@@ -3,6 +3,7 @@ package dk.aau.cs.ds302e18.app.auth;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Date;
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
@@ -68,5 +69,11 @@ public class CourseControllerTest {
     @Test
     public void deleteCourse() {
         courseController.deleteCourse(3);
+    }
+
+    @Test
+    public void testTime() {
+        Date testDate = new Date(2018, 5, 12, 4, 3);
+        System.out.println(testDate.getTime());
     }
 }

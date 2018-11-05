@@ -1,8 +1,11 @@
 package dk.aau.cs.ds302e18.app.auth;
+import dk.aau.cs.ds302e18.app.domain.Lesson;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Date;
 
 
 public class CourseController {
@@ -98,6 +101,18 @@ public class CourseController {
         }
     }
 
+    /* Get list of students from course database */
+    /* Create a  */
+    public void courseAddLessons(Date startDate, int numberLessons, ArrayList<Integer> weekdays) {
+        ArrayList<Lesson> lessonList = new ArrayList<>();
+        Date tempoaryDate = new Date();
+        //startDate = new Date(2018, 5, 12, 4, 3);
+        while(numberLessons > 0){
+            Lesson lesson = new Lesson();
+            Date lessonDate =
+            lesson.setLessonDate();
 
-
+            numberLessons--;
+        }
+    }
 }
