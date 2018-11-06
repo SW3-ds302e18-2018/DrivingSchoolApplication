@@ -12,6 +12,7 @@ import static org.junit.Assert.*;
 public class CourseControllerTest {
     private ArrayList<User> userList;
     private CourseController courseController;
+    private Date startDate;
 
     @Before
     public void setUp() throws Exception {
@@ -29,6 +30,7 @@ public class CourseControllerTest {
         userList.add(user1);
         userList.add(user2);
         userList.add(user3);
+        startDate = new Date(118,10,6,16,0);
     }
 
     @Test
@@ -73,17 +75,24 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void courseAddLessons() {
-        Date startDate = new Date(118,10,6);
-        ArrayList<Integer> weekdays = new ArrayList<>();
-        weekdays.add(0);
-        weekdays.add(1);
-        weekdays.add(6);
+    public void createLessonDates() {
+        ArrayList<Integer> lessonPlacementsFromOffset = new ArrayList<>();
+        lessonPlacementsFromOffset.add(0);
+        lessonPlacementsFromOffset.add(1);
+        lessonPlacementsFromOffset.add(6);
         /* An uneven amount of lessons also checks that the if statement in the for loop prevents the loop from creating
            unnecessary extra lessons. */
-        ArrayList<Date> dateList = courseController.createLessonDates(startDate, weekdays,5);
+        ArrayList<Date> dateList = courseController.createLessonDates(startDate, lessonPlacementsFromOffset,5);
         for(Date date: dateList) {
             System.out.println("lesson date:" + date.getDate() + " weekday: " + date.getDay());
         }
+    }
+
+    @Test
+    public void courseAddLessons() {
+        ArrayList<Integer> lessonPlacementsFromOffset = new ArrayList<>();
+        lessonPlacementsFromOffset.add(0);
+        lessonPlacementsFromOffset.add(1);
+        courseController.courseAddLessons(startDate,lessonPlacementsFromOffset,4, userList, 7,"AAU", "Instructor Samuel", 1);
     }
 }

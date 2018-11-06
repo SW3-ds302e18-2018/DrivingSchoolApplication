@@ -107,51 +107,58 @@ public class CourseController {
     /* needs to sort lessons after ID, and pick the ID incremented by one. DONE */
     /* Still needs number of hours at a time and start date should be the exact time the first lesson starts */
     /* every lesson needs an associated courseID if there are any */
-    public void courseAddLessons(Date startDate, int numberLessons,
-                                 String location, String instructorName, int type) {
-        /* Gets the ID of the last lesson created, which will be the first ID of the created course lessons */
-        int lastEnteredLessonID = 0;
+    public void courseAddLessons(Date startDate, ArrayList<Integer> lessonPlacementsFromOffset, int numberLessons,
+                                 ArrayList<User> userList, int courseID,
+                                 String location, String instructorName, int lessonType) {
+
+        String usernamesString = saveUsernamesAsString(userList);
+        ArrayList<Date> lessonDates = createLessonDates(startDate, lessonPlacementsFromOffset, numberLessons);
+        /* All added lessons will be initialized as active */
+        int lessonState = 1;
+        int lastEnteredLessonID;
         try {
             Statement st = conn.createStatement();
+            /* Gets the ID of the last lesson created, which will be the first ID of the created course lessons */
             ResultSet rs = st.executeQuery("SELECT `lesson_id` FROM `lesson`");
             rs.last();
             lastEnteredLessonID = rs.getInt("lesson_id");
+
+            for(int j = 0; j<lessonDates.size(); j++) {
+                int lessonID = lastEnteredLessonID + 1 + j;
+                String lessonDate = reformatDate(lessonDates.get(j));
+                st.executeUpdate(   "INSERT INTO `lesson`(`lesson_id`, `state`, `lesson_date`, `instructor`, " +
+                                        "`lesson_location`, `lesson_type`, `student_list`, `course_id`) " + "VALUES (" + lessonID + ","+ lessonState +",'"+ lessonDate +"','"+ instructorName +"','"+
+                                        location + "',"+ lessonType +",'"+ usernamesString +"',"+ courseID +")");
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        /* All added lessons will be initialized as active */
-        int lessonState = 1;
-
-
-        ArrayList<Lesson> lessonList = new ArrayList<>();
-        /* Expected value */
-        Lesson lesson = new Lesson();
     }
 
     /* Creates an ArrayList of dates with the dates a course should contain. The dates are set to start at startDate
-       and lessons will be distributed with the offset specified in lessonDaysFromOffset, with a 7 days interval.
-       So if startDate is a monday, an lesson will be distributed every monday if 0 is in lessonDaysFromOffset.
-       If the startDate is an monday and you want to add lessons every tuesday and thursday lessonDaysFromOffset should contain
+       and lessons will be distributed with the offset specified in lessonPlacementsFromOffset, with a 7 days interval.
+       So if startDate is a monday, an lesson will be distributed every monday if 0 is in lessonPlacementsFromOffset.
+       If the startDate is an monday and you want to add lessons every tuesday and thursday lessonPlacementsFromOffset should contain
        1 and 3, and so on.
        The dates will continue to be distributed until all lessons are distributed.
        */
 
-    public ArrayList<Date> createLessonDates(Date startDate, ArrayList<Integer> lessonDaysFromOffset, int numberLessonsLeft) {
+    public ArrayList<Date> createLessonDates(Date startDate, ArrayList<Integer> lessonPlacementsFromOffset, int numberLessonsLeft) {
+
         ArrayList<Date> lessonDates = new ArrayList<>();
         int oneDayInMilliseconds = 86400000;
-
         Date currentWeekStart = startDate;
 
         /* While all lessons has not yet been distributed */
         while (numberLessonsLeft > 0) {
             int weekCount = 1;
-            /* For every lessonDaysFromOffset add an corresponding lesson date. */
-            for (int k = 0; k<lessonDaysFromOffset.size(); k++) {
+            /* For every lessonPlacementsFromOffset add an corresponding lesson date. */
+            for (int k = 0; k<lessonPlacementsFromOffset.size(); k++) {
                 /* Since the for loop can add multiple lessons it is necessary to make a check before each loop if
                    there is any lessons left to be distributed. */
                 if (numberLessonsLeft > 0) {
                     /* depending on the offset number  */
-                    lessonDates.add(new Date(currentWeekStart.getTime() + (oneDayInMilliseconds * lessonDaysFromOffset.get(k))));
+                    lessonDates.add(new Date(currentWeekStart.getTime() + (oneDayInMilliseconds * lessonPlacementsFromOffset.get(k))));
                     numberLessonsLeft--;
                 }
             }
@@ -160,5 +167,22 @@ public class CourseController {
             currentWeekStart = new Date(currentWeekStart.getTime() + 604800000 * weekCount);
         }
         return lessonDates;
+    }
+
+    //Reformats the Java Date format to the mySQL datetime format and returns it in a String.
+    //This functions works based on the Java Date format for generating a Date.
+    //This means that this function counterworks the addition of +1900 in allocating a new Date.
+    //Therefor any pre-formatted dates won't work with this function.
+    private String reformatDate(Date date) {
+        if(date == null) {
+            try {
+                throw new Exception("Invalid date.");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        String formattetDate = (date.getYear() + 1900) + "-" + (date.getMonth() + 1) + "-" + date.getDate()
+                + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+        return formattetDate;
     }
 }
