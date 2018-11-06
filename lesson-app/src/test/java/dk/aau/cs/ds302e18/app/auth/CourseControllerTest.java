@@ -3,6 +3,7 @@ package dk.aau.cs.ds302e18.app.auth;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.ArrayList;
 
@@ -73,16 +74,16 @@ public class CourseControllerTest {
 
     @Test
     public void courseAddLessons() {
-        Date startDate = new Date(2018,10,10);
+        Date startDate = new Date(118,10,6);
         ArrayList<Integer> weekdays = new ArrayList<>();
         weekdays.add(0);
-        weekdays.add(3);
+        weekdays.add(1);
         weekdays.add(6);
         /* An uneven amount of lessons also checks that the if statement in the for loop prevents the loop from creating
-         * unnecessary extra lessons. */
-        ArrayList<Date> dateList = courseController.createLessonDates(startDate,weekdays,5);
+           unnecessary extra lessons. */
+        ArrayList<Date> dateList = courseController.createLessonDates(startDate, weekdays,5);
         for(Date date: dateList) {
-            System.out.println(date.getDate());
+            System.out.println("lesson date:" + date.getDate() + " weekday: " + date.getDay());
         }
     }
 }

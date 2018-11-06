@@ -5,7 +5,9 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 
 
 public class CourseController {
@@ -128,36 +130,64 @@ public class CourseController {
         Lesson lesson = new Lesson();
     }
 
-    /* Creates an ArrayList of dates with the dates a course should contain. The dates are set to start at startDate
-       and lessons will be distributed with the offset specified in lessonDaysFromOffset, with a 7 days interval.
-       So if startDate is a monday, an lesson will be distributed every monday if 0 is in lessonDaysFromOffset.
-       If the startDate is an monday and you want to add lessons every tuesday and thursday lessonDaysFromOffset should contain
-       1 and 3, and so on.
-       The dates will continue to be distributed until all lessons are distributed.
-       */
-
-    public ArrayList<Date> createLessonDates(Date startDate, ArrayList<Integer> lessonDaysFromOffset, int numberLessonsLeft) {
+    /* Creates an ArrayList of dates with the dates an course should contain. The dates are set to start at
+     * the same time at specified weekdays starting from a specified startDate retrieved from an Date object. */
+    public ArrayList<Date> createLessonDates(Calendar startDate, ArrayList<Integer> weekdays, int numberLessonsLeft) {
         ArrayList<Date> lessonDates = new ArrayList<>();
-        int oneDayInMilliseconds = 86400000;
 
-        Date currentWeekStart = startDate;
+        int oneDayInMilliseconds = 86400000;
+        final int oneDay = oneDayInMilliseconds;
+        int twoDays = oneDayInMilliseconds * 2;
+        int threeDays = oneDayInMilliseconds * 3;
+        int fourDays = oneDayInMilliseconds * 4;
+        int fiveDays = oneDayInMilliseconds * 5;
+        int sixDays = oneDayInMilliseconds * 6;
+
+        Calendar currentWeekStart = startDate;
 
         /* While all lessons has not yet been distributed */
         while (numberLessonsLeft > 0) {
             int weekCount = 1;
-            /* For every lessonDaysFromOffset add an corresponding lesson date. */
-            for (int k = 0; k<lessonDaysFromOffset.size(); k++) {
+            /* For every weekday add an corresponding lesson date. */
+            for (int k = 0; k<weekdays.size(); k++) {
                 /* Since the for loop can add multiple lessons it is necessary to make a check before each loop if
                    there is any lessons left to be distributed. */
-                if (numberLessonsLeft > 0) {
-                    /* depending on the offset number  */
-                    lessonDates.add(new Date(currentWeekStart.getTime() + (oneDayInMilliseconds * lessonDaysFromOffset.get(k))));
-                    numberLessonsLeft--;
+                if(numberLessonsLeft > 0) {
+                    switch (weekdays.get(k)) {
+                        case 0:
+                            lessonDates.add(new Date(currentWeekStart.getTime()));
+                            numberLessonsLeft--;
+                            break;
+                        case 1:
+                            lessonDates.add(new Date(currentWeekStart.getTime() + oneDay));
+                            numberLessonsLeft--;
+                            break;
+                        case 2:
+                            lessonDates.add(new Date(currentWeekStart.getTime() + twoDays));
+                            numberLessonsLeft--;
+                            break;
+                        case 3:
+                            lessonDates.add(new Date(currentWeekStart.getTime() + threeDays));
+                            numberLessonsLeft--;
+                            break;
+                        case 4:
+                            lessonDates.add(new Date(currentWeekStart.getTime() + fourDays));
+                            numberLessonsLeft--;
+                            break;
+                        case 5:
+                            lessonDates.add(new Date(currentWeekStart.getTime() + fiveDays));
+                            numberLessonsLeft--;
+                            break;
+                        case 6:
+                            lessonDates.add(new Date(currentWeekStart.getTime() + sixDays));
+                            numberLessonsLeft--;
+                            break;
+                    }
                 }
             }
-            /* 604800000 is an week in milliseconds. 604800000 * weekCount is not contained in a variable due to the possible of reaching an overflow of most
+            /* 604800000 * weekCount is not contained in a variable due to the possible of reaching an overflow of most
                data-types. Date is by default suitable to handle very large numbers. */
-            currentWeekStart = new Date(currentWeekStart.getTime() + 604800000 * weekCount);
+            currentWeekStart = new GregorianCalendar() new Date(currentWeekStart.add(604800000* weekCount));
         }
         return lessonDates;
     }
