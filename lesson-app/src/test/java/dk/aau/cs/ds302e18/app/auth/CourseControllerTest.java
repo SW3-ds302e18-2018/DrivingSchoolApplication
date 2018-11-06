@@ -72,8 +72,17 @@ public class CourseControllerTest {
     }
 
     @Test
-    public void testTime() {
-        Date testDate = new Date(2018, 5, 12, 4, 3);
-        System.out.println(testDate.getTime());
+    public void courseAddLessons() {
+        Date startDate = new Date(2018,10,10);
+        ArrayList<Integer> weekdays = new ArrayList<>();
+        weekdays.add(0);
+        weekdays.add(3);
+        weekdays.add(6);
+        /* An uneven amount of lessons also checks that the if statement in the for loop prevents the loop from creating
+         * unnecessary extra lessons. */
+        ArrayList<Date> dateList = courseController.createLessonDates(startDate,weekdays,5);
+        for(Date date: dateList) {
+            System.out.println(date.getDate());
+        }
     }
 }
