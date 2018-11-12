@@ -1,12 +1,17 @@
 package dk.aau.cs.ds302e18.app;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+@Controller
+@RequestMapping("/")
 public class AccountController {
 
     private Connection conn;
@@ -43,7 +48,7 @@ public class AccountController {
         new RegisterUser(student.getUsername(), student.getPassword(), student.getFirstName(), student.getLastName(),
                 student.getPhonenumber(), student.getEmail(), student.getBirthdate(), student.getAddress(),
                 student.getZipCode(), student.getCity());
-        return "modifyAccount";
+        return "modify-account";
     }
     public void getUsername() {
         getUsername(); {this.conn = new DBConnector().createConnectionObject();}
