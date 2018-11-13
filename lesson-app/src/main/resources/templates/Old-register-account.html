@@ -1,0 +1,121 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}" lang="en">
+<head>
+    <title>Register Account</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="container main-content">
+        <h3>Register New Account</h3>
+
+        <form th:action="@{/}" method="post">
+            <div th:if="${param.error}">
+                <div class="alert alert-danger">
+                    Invalid username or password.
+                </div>
+            </div>
+
+
+            <div class="form-group row">
+                <label for="username" class="col-sm-2 col-form-label">Username</label>
+                <div class="col-sm-6">
+                    <input type="text" id="username" name="username" class="form-control" placeholder="Username"
+                           autofocus="autofocus">
+                </div>
+            </div>
+
+
+            <div class="form-group row">
+                <label for="password" class="col-sm-2 col-form-label">Password</label>
+                <div class="col-sm-6">
+                    <input type="password" id="password" name="password" class="form-control" placeholder="Password"
+                           autofocus="autofocus">
+                </div>
+            </div>
+
+
+            <div class="form-group row">
+                <label for="firstName" class="col-sm-2 col-form-label">First Name</label>
+                <div class="col-sm-6">
+                    <input type="text" id="firstName" name="firstName" class="form-control" placeholder="First Name"
+                           autofocus="autofocus">
+                </div>
+            </div>
+
+
+            <div class="form-group row">
+                <label for="lastName" class="col-sm-2 col-form-label">Last Name</label>
+                <div class="col-sm-6">
+                    <input type="textx" id="lastName" name="lastName" class="form-control" placeholder="Last Name"
+                           autofocus="autofocus">
+                </div>
+            </div>
+
+
+            <div class="form-group row">
+                <label for="phonenumber" class="col-sm-2 col-form-label">Phone Number</label>
+                <div class="col-sm-6">
+                    <input type="text" id="phonenumber" name="phonenumber" class="form-control" placeholder="+45 "
+                           autofocus="autofocus">
+                </div>
+            </div>
+
+
+            <div class="form-group row">
+                <label for="email" class="col-sm-2 col-form-label">Email Address</label>
+                <div class="col-sm-6">
+                    <input type="text" id="email" name="email" class="form-control" placeholder="Email Address"
+                           autofocus="autofocus">
+                </div>
+            </div>
+
+
+            <div class="form-group row">
+                <label for="birthdate" class="col-sm-2 col-form-label">Birth Day</label>
+                <div class="col-sm-6">
+                    <input type="text" id="birthdate" name="birthdate" class="form-control" placeholder="Brith Day"
+                           autofocus="autofocus">
+                </div>
+            </div>
+
+
+            <div class="form-group row">
+                <label for="address" class="col-sm-2 col-form-label">Home Address</label>
+                <div class="col-sm-6">
+                    <input type="text" id="address" name="address" class="form-control" placeholder="Address"
+                           autofocus="autofocus">
+                </div>
+            </div>
+
+
+            <div class="form-group row">
+                <label for="zipCode" class="col-sm-2 col-form-label">Zip Code</label>
+                <div class="col-sm-6">
+                    <input type="text" id="zipCode" name="zipCode" class="form-control" placeholder="1000"
+                           autofocus="autofocus">
+                </div>
+            </div>
+
+
+            <div class="form-group row">
+                <label for="city" class="col-sm-2 col-form-label">City</label>
+                <div class="col-sm-6">
+                    <input type="text" id="city" name="city" class="form-control" placeholder="City"
+                           autofocus="autofocus">
+                </div>
+            </div>
+
+            <div class="form-group row">
+                <div class="col-sm-2">
+                    <button type="submit" class="btn btn-primary">Register New Account</button>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+</body>
+</html>
