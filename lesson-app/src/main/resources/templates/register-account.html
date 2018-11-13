@@ -1,20 +1,25 @@
-<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css"
+<!--<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css"
       xmlns:th="http://www.w3.org/1999/xhtml">
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
-<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script> --!
 <!------ Include the above in your HEAD tag ---------->
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{layout}" lang="en">
 <head>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css"
+          xmlns:th="http://www.w3.org/1999/xhtml">
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
     <title>Register Account</title>
 </head>
-<form th:action="@{/register}" method="post">
-    <div th:if="${param.error}">
-        <div class="alert alert-danger">
-            Invalid username or password.
-        </div>
-    </div>
+<div layout:fragment="content">
 <div class="container">
+    <form th:action="@{/register}" method="post">
+        <div th:if="${param.error}">
+            <div class="alert alert-danger">
+                Invalid username or password.
+            </div>
+        </div>
     <div class="row centered-form">
         <div class="col-xs-12 col-sm-8 col-md-4 col-sm-offset-2 col-md-offset-4">
             <div class="panel panel-default">
@@ -39,44 +44,44 @@
                         </div>
 
                         <div class="form-group">
-                            <input type="adress" name="adress" id="adress" class="form-control input-sm"
+                            <input type="text" name="adress" id="adress" class="form-control input-sm"
                                    placeholder="Adress">
                         </div>
 
                         <div class="form-group">
-                            <input type="zipcode" name="zipcode" id="zipcode" class="form-control input-sm"
+                            <input type="text" name="zipcode" id="zipcode" class="form-control input-sm"
                                    placeholder="ZipCode">
                         </div>
 
                         <div class="form-group">
-                            <input type="city" name="city" id="city" class="form-control input-sm" placeholder="City">
+                            <input type="text" name="city" id="city" class="form-control input-sm" placeholder="City">
                         </div>
 
                         <div class="form-group">
-                            <input type="birthdate" name="birthdate" id="birthdate" class="form-control input-sm"
+                            <input type="text" name="birthdate" id="birthdate" class="form-control input-sm"
                                    placeholder="Birthdate">
                         </div>
 
                         <div class="form-group">
-                            <input type="email" name="email" id="email" class="form-control input-sm"
+                            <input type="text" name="email" id="email" class="form-control input-sm"
                                    placeholder="Email Address">
                         </div>
 
                         <div class="form-group">
-                            <input type="username" name="username" id="username" class="form-control input-sm"
+                            <input type="text" name="username" id="username" class="form-control input-sm"
                                    placeholder="Username">
                         </div>
 
                         <div class="row">
                             <div class="col-xs-6 col-sm-6 col-md-6">
                                 <div class="form-group">
-                                    <input type="password" name="password" id="password" class="form-control input-sm"
+                                    <input type="text" name="password" id="password" class="form-control input-sm"
                                            placeholder="Password">
                                 </div>
                             </div>
                             <div class="col-xs-6 col-sm-6 col-md-6">
                                 <div class="form-group">
-                                    <input type="password" name="password_confirmation" id="password_confirmation"
+                                    <input type="text" name="password_confirmation" id="password_confirmation"
                                            class="form-control input-sm" placeholder="Confirm Password">
                                 </div>
                             </div>
@@ -89,8 +94,7 @@
             </div>
         </div>
     </div>
-</div>
-</form>
+    </form>
 </div>
 </div>
 </html>
