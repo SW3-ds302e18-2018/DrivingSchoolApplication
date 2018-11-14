@@ -56,10 +56,10 @@ public class ModifyUser
             // note that i'm leaving "date_created" out of this insert statement
             st.executeUpdate("UPDATE INTO (user_id, isacitve, username, password) "
                     +"VALUES ('"+accountId+"', 1,'"+username+"','"+passwordEncoder.encode(password)+"')");
-            st.executeUpdate("INSERT INTO account (auth_user_account_id, address, birthday, city, email, firstname," +
+            st.executeUpdate("UPDATE INTO account (auth_user_account_id, address, birthday, city, email, firstname," +
                     " lastname, phonenumber, username, zip)"
                     +"VALUES ('"+accountId+"', '"+address+"','"+birthday+"','"+city+"','"+email+"','"+firstName+"','"+lastName+"','"+phoneNumber+"','"+username+"','"+zipCode+"')");
-            st.executeUpdate("INSERT INTO auth_user_group (auth_user_group_id, auth_group, username) "
+            st.executeUpdate("UPDATE INTO auth_user_group (auth_user_group_id, auth_group, username) "
                     +"VALUES ('"+accountId+"', 'ADMIN','"+username+"')");
 
             conn.close();
