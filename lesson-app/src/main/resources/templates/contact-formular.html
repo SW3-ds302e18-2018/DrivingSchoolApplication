@@ -1,10 +1,97 @@
-<!DOCTYPE html>
-<html lang="en">
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}"lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>
 
-</body>
-</html>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+   <style>
+
+       .split {
+           height: 100%;
+           width: 50%;
+           position: fixed;
+           z-index: 1;
+           top: 0;
+           overflow-x: hidden;
+           padding-top: 20px;
+       }
+
+       .left {
+           left: 0;
+           background-color: whitesmoke;
+       }
+
+       .right {
+           right: 0;
+           background-color: whitesmoke;
+       }
+
+       .centered {
+           position: absolute;
+           top: 50%;
+           left: 50%;
+           transform: translate(-50%, -50%);
+           text-align: center;
+       }
+
+
+   </style>
+
+</head>
+
+<div layout:fragment="content">
+    <div class="container main-content">
+
+        <h3>Contact</h3>
+        <div class="split left">
+            <div class="left">
+                <h2>About us</h2>
+                <p>My name is xxx, My sex is xxx, I have xxx experience in the driving school industry.</p>
+
+                <h2> Contact info</h2>
+                <p> xxx@gmail.com</p>
+                <p>+45xxxxxxx</p>
+            </div>
+        </div>
+
+        <div class="split right">
+            <div class="left">
+                <h2>Location</h2>
+                <p>Show map.</p>
+
+                <h2>Contact form</h2>
+                <div class="form-group row">
+                    <label for="firstName" class="col-sm-2 col-form-label">First Name</label>
+                    <div class="col-sm-6">
+                        <input type="text" id="firstName" name="firstName" class="form-control" placeholder="First Name" autofocus="autofocus">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="phonenumber" class="col-sm-2 col-form-label">Phone Number</label>
+                    <div class="col-sm-6">
+                        <input type="text" id="phonenumber" name="phonenumber" class="form-control" placeholder="+45 " autofocus="autofocus">
+                    </div>
+                </div>
+
+
+                <div class="form-group row">
+                    <label for="email" class="col-sm-2 col-form-label">Email Address</label>
+                    <div class="col-sm-6">
+                        <input type="text" id="email" name="email" class="form-control" placeholder="Email Address" autofocus="autofocus">
+                    </div>
+                </div>
+
+                <div class="form-group row">
+                    <label for="subject" class="col-sm-2 col-form-label">Subject</label>
+                    <div class="col-sm-6">
+                        <textarea id="subject" name="subject" placeholder="Subject.." style="height:200px"></textarea>
+                    </div>
+                </div>
+                <button type="Send" class="btn btn-primary">Send</button>
+
+            </div>
+        </div>
+    </div>
+</div>
+</html>s

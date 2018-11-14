@@ -1,110 +1,100 @@
-<!doctype html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}"lang="en">
+<!--<link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css"
+      xmlns:th="http://www.w3.org/1999/xhtml">
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+<script src="//code.jquery.com/jquery-1.11.1.min.js"></script> --!
+<!------ Include the above in your HEAD tag ---------->
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}" lang="en">
 <head>
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css"
+          xmlns:th="http://www.w3.org/1999/xhtml">
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+    <script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
     <title>Register Account</title>
 </head>
-<body>
-
 <div layout:fragment="content">
-    <div class="container main-content">
-            <h3>Register New Account</h3>
-
+    <div class="container">
         <form th:action="@{/register}" method="post">
             <div th:if="${param.error}">
                 <div class="alert alert-danger">
                     Invalid username or password.
                 </div>
             </div>
+            <div class="row centered-form">
+                <div class="col-xs-12 col-sm-8 col-md-4 col-sm-offset-2 col-md-offset-4">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h3 class="panel-title">Registration</h3>
+                        </div>
+                        <div class="panel-body">
+                            <form role="form">
+                                <div class="row">
+                                    <div class="col-xs-6 col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <input type="text" name="first_name" id="first_name" class="form-control input-sm"
+                                                   placeholder="First Name">
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6 col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <input type="text" name="last_name" id="last_name" class="form-control input-sm"
+                                                   placeholder="Last Name">
+                                        </div>
+                                    </div>
+                                </div>
 
+                                <div class="form-group">
+                                    <input type="text" name="adress" id="adress" class="form-control input-sm"
+                                           placeholder="Adress">
+                                </div>
 
-            <div class="form-group row">
-                <label for="username" class="col-sm-2 col-form-label">Username</label>
-                <div class="col-sm-6">
-                    <input type="text" id="username" name="username" class="form-control" placeholder="Username" autofocus="autofocus">
+                                <div class="form-group">
+                                    <input type="text" name="zipcode" id="zipcode" class="form-control input-sm"
+                                           placeholder="ZipCode">
+                                </div>
+
+                                <div class="form-group">
+                                    <input type="text" name="city" id="city" class="form-control input-sm" placeholder="City">
+                                </div>
+
+                                <div class="form-group">
+                                    <input type="text" name="birthdate" id="birthdate" class="form-control input-sm"
+                                           placeholder="Birthdate">
+                                </div>
+
+                                <div class="form-group">
+                                    <input type="text" name="email" id="email" class="form-control input-sm"
+                                           placeholder="Email Address">
+                                </div>
+
+                                <div class="form-group">
+                                    <input type="text" name="username" id="username" class="form-control input-sm"
+                                           placeholder="Username">
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-xs-6 col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <input type="text" name="password" id="password" class="form-control input-sm"
+                                                   placeholder="Password">
+                                        </div>
+                                    </div>
+                                    <div class="col-xs-6 col-sm-6 col-md-6">
+                                        <div class="form-group">
+                                            <input type="text" name="password_confirmation" id="password_confirmation"
+                                                   class="form-control input-sm" placeholder="Confirm Password">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <input type="submit" value="Register" class="btn btn-info btn-block">
+
+                            </form>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-
-            <div class="form-group row">
-                <label for="password" class="col-sm-2 col-form-label">Password</label>
-                <div class="col-sm-6">
-                    <input type="password" id="password" name="password" class="form-control" placeholder="Password" autofocus="autofocus">
-                </div>
-            </div>
-
-
-            <div class="form-group row">
-                <label for="firstName" class="col-sm-2 col-form-label">First Name</label>
-                <div class="col-sm-6">
-                    <input type="text" id="firstName" name="firstName" class="form-control" placeholder="First Name" autofocus="autofocus">
-                </div>
-            </div>
-
-
-            <div class="form-group row">
-                <label for="lastName" class="col-sm-2 col-form-label">Last Name</label>
-                <div class="col-sm-6">
-                    <input type="textx" id="lastName" name="lastName" class="form-control" placeholder="Last Name" autofocus="autofocus">
-                </div>
-            </div>
-
-
-            <div class="form-group row">
-                <label for="phonenumber" class="col-sm-2 col-form-label">Phone Number</label>
-                <div class="col-sm-6">
-                    <input type="text" id="phonenumber" name="phonenumber" class="form-control" placeholder="+45 " autofocus="autofocus">
-                </div>
-            </div>
-
-
-            <div class="form-group row">
-                <label for="email" class="col-sm-2 col-form-label">Email Address</label>
-                <div class="col-sm-6">
-                    <input type="text" id="email" name="email" class="form-control" placeholder="Email Address" autofocus="autofocus">
-                </div>
-            </div>
-
-
-            <div class="form-group row">
-                <label for="birthdate" class="col-sm-2 col-form-label">Birth Day</label>
-                <div class="col-sm-6">
-                    <input type="text" id="birthdate" name="birthdate" class="form-control" placeholder="Brith Day" autofocus="autofocus">
-                </div>
-            </div>
-
-
-            <div class="form-group row">
-                <label for="address" class="col-sm-2 col-form-label">Home Address</label>
-                <div class="col-sm-6">
-                    <input type="text" id="address" name="address" class="form-control" placeholder="Address" autofocus="autofocus">
-                </div>
-            </div>
-
-
-            <div class="form-group row">
-                <label for="zipCode" class="col-sm-2 col-form-label">Zip Code</label>
-                <div class="col-sm-6">
-                    <input type="text" id="zipCode" name="zipCode" class="form-control" placeholder="1000" autofocus="autofocus">
-                </div>
-            </div>
-
-
-            <div class="form-group row">
-                <label for="city" class="col-sm-2 col-form-label">City</label>
-                <div class="col-sm-6">
-                    <input type="text" id="city" name="city" class="form-control" placeholder="City" autofocus="autofocus">
-                </div>
-            </div>
-
-            <div class="form-group row">
-                <div class="col-sm-2">
-                    <button type="submit" class="btn btn-primary">Register New Account</button>
-                </div>
-            </div>
-
         </form>
     </div>
 </div>
-
-</body>
 </html>
