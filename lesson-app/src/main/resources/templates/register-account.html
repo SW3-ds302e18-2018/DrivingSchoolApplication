@@ -30,7 +30,7 @@
                         <div class="form-group row mb-4">
                             <div class="col-12">
                                 <label for="Password">Password :</label>
-                                <input class="form-control" type="password" required="required" placeholder="Please enter your password" id="Password" name="Password">
+                                <input class="form-control" type="password" pattern=".{6,15}" required="required" placeholder="Please enter your password (6-15 characters)" id="Password" name="Password">
                             </div>
                         </div>
 
@@ -88,7 +88,7 @@
                         <div class="form-group mb-4 row">
                             <div class="col-12">
                                 <label for="Zip">Zip Code :</label>
-                                <input class="form-control" type="text" required="required" placeholder="Zip" id="Zip" name="Zip">
+                                <input class="form-control" type="number" required="required" placeholder="Zip" id="Zip" name="Zip">
                             </div>
                         </div>
 
@@ -121,6 +121,7 @@
 
             </div>
         </div>
+    </div>
 </body>
 
 </html>

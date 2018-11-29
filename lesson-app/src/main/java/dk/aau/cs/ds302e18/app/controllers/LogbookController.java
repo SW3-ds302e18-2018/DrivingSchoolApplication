@@ -8,6 +8,7 @@ import dk.aau.cs.ds302e18.app.domain.*;
 import dk.aau.cs.ds302e18.app.service.LessonService;
 import dk.aau.cs.ds302e18.app.service.LogbookService;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
@@ -34,13 +35,14 @@ public class LogbookController {
     public LogbookController(LessonService lessonService, LogbookService logbookService, AuthGroupRepository authGroupRepository, AccountRespository accountRepository) {
         super();
         this.lessonService = lessonService;
-        this.accountRespository = accountRespository;
+        this.accountRespository = accountRepository;
         this.logbookService = logbookService;
         this.authGroupRepository = authGroupRepository;
     }
 
     /**
-     * Retrieves all logbooks and selects the student's logbooks and models them for the html site
+     * Get for the page.
+     *
      * @param model
      * @return
      */
@@ -55,89 +57,42 @@ public class LogbookController {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = ((UserDetails) principal).getUsername();
 
-        //Compares all logbooks with the user's username, if they are the same add the logbook to the user's logbook list
-        for (Logbook logbook : logbookList) {
-            if (logbook.getStudent().equals(username)) {
-                studentLogbookList.add(logbook);
+
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        GrantedAuthority role = userDetails.getAuthorities().iterator().next();
+
+        for(int i = 0; i < lessonList.size(); i++) {
+            if(lessonList.get(i).getStudentList().contains(username)) {
+                logbookLessonList.add(lessonList.get(i));
             }
         }
 
-        //Models the lists and username as an attribute to the website
-        model.addAttribute("studentLogbookList", studentLogbookList);
-        model.addAttribute("username", username);
+        //Models the lists as an attribute to the website
+        model.addAttribute("logbookLessonList", logbookLessonList);
         return "logbook-student";
     }
 
 
     @GetMapping(value = {"/logbook/instructor"})
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String getInstructorLogbookLessons(Model model) {
-        List<Logbook> logbookList = this.logbookService.getAllLogbooks();
-        //Creates a list to store all logbooks
-        List<Logbook> allLogbooksList = new ArrayList<>();
-
-        //Fetches the username from the session
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = ((UserDetails) principal).getUsername();
-
-        allLogbooksList.addAll(logbookList);
-
-        //Models the lists as an attribute to the website
-        model.addAttribute("allLogbookList", allLogbooksList);
-        model.addAttribute("username", username);
-
-        return "logbook-instructor";
-    }
-
-    /**
-     * Retrieves details about a student's specific logbook and models it for the html site
-     * @param model
-     * @param id
-     * @return
-     */
-    @GetMapping(value = {"/logbook/instructor"})
     @PreAuthorize("hasAnyRole('ROLE_INSTRUCTOR', 'ROLE_ADMIN')")
     public String getInstructorLogbookLessons(Model model) {
         List<Lesson> lessonList = this.lessonService.getAllLessons();
-
-        //Creates a list to store all lessons connected to a specific logbook
+        //Creates a list, to store the user's lessons in the logbook
         List<Lesson> logbookLessonList = new ArrayList<>();
 
         //Fetches the username from the session
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = ((UserDetails) principal).getUsername();
 
-        //Fetches the auth group of the user. This should return a list with a single entry, since a user only has one role
-        List<AuthGroup> userAuthGroupList = authGroupRepository.findByUsername(username);
-
-        //If the user trying to access a logbook is it's owner or an admin, the user is allowed to access the logbook
-        if (logbook.getStudent().equals(username) || userAuthGroupList.get(0).getAuthGroup().equals("ADMIN")) {
-
-            //Compares every lesson with the logbook's courseId to sort out every unnecessary lesson. Only same Id can be added
-            for (Lesson lesson : lessonList) {
-                if (logbook.getCourseID() == lesson.getCourseId()) {
-                    String[] lessonStudentList = lesson.getStudentList().split(",");
-
-                    //Compares every student on the lesson's student list, if the logbook owner is on it, add the lesson to the logbook
-                    for (String student : lessonStudentList) {
-                       if (logbook.getStudent().equals(student)) {
-                           logbookLessonList.add(lesson);
-                       }
-                    }
-                }
+        for(int i = 0; i < lessonList.size(); i++) {
+            if(lessonList.get(i).getStudentList().contains(username)) {
+                logbookLessonList.add(lessonList.get(i));
             }
-
-            //Models the lists, username and logbook id as an attribute to the website
-            model.addAttribute("logbookLessonList", logbookLessonList);
-            model.addAttribute("username", username);
-            model.addAttribute("logbookId", id);
-            return "logbook-view";
         }
 
-        //Else return an error page
-        else {
-            return "error";
-        }
+        //Models the lists as an attribute to the website
+        model.addAttribute("logbookLessonList", logbookLessonList);
+        return "logbook-instructor";
     }
 
     @ModelAttribute("gravatar")
@@ -149,11 +104,10 @@ public class LogbookController {
         return (gravatar);
     }
 
-    public String getAccountUsername()
+    private String getAccountUsername()
     {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = ((UserDetails) principal).getUsername();
-        return username;
+        UserDetails principal = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return principal.getUsername();
     }
 
 }

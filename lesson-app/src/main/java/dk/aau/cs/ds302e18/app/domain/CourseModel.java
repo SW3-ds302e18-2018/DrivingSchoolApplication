@@ -26,6 +26,16 @@ public class CourseModel {
     private String studentToUpdate;
 
 
+    public CourseType getCourseType()
+    {
+        return courseType;
+    }
+
+    public void setCourseType(CourseType courseType)
+    {
+        this.courseType = courseType;
+    }
+
     public String getStudentUsernames() {
         return studentUsernames;
     }
@@ -144,14 +154,6 @@ public class CourseModel {
 
     public void setStudentToUpdate(String studentToUpdate) {
         this.studentToUpdate = studentToUpdate;
-    }
-
-    public CourseType getCourseType() {
-        return courseType;
-    }
-
-    public void setCourseType(CourseType courseType) {
-        this.courseType = courseType;
     }
 
     public Course translateModelToCourse(){

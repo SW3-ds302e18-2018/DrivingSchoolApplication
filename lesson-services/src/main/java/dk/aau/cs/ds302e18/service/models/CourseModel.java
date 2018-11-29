@@ -11,6 +11,16 @@ public class CourseModel {
     private CourseType courseType;
     private String studentToDelete;
 
+    public CourseType getCourseType()
+    {
+        return courseType;
+    }
+
+    public void setCourseType(CourseType courseType)
+    {
+        this.courseType = courseType;
+    }
+
     public String getInstructorUsername() {
         return instructorUsername;
     }
@@ -49,14 +59,6 @@ public class CourseModel {
 
     public void setCourseStartDate(Date courseStartDate) {
         this.courseStartDate = courseStartDate;
-    }
-
-    public CourseType getCourseType() {
-        return courseType;
-    }
-
-    public void setCourseType(CourseType courseType) {
-        this.courseType = courseType;
     }
 
     public Course translateModelToCourse(){

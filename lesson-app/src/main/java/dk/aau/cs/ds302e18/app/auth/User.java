@@ -1,17 +1,16 @@
 package dk.aau.cs.ds302e18.app.auth;
 
-import dk.aau.cs.ds302e18.app.Student;
-
 import javax.persistence.*;
-import java.util.ArrayList;
 
-/* Ensures that the table User exists in the database and has the following columns.
-   Also provides setters and getters. */
+/**
+ * Contains authentication information about the user,
+ * such as the username, password and whether the account is active
+ */
 @Entity
-@Table(name="USER")
+@Table(name="ACCOUNT")
 public class User {
     @Id
-    @Column(name="USER_ID")
+    @Column(name="ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column(name="USERNAME", nullable = false, unique = true)
@@ -20,7 +19,6 @@ public class User {
     private String password;
     @Column(name = "IS_ACTIVE", nullable = false)
     private boolean isActive;
-
 
     public long getId()
     {

@@ -4,8 +4,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-/* Spring uses JpaRepository to connect to the database. Here the auth_user_group repository in the database is connected to.
-   The repository can now be called through the objects from the the AuthGroupRepository class. */
+
+/**
+ * The repository used to access the account role
+ */
 public interface AuthGroupRepository extends JpaRepository<AuthGroup, Long> {
     List<AuthGroup> findByUsername(String username);
 }

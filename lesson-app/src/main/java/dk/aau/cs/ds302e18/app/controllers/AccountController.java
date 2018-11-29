@@ -38,7 +38,7 @@ public class AccountController
         this.userRepository = userRepository;
     }
 
-    @GetMapping(value = "/manage")
+    @GetMapping(value = "/account/edit")
     public String getManageAccount(Model model)
     {
         model.addAttribute("user", accountRespository.findByUsername(getAccountUsername()));
@@ -47,7 +47,18 @@ public class AccountController
         return "manage-account";
     }
 
-    @RequestMapping(value = "/changeaccdetails", method = RequestMethod.POST)
+    /**
+     * @param firstName The first name of the user
+     * @param lastName The last name of the user
+     * @param email The email of the user
+     * @param phoneNumber The phone number of the user
+     * @param birthday The birthday of the user
+     * @param address The address of the user
+     * @param city The city of the user
+     * @param zip The zip of the user
+     * @return The site to be redirected to
+     */
+    @RequestMapping(value = "/account/edit/details", method = RequestMethod.POST)
     public RedirectView changeAccountDetails(@RequestParam("FirstName") String firstName,
                                              @RequestParam("LastName") String lastName,
                                              @RequestParam("Email") String email,
@@ -57,9 +68,9 @@ public class AccountController
                                              @RequestParam("City") String city,
                                              @RequestParam("Zip") int zip)
     {
-        Account account = new Account();
-        account.setUsername(getAccountUsername());
-        account.setId(accountRespository.findByUsername(getAccountUsername()).getId());
+        // Retrieve account from the repository
+        Account account = accountRespository.findByUsername(getAccountUsername());
+
         account.setFirstName(firstName);
         account.setLastName(lastName);
         account.setEmail(email);
@@ -69,23 +80,27 @@ public class AccountController
         account.setCity(city);
         account.setZipCode(zip);
         this.accountRespository.save(account);
-        return new RedirectView("manage");
+        return new RedirectView("redirect:/account/edit");
     }
 
-    @RequestMapping(value = "/changeaccpassword", method = RequestMethod.POST)
+    @RequestMapping(value = "/account/edit/password", method = RequestMethod.POST)
     public RedirectView changeAccountPassword(@RequestParam("Password") String password)
     {
+        // Get current user by username
+        User user = userRepository.findByUsername(getAccountUsername());
+
+        // Initialize BCryptPasswordEncoder with strength 11
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(11);
 
-        String newPass = passwordEncoder.encode(password);
+        // Encode and store the password in the variable
+        String encodedPassword = passwordEncoder.encode(password);
 
-        User user = new User();
-        user.setId(userRepository.findByUsername(getAccountUsername()).getId());
-        user.setUsername(getAccountUsername());
-        user.setPassword(newPass);
-        user.setActive(true);
+        // Replace the user's password with the new encoded password
+        user.setPassword(encodedPassword);
+
+        // Save the user back into the repository
         this.userRepository.save(user);
-        return new RedirectView("manage");
+        return new RedirectView("redirect:/account/edit");
     }
 
     @ModelAttribute("gravatar")
@@ -93,17 +108,19 @@ public class AccountController
 
         //Models Gravatar
         System.out.println(accountRespository.findByUsername(getAccountUsername()).getEmail());
-        String gravatar = ("http://0.gravatar.com/avatar/"+md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
-        return (gravatar);
+        return "http://0.gravatar.com/avatar/"+md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail());
     }
 
     public String getAccountUsername()
     {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = ((UserDetails) principal).getUsername();
-        return username;
+        return ((UserDetails) principal).getUsername();
     }
 
+    /**
+     * @param response The response to be returned to the user as a file
+     * @throws IOException If the MySQL errors
+     */
     @RequestMapping(value = "/account/exportCalendar", method = RequestMethod.GET)
     @ResponseBody
     public void exportCalendar(HttpServletResponse response) throws IOException
@@ -114,7 +131,7 @@ public class AccountController
         // Create FileWriter object, it will not append to the file
         FileWriter fileWriter = new FileWriter(file,false);
 
-        // Create headers which Google Calendar accepts
+        // Create CSV headers which Google Calendar accepts
         fileWriter.write("Subject, Start date, Start time\n");
 
         // TODO: Potentially shift this towards "services" instead of directly on controller
@@ -151,11 +168,10 @@ public class AccountController
 
         fileWriter.close();
 
-        response.setHeader("Content-Disposition", String.format("attachment; filename=\"" + file.getName() +"\""));
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + file.getName() +"\"");
         response.setContentLength((int)file.length());
 
         InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
         FileCopyUtils.copy(inputStream, response.getOutputStream());
     }
-
 }

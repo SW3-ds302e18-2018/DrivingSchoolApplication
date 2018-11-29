@@ -275,11 +275,10 @@ public class StoreController
         return (gravatar);
     }
 
-    public String getAccountUsername()
+    private String getAccountUsername()
     {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = ((UserDetails) principal).getUsername();
-        return username;
+        UserDetails principal = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return principal.getUsername();
     }
 
 }

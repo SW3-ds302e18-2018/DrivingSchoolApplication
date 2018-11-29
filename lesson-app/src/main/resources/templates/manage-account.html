@@ -76,7 +76,7 @@
                                     <!-- settings -->
                                     <div id="edit-profile" class="tab-pane">
                                         <div class="user-profile-content">
-                                            <form role="form" method="POST" th:action="@{/changeaccdetails}">
+                                            <form role="form" method="POST" th:action="@{/account/edit/details}">
                                                 <div class="form-group">
                                                     <label for="FirstName">First Name</label>
                                                     <input type="text" th:value="${user.getFirstName()}" id="FirstName" class="form-control" name="FirstName">
@@ -117,18 +117,27 @@
                                     <!-- Change Password -->
                                     <div id="edit-password" class="tab-pane">
                                         <div class="user-profile-content">
-                                            <form role="form" method="POST" th:action="@{/changeaccpassword}">
+                                            <form role="form" method="POST" th:action="@{/account/edit/password}">
                                                 <div class="form-group">
                                                     <h2 th:text="${user.getUsername()}"></h2></br>
                                                     <label for="Password">Password</label>
-                                                    <input type="password" placeholder="6 - 15 Characters" id="Password" class="form-control" name="Password">
+                                                    <input type="password" pattern=".{6,15}" placeholder="6 - 15 Characters" id="Password" class="form-control" name="Password" required>
                                                 </div>
                                                 <button class="btn btn-primary" type="submit">Change Password</button>
                                             </form>
                                         </div>
                                     </div>  
                                 </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
+
 
 </body>
 </html>
