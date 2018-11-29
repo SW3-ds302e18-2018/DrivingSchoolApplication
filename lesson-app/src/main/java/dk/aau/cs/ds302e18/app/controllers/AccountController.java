@@ -66,7 +66,8 @@ public class AccountController
                                              @RequestParam("Birthday") String birthday,
                                              @RequestParam("Address") String address,
                                              @RequestParam("City") String city,
-                                             @RequestParam("Zip") int zip)
+                                             @RequestParam("Zip") int zip,
+                                             @RequestParam("NotificationInMinutes") int notificationInMinutes)
     {
         // Retrieve account from the repository
         Account account = accountRespository.findByUsername(getAccountUsername());
@@ -79,6 +80,7 @@ public class AccountController
         account.setAddress(address);
         account.setCity(city);
         account.setZipCode(zip);
+        account.setNotificationInMinutes(notificationInMinutes);
         this.accountRespository.save(account);
         return new RedirectView("redirect:/account/edit");
     }

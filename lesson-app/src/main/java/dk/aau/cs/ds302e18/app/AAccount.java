@@ -15,8 +15,9 @@ public abstract class AAccount {
     private String city;
     private String username;
     private String password;
+    private int notificationInMinutes;
 
-    public AAccount(String firstName, String lastName, String phonenumber, String email, String birthDay, String address, String zipCode, String city, String username) {
+    public AAccount(String firstName, String lastName, String phonenumber, String email, String birthDay, String address, String zipCode, String city, String username, int notificationInMinutes) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.phonenumber = phonenumber;
@@ -26,6 +27,17 @@ public abstract class AAccount {
         this.zipCode = zipCode;
         this.city = city;
         this.username = username;
+        this.notificationInMinutes = notificationInMinutes;
+    }
+
+    public int getNotificationInMinutes()
+    {
+        return notificationInMinutes;
+    }
+
+    public void setNotificationInMinutes(int notificationInMinutes)
+    {
+        this.notificationInMinutes = notificationInMinutes;
     }
 
     public int getUserID() {

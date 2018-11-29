@@ -46,6 +46,9 @@ public class ScheduledTasks {
                         // Retrieve the time in minutes before the student should receive a notification
                         int notificationReminderInMinutes = usernameResultSet.getInt("notification_reminder");
 
+                        if (notificationReminderInMinutes == 0) // This student has set their notification reminder to 0, which means to skip them.
+                            continue;
+
                         Timestamp currentTime = new Timestamp(System.currentTimeMillis()); // Create TimeStamp, set its nanoseconds and seconds to 0, along with setting it according to the notification time
                         currentTime.setSeconds(0);
                         currentTime.setNanos(0);

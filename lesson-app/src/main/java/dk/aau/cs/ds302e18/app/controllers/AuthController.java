@@ -70,6 +70,7 @@ public class AuthController
         account.setAddress(address);
         account.setCity(city);
         account.setZipCode(zip);
+        account.setNotificationInMinutes(120); // Default to 2 hours
 
         AuthGroup authGroup = new AuthGroup();
         authGroup.setUsername(username);
