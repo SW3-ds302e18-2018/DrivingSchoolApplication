@@ -289,16 +289,13 @@ public class StoreController {
         byte b = 0;
         storeModel.setState(b);
 
-        //Fetches the username from the session
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = ((UserDetails) principal).getUsername();
-
         // Setting the username of the student who applied
-        storeModel.setStudentUsername(username);
+        storeModel.setStudentUsername(getAccountUsername());
 
         // Creating the store mode, to be sent to the rest server
         Store store = this.storeService.addStoreRequest(storeModel);
         String studentEmail = accountRespository.findByUsername(getAccountUsername()).getEmail();
+        System.out.println("APPLY : " + studentEmail);
         new Notification("Hello", studentEmail, true);
 
         model.addAttribute("store", store);
