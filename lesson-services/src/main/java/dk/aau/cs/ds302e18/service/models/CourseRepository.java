@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
    The repository can now be be called through the objects from the LessonRepository class. */
 @Repository
 public interface CourseRepository extends JpaRepository<Course, Long> {
+    Course findFirstByOrderByCourseTableIDDesc();
 }

@@ -1,11 +1,6 @@
 package dk.aau.cs.ds302e18.app.auth;
 
-import dk.aau.cs.ds302e18.app.Student;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.util.ArrayList;
 
 /* Ensures that the table User exists in the database and has the following columns.
@@ -15,6 +10,7 @@ import java.util.ArrayList;
 public class User {
     @Id
     @Column(name="USER_ID")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column(name="USERNAME", nullable = false, unique = true)
     private String username;

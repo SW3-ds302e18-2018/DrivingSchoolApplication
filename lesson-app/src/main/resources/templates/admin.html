@@ -1,0 +1,36 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}"lang="en">
+<head>
+    <title>Admin</title>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="container">
+        <h1>Admin</h1>
+
+        <div>
+            <table id="tableAdmin" class="table table-striped table-sm">
+                <thead>
+                <th scope="col">Username</th>
+                <th scope="col">Firstname</th>
+                <th scope="col">Lastname</th>
+                <th scope="col">Auth Group</th>
+                </thead>
+                <tbody>
+                <tr th:each="acc : ${GetAllAccounts}">
+                    <th scope="row"><a th:href="@{'/admin/' + ${acc.username}}" th:text="${acc.username}"></a></th>
+                    <td th:text="${acc.firstName}"></td>
+                    <td th:text="${acc.lastName}"></td>
+                    <td th:text="${acc.authGroup}"></td>
+                </tr>
+                </tbody>
+            </table>
+            </div>
+    
+            
+    </div>
+</div>
+
+</body>
+</html>

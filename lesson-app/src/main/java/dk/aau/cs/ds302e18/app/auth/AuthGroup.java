@@ -13,7 +13,7 @@ import javax.persistence.Table;
 public class AuthGroup {
     @Id
     @Column(name="AUTH_USER_GROUP_ID")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column(name="USERNAME")
     private String username;

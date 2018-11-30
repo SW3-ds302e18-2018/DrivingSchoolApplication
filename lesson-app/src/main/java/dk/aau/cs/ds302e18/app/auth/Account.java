@@ -11,23 +11,23 @@ public class Account
 {
     @Id
     @Column(name="AUTH_USER_ACCOUNT_ID")
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @Column(name="USERNAME")
+    @Column(name="USERNAME", nullable = false)
     private String username;
-    @Column(name = "FIRSTNAME", nullable = false)
+    @Column(name = "FIRST_NAME", nullable = false)
     private String firstName;
-    @Column(name = "LASTNAME", nullable = false)
+    @Column(name = "LAST_NAME", nullable = false)
     private String lastName;
-    @Column(name = "PHONENUMBER", nullable = false, unique = true)
+    @Column(name = "PHONE_NUMBER", nullable = false)
     private String phoneNumber;
     @Column(name = "EMAIL", nullable = false, unique = true)
     private String email;
-    @Column(name = "BIRTHDAY")
+    @Column(name = "BIRTHDAY", nullable = false)
     private String birthday;
     @Column(name = "ADDRESS", nullable = false)
     private String address;
-    @Column(name = "ZIP")
+    @Column(name = "ZIP", nullable = false)
     private int zipCode;
     @Column(name = "CITY", nullable = false)
     private String city;
@@ -132,4 +132,20 @@ public class Account
         this.city = city;
     }
 
+    @Override
+    public String toString()
+    {
+        return "Account{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", email='" + email + '\'' +
+                ", birthday='" + birthday + '\'' +
+                ", address='" + address + '\'' +
+                ", zipCode=" + zipCode +
+                ", city='" + city + '\'' +
+                '}';
+    }
 }

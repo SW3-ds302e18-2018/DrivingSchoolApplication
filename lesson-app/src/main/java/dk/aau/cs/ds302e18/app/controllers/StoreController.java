@@ -1,7 +1,8 @@
 package dk.aau.cs.ds302e18.app.controllers;
 
-import dk.aau.cs.ds302e18.app.domain.Store;
-import dk.aau.cs.ds302e18.app.domain.StoreModel;
+import dk.aau.cs.ds302e18.app.auth.AccountRespository;
+import dk.aau.cs.ds302e18.app.domain.*;
+import dk.aau.cs.ds302e18.app.service.CourseService;
 import dk.aau.cs.ds302e18.app.service.StoreService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,18 +17,25 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+
+import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
 
 @Controller
 @RequestMapping
 public class StoreController
 {
     private final StoreService storeService;
+    private final AccountRespository accountRespository;
+    private final CourseService courseService;
 
-    public StoreController(StoreService storeService)
+    public StoreController(StoreService storeService, AccountRespository accountRespository, CourseService courseService)
     {
         super();
         this.storeService = storeService;
+        this.accountRespository = accountRespository;
+        this.courseService = courseService;
     }
 
     /**
@@ -51,7 +59,7 @@ public class StoreController
     }
 
     @GetMapping(value = "/store")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @PreAuthorize("hasAnyRole('ROLE_STUDENT', 'ROLE_ADMIN', 'ROLE_INSTRUCTOR')")
     public String getStore(Model model)
     {
         // Fetching all requests in a list
@@ -60,7 +68,30 @@ public class StoreController
         List<Store> list = new ArrayList<>();
         // Iterates through all requests, adding the ones with state (0) into the filtered request list.
         for (Store store : storeadmin) if (store.getState() == 0) list.add(store);
+
+        List<Course> courses = this.courseService.getAllCourseRequests();
+
+        List<Course> BType = new ArrayList<>();
+        List<Course> BEType = new ArrayList<>();
+        List<Course> AType = new ArrayList<>();
+
+        Date today = new Date();
+        System.out.println(today.getTime());
+
+        for (Course course: courses)
+        {
+            System.out.println();
+            if ((course.getCourseType() == CourseType.TYPE_B_CAR)) BType.add(course);
+            if ((course.getCourseType() == CourseType.TYPE_BE_CAR_TRAILER)) BEType.add(course);
+            if ((course.getCourseType() == CourseType.TYPE_A_BIKE)) AType.add(course);
+        }
+
+        model.addAttribute("b_car_list", BType);
+        model.addAttribute("be_car_list", BEType);
+        model.addAttribute("a_bike_list", AType);
+
         model.addAttribute("store", list);
+
         return "store-page";
     }
 
@@ -102,7 +133,7 @@ public class StoreController
      * @return
      */
     @GetMapping(value = "/storeadmin/{id}")
-    @PreAuthorize("hasRole('ROLE_USER')")
+    @PreAuthorize("hasRole('ROLE_STUDENT')")
     public String getStore(Model model, @PathVariable long id)
     {
         Store store = this.storeService.getStoreRequest(id);
@@ -144,7 +175,8 @@ public class StoreController
     @RequestMapping(value="/accept", method=RequestMethod.POST)
     public RedirectView acceptAppState(@RequestParam("appId") long appId, @RequestParam("courseIdAccept") long courseId,
                                        @RequestParam("studentUsernameAccept") String studentUsername, Model model,
-                                       @ModelAttribute StoreModel storeModel) {
+                                       @ModelAttribute StoreModel storeModel,
+                                       @ModelAttribute CourseModel courseModel) {
         // Predefining byte to state 1 (accepted application)
         Byte b = 1;
 
@@ -155,8 +187,22 @@ public class StoreController
 
         // Creating the storemodel with the set values above, and updaing it.
         Store store = this.storeService.acceptStoreRequest(appId, storeModel);
+
+        Course course = courseService.getCourse(courseId);
+
+        courseModel.setInstructorUsername(course.getInstructorUsername());
+        courseModel.setCourseType(course.getCourseType());
+
+        String studentUsernames = course.getStudentUsernames();
+        /* Adds the new student */
+        studentUsernames += "," + studentUsername;
+        courseModel.setStudentUsernames(studentUsernames);
+
+        courseService.updateCourse(courseId, courseModel);
+
         model.addAttribute("store", store);
         model.addAttribute("storeModel", new StoreModel());
+
         return new RedirectView("storeadmin");
     }
 
@@ -219,5 +265,22 @@ public class StoreController
         // Returning index after you've applied
         return "index";
     }
+
+    @ModelAttribute("gravatar")
+    public String gravatar() {
+
+        //Models Gravatar
+        System.out.println(accountRespository.findByUsername(getAccountUsername()).getEmail());
+        String gravatar = ("http://0.gravatar.com/avatar/"+md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
+        return (gravatar);
+    }
+
+    public String getAccountUsername()
+    {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = ((UserDetails) principal).getUsername();
+        return username;
+    }
+
 }
 

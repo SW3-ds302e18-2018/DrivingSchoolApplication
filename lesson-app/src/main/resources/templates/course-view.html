@@ -1,27 +1,162 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}"lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}" lang="en">
 <head>
     <title>Home</title>
+    <style>
+        .split {
+            height: 100%;
+            width: 50%;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            overflow-x: hidden;
+            padding-top: 5%;
+        }
+
+        .left {
+            padding-left: 2%;
+            padding-right: 1%;
+            left: 0;
+            background-color: whitesmoke;
+        }
+
+        .right {
+            padding-left: 1%;
+            padding-right: 2%;
+            right: 0;
+            background-color: whitesmoke;
+        }
+
+        .centered {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+        }
+
+        .block-button {
+            display: block;
+        }
+
+    </style>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
+    <script>
+        $(function () {
+            $('[data-toggle="tooltip"]').tooltip()
+        })
+    </script>
 </head>
 <body>
 
 <div layout:fragment="content">
     <div class="container main-content">
-        <h3>Lesson View</h3>
-        <form method="post" action="#" th:action="${course != null} ? '/course/'+${course.getId()} : '/course'" th:object="${courseModel}">
-            <div class="form-row">
-                <div class="col">
-                    <input th:id="studentUsernames" th:name="studentUsernames" type="text" class="form-control" placeholder="Students" th:value="${course != null} ? ${course.studentUsernames}"/>
-                </div>
+        <div class="split left">
+            <div class="left">
+                <h2 th:text="${'Course: #'+course.courseTableID}" style="padding-bottom: 1%"></h2>
+                <h3 style="padding-bottom: 1%">Manage Students</h3>
+                <form method="post" th:action="@{'/course/addStudent/' + ${course.courseTableID}}" style="padding-bottom: 0.8%"
+                      th:object="${courseModel}">
+                    <input name="studentToUpdate" id="studentToAdd" placeholder=" Student Username"/>
+                    <button type="submit" name="submit" value="value" class="btn btn-primary">Add Student</button>
+                </form>
+                <form method="post" th:action="@{'/course/removeStudent/' + ${course.courseTableID}}" style="padding-bottom: 1%"
+                      onsubmit="return confirm('Are you sure you want to remove this student?');"
+                      th:object="${courseModel}">
+                    <input name="studentToUpdate" id="studentToRemove" placeholder=" Student Username"/>
+                    <button type="submit" name="submit" value="value" class="btn btn-danger">Remove Student</button>
+                </form>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter" style="margin-bottom: 3%" >
+                    Search Students
+                </button>
+                <table id="studentTable" class="table table-sm">
+                    <thead>
+                    <th scope="col">List of Students</th>
+                    </thead>
+                    <tbody>
+                    <tr th:each="student : ${studentAccountsBelongingToCourse}">
+                        <td th:text="${student.firstName +' '+ student.lastName}"></td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-            <div class="form-row">
-                <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+        <div class="split right">
+            <div class="right">
+                <form method="get" th:action="@{'/course/delete/' + ${course.courseTableID}}"
+                      th:object="${courseModel}" onsubmit="return confirm('Are you sure you want to delete this course?');">
+                    <h3 style="padding-bottom: 1%">Delete Course <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="top" title="Delete course. If 'delete all associated lesssons' is checked, the lessons associated with the course will be deleted. This also includes lessons in the logbook."></span></h3>
+                    <input th:text="${' Delete All Associated Lessons'}" type="checkbox"
+                           th:name="deleteAssociatedLessons" style="margin-bottom: 1.3%">
+                    <input type="hidden" name="deleteCourse" id="deleteCourse"
+                           th:value="${course.courseTableID}"/>
+                    <div class="block-button" >
+                        <button type="submit" name="submit" value="value" class="btn btn-danger">Delete</button>
+                    </div>
+                </form>
+                <h3 style="padding-bottom: 1%" >Lessons in Course</h3>
+                <table id="lessonsTable" class="table table-sm">
+                    <thead>
+                    <th scope="col">#</th>
+                    <th scope="col">Type</th>
+                    <th scope="col">Date</th>
+                    <th scope="col">Student List</th>
+                    <th scope="col">Instructor</th>
+                    <th scope="col">Location</th>
+                    </thead>
+                    <tbody>
+                    <tr th:each="lesson : ${lessonsMatchingCourse}">
+                        <th scope="row"><a th:href="@{'/lessons/' + ${lesson.courseId}}"
+                                           th:text="${lesson.courseId}"></a></th>
+                        <td th:text="${lesson.lessonType}"></td>
+                        <td th:text="${lesson.lessonDate}"></td>
+                        <td th:text="${lesson.studentList}"></td>
+                        <td th:text="${lesson.lessonInstructor}"></td>
+                        <td th:text="${lesson.lessonLocation}"></td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
-        </form>
-        <a th:href="@{/course}">Return to All Courses</a>
+        </div>
+        <a th:href="@{/lessons}">Return to All Lessons</a>
     </div>
     <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script th:src="@{/js/table.js}"></script>
+    <!-- Modal -->
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog"
+         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title" id="exampleModalLongTitle">Student List</h3>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table id="availableStudents" class="table table-sm" width="450">
+                        <thead>
+                        <th scope="col">First Name</th>
+                        <th scope="col">Last Name</th>
+                        <th scope="col">Username</th>
+                        </thead>
+                        <tbody>
+                        <tr th:each="student : ${studentAccounts}">
+                            <td th:text="${student.firstName}"></td>
+                            <td th:text="${student.lastName}"></td>
+                            <td th:text="${student.username}"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 </body>
 </html>

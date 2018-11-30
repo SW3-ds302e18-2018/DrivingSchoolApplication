@@ -1,11 +1,16 @@
 package dk.aau.cs.ds302e18.app.controllers;
 
 import dk.aau.cs.ds302e18.app.DBConnector;
-import dk.aau.cs.ds302e18.app.ModifyUser;
-import dk.aau.cs.ds302e18.app.Student;
+import dk.aau.cs.ds302e18.app.auth.*;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
@@ -13,16 +18,92 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
+import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
+
 /**
  * Controller responsible for handling actions towards the account
  */
 @Controller
 public class AccountController
 {
-    private Connection conn;
 
-    public AccountController() {this.conn = new DBConnector().createConnectionObject();}
-    
+    private final AccountRespository accountRespository;
+    private final AuthGroupRepository authGroupRepository;
+    private final UserRepository userRepository;
+
+    public AccountController(AccountRespository accountRespository, AuthGroupRepository authGroupRepository,
+                             UserRepository userRepository) {
+        this.accountRespository = accountRespository;
+        this.authGroupRepository = authGroupRepository;
+        this.userRepository = userRepository;
+    }
+
+    @GetMapping(value = "/manage")
+    public String getManageAccount(Model model)
+    {
+        model.addAttribute("user", accountRespository.findByUsername(getAccountUsername()));
+        model.addAttribute("userAuth",
+                authGroupRepository.findByUsername(getAccountUsername()).get(0).getAuthGroup());
+        return "manage-account";
+    }
+
+    @RequestMapping(value = "/changeaccdetails", method = RequestMethod.POST)
+    public RedirectView changeAccountDetails(@RequestParam("FirstName") String firstName,
+                                             @RequestParam("LastName") String lastName,
+                                             @RequestParam("Email") String email,
+                                             @RequestParam("PhoneNumber") String phoneNumber,
+                                             @RequestParam("Birthday") String birthday,
+                                             @RequestParam("Address") String address,
+                                             @RequestParam("City") String city,
+                                             @RequestParam("Zip") int zip)
+    {
+        Account account = new Account();
+        account.setUsername(getAccountUsername());
+        account.setId(accountRespository.findByUsername(getAccountUsername()).getId());
+        account.setFirstName(firstName);
+        account.setLastName(lastName);
+        account.setEmail(email);
+        account.setPhoneNumber(phoneNumber);
+        account.setBirthday(birthday);
+        account.setAddress(address);
+        account.setCity(city);
+        account.setZipCode(zip);
+        this.accountRespository.save(account);
+        return new RedirectView("manage");
+    }
+
+    @RequestMapping(value = "/changeaccpassword", method = RequestMethod.POST)
+    public RedirectView changeAccountPassword(@RequestParam("Password") String password)
+    {
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(11);
+
+        String newPass = passwordEncoder.encode(password);
+
+        User user = new User();
+        user.setId(userRepository.findByUsername(getAccountUsername()).getId());
+        user.setUsername(getAccountUsername());
+        user.setPassword(newPass);
+        user.setActive(true);
+        this.userRepository.save(user);
+        return new RedirectView("manage");
+    }
+
+    @ModelAttribute("gravatar")
+    public String gravatar() {
+
+        //Models Gravatar
+        System.out.println(accountRespository.findByUsername(getAccountUsername()).getEmail());
+        String gravatar = ("http://0.gravatar.com/avatar/"+md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
+        return (gravatar);
+    }
+
+    public String getAccountUsername()
+    {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = ((UserDetails) principal).getUsername();
+        return username;
+    }
+
     @RequestMapping(value = "/account/exportCalendar", method = RequestMethod.GET)
     @ResponseBody
     public void exportCalendar(HttpServletResponse response) throws IOException
@@ -76,62 +157,5 @@ public class AccountController
         InputStream inputStream = new BufferedInputStream(new FileInputStream(file));
         FileCopyUtils.copy(inputStream, response.getOutputStream());
     }
-    
-    
-    public void editAccount(String address, String birthday, String email, String firstname, String city,
-                            String lastname, int phonenumber, String username, int zip ) {
-        try {
-            Statement st = conn.createStatement();
-            st.executeUpdate("UPDATE `account` SET `address` = '"+address+"',  `birthday` = '"+birthday+"',   " +
-                    "`email` = '"+email+"', `firstname` = '"+firstname+"', `lastname`='"+lastname+"', `city`='"+city+"', " +
-                    " `phonenumber` = "+phonenumber+", `zip`="+zip+" WHERE `username` = '"+username+"'");
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    @GetMapping(value = "/account/modify")
-    public String getModifyPage()
-    {
-        return "modify-account";
-    }
-
-    @GetMapping(value = "/contact")
-    public String getContactPage()
-    {
-        return "contact-formular";
-    }
-
-    @PostMapping(value = "/account/modify")
-    public String postModifyPage(@ModelAttribute Student student){
-        System.out.println(student.toString());
-        new ModifyUser(student.getUsername(), student.getPassword(), student.getFirstName(), student.getLastName(),
-                student.getPhonenumber(), student.getEmail(), student.getBirthdate(), student.getAddress(),
-                student.getZipCode(), student.getCity());
-        return "modify-account";
-    }
-    
-    public void getUsername() {
-        getUsername(); {this.conn = new DBConnector().createConnectionObject();}
-
-        try {
-            Statement st = conn.createStatement();
-            ResultSet rs = st.executeQuery("SELECT`address`, `birthday`, `city`, `email`, `firstname`," +
-                    " `lastname`, `phonenumber`, `username`, `zip` FROM `account` WHERE `username` = Sembrik");
-            rs.next();
-            String accountAddress = rs.getString("address");
-            String accountBirthday = rs.getString("birthday");
-            String accountCity = rs.getString("city");
-            String accountFirstname = rs.getString("firstname");
-            String accountLastname = rs.getString("lastname");
-            String accountPhonenumber = rs.getString("phonenumber");
-            String accountZip = rs.getString("zip");
-            String accountUserName = rs.getString("username");
-
-            conn.close();
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-
-    }
 }

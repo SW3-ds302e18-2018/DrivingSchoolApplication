@@ -4,118 +4,101 @@ import javax.persistence.*;
 import java.util.Date;
 
 @Entity
-@Table(name="LESSON")
-public class Lesson
-{
+@Table(name = "LESSON")
+public class Lesson {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
-    @Column(name="LESSON_ID")
+    @Column(name = "LESSON_ID")
     private long id;
 
-    @Column(name="LESSON_TYPE")
+    @Column(name = "LESSON_TYPE")
     @Enumerated(EnumType.STRING)
     private LessonType lessonType;
 
-    @Column(name="STUDENT_LIST")
+    @Column(name = "STUDENT_LIST")
     private String studentList;
 
-    @Column(name="INSTRUCTOR")
+    @Column(name = "INSTRUCTOR")
     private String lessonInstructor;
 
-    @Column(name="LESSON_DATE")
+    @Column(name = "LESSON_DATE")
     private Date lessonDate;
 
-    @Column(name="LESSON_LOCATION")
+    @Column(name = "LESSON_LOCATION")
     private String lessonLocation;
 
-    @Column(name="STATE")
-    private boolean isSigned;
+    @Column(name = "STATE")
+    @Enumerated(EnumType.STRING)
+    private LessonState lessonState;
 
-    @Column(name="COURSE_ID")
-    private int courseId;
+    @Column(name = "COURSE_ID")
+    private long courseId;
 
     public Lesson() {
         super();
     }
 
-    public long getId()
-    {
+    public long getId() {
         return id;
     }
 
-    public void setId(long id)
-    {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public LessonType getLessonType()
-    {
+    public LessonType getLessonType() {
         return lessonType;
     }
 
-    public void setLessonType(LessonType lessonType)
-    {
+    public void setLessonType(LessonType lessonType) {
         this.lessonType = lessonType;
     }
 
-    public String getStudentList()
-    {
+    public String getStudentList() {
         return studentList;
     }
 
-    public void setStudentList(String studentList)
-    {
+    public void setStudentList(String studentList) {
         this.studentList = studentList;
     }
 
-    public String getLessonInstructor()
-    {
+    public String getLessonInstructor() {
         return lessonInstructor;
     }
 
-    public void setLessonInstructor(String lessonInstructor)
-    {
+    public void setLessonInstructor(String lessonInstructor) {
         this.lessonInstructor = lessonInstructor;
     }
 
-    public Date getLessonDate()
-    {
+    public Date getLessonDate() {
         return lessonDate;
     }
 
-    public void setLessonDate(Date lessonDate)
-    {
+    public void setLessonDate(Date lessonDate) {
         this.lessonDate = lessonDate;
     }
 
-    public String getLessonLocation()
-    {
+    public String getLessonLocation() {
         return lessonLocation;
     }
 
-    public void setLessonLocation(String lessonLocation)
-    {
+    public void setLessonLocation(String lessonLocation) {
         this.lessonLocation = lessonLocation;
     }
 
-    public boolean isSigned()
-    {
-        return isSigned;
+    public LessonState getLessonState() {
+        return lessonState;
     }
 
-    public void setSigned(boolean signed)
-    {
-        isSigned = signed;
+    public void setLessonState(LessonState lessonState) {
+        this.lessonState = lessonState;
     }
 
-    public int getCourseId()
-    {
+    public long getCourseId() {
         return courseId;
     }
 
-    public void setCourseId(int courseId)
-    {
+    public void setCourseId(long courseId) {
         this.courseId = courseId;
     }
 }

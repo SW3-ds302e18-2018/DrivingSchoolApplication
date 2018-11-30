@@ -13,8 +13,8 @@ public class Lesson
     //final so that lesson type cannot be changed once it's been set.
     //This is to prevent lessons from changing type after compeletion.
     //It lesson needs to be changed, a new lesson must be created.
-    private boolean isSigned;
-    private int courseId;
+    private LessonState lessonState;
+    private long courseId;
 
     public long getId()
     {
@@ -76,22 +76,22 @@ public class Lesson
         this.lessonLocation = lessonLocation;
     }
 
-    public boolean isSigned()
+    public LessonState getLessonState()
     {
-        return isSigned;
+        return lessonState;
     }
 
-    public void setSigned(boolean signed)
+    public void setLessonState(LessonState lessonState)
     {
-        isSigned = signed;
+        this.lessonState = lessonState;
     }
 
-    public int getCourseId()
+    public long getCourseId()
     {
         return courseId;
     }
 
-    public void setCourseId(int courseId)
+    public void setCourseId(long courseId)
     {
         this.courseId = courseId;
     }

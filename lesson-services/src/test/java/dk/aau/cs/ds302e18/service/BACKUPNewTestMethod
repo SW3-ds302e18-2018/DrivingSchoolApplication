@@ -12,7 +12,7 @@ import static org.mockito.Mockito.mock;
 public class CourseServiceControllerTest {
 
     private ArrayList<String> studentList;
-    private Date startDate;
+    private Date startingPoint;
     private CourseServiceController courseServiceController;
 
     @Before
@@ -32,7 +32,7 @@ public class CourseServiceControllerTest {
         studentList.add(user1);
         studentList.add(user2);
         studentList.add(user3);
-        startDate = new Date(118,11,1,16,0);
+        startingPoint = new Date(118,11,1,16,0);
     }
 
     @Test

@@ -1,5 +1,7 @@
 package dk.aau.cs.ds302e18.service.models;
 
+import org.springframework.format.annotation.DateTimeFormat;
+
 import java.util.Date;
 
 public class LessonModel
@@ -7,13 +9,14 @@ public class LessonModel
     private LessonType lessonType;
     private String studentList;
     private String lessonInstructor;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date lessonDate;
     private String lessonLocation;
     //final so that lesson type cannot be changed once it's been set.
     //This is to prevent lessons from changing type after compeletion.
     //It lesson needs to be changed, a new lesson must be created.
-    private boolean isSigned;
-    private int courseId;
+    private LessonState lessonState;
+    private long courseId;
 
     public LessonType getLessonType()
     {
@@ -65,22 +68,22 @@ public class LessonModel
         this.lessonLocation = lessonLocation;
     }
 
-    public boolean isSigned()
+    public LessonState getLessonState()
     {
-        return isSigned;
+        return lessonState;
     }
 
-    public void setSigned(boolean signed)
+    public void setLessonState(LessonState lessonState)
     {
-        isSigned = signed;
+        this.lessonState = lessonState;
     }
 
-    public int getCourseId()
+    public long getCourseId()
     {
         return courseId;
     }
 
-    public void setCourseId(int courseId)
+    public void setCourseId(long courseId)
     {
         this.courseId = courseId;
     }
@@ -92,7 +95,7 @@ public class LessonModel
         lesson.setLessonInstructor(this.lessonInstructor);
         lesson.setLessonDate(this.lessonDate);
         lesson.setLessonLocation(this.lessonLocation);
-        lesson.setSigned(this.isSigned);
+        lesson.setLessonState(this.lessonState);
         lesson.setCourseId(this.courseId);
         return lesson;
     }

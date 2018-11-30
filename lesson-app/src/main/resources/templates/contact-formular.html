@@ -4,93 +4,64 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"/>
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-
-    .split {
-        height: 100%;
-        width: 50%;
-        position: fixed;
-        z-index: 1;
-        top: 0;
-        overflow-x: hidden;
-        padding-top: 5%;
-    }
-
-    .left {
-        left: 0;
-        background-color: whitesmoke;
-    }
-
-    .right {
-        right: 0;
-        background-color: whitesmoke;
-    }
-
-    .centered {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        text-align: center;
-    }
-
-
-</style>
 </head>
 
 <div layout:fragment="content">
     <div class="container main-content">
+        <h1>Contact</h1>
+        <div class="row">
+            <div class="col-sm-6">
+                <h4>About us</h4>
+                <p>All degree programmes and research activities at Aalborg University are problem and project-based and have an interdisciplinary focus.
+                    Through strong interplay between staff and students and intense collaboration with public and private sectors, we offer degree programmes with a real-world approach and provide world-class research.
+                    This results in new insights, new solutions to societal challenges and knowledge that changes the world.</p>
 
-        <h3>Contact</h3>
-        <div class="split left">
-            <div class="left">
-                <h2>About us</h2>
-                <p>My name is xxx, My sex is xxx, I have xxx experience in the driving school industry.</p>
-
-                <h2> Contact info</h2>
-                <p> xxx@gmail.com</p>
-                <p>+45xxxxxxx</p>
+                <h4> Contact info</h4>
+                <p>Department of Computer Science</p>
+                <p>Aalborg University</p>
+                <p>Selma Lagerlöfs Vej 300 9220 Aalborg East, DK</p>
+                <p>Telephone: +45 9940 9940</p>
+                <p>Telefax: +45 9940 9798</p>
+                <p>i16@cs.aau.dk</p>
             </div>
-        </div>
 
-        <div class="split right">
-            <div class="left">
-                <h2>Location</h2>
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2172.2870189408723!2d9.989367515959458!3d57.01239238090904!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x464eccdc3b849cf3%3A0xf858a47b27302972!2sCassiopeia+-+Institut+for+Datalogi%2C+Selma+Lagerl%C3%B8fs+Vej+300%2C+9220+Aalborg!5e0!3m2!1sda!2sdk!4v1542280965623" width="300" height="250" frameborder="0" style="border:0" allowfullscreen></iframe>
+            <div class="col-sm-6">
+                <h4>Location</h4>
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2172.2870189408723!2d9.989367515959458!3d57.01239238090904!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x464eccdc3b849cf3%3A0xf858a47b27302972!2sCassiopeia+-+Institut+for+Datalogi%2C+Selma+Lagerl%C3%B8fs+Vej+300%2C+9220+Aalborg!5e0!3m2!1sda!2sdk!4v1542280965623" width="600" height="300" frameborder="0" style="border:0" allowfullscreen></iframe>
 
-                <h2>Contact form</h2>
-                <div class="form-group row">
-                    <label for="firstName" class="col-sm-2 col-form-label">First Name</label>
-                    <div class="col-sm-6">
-                        <input type="text" id="firstName" name="firstName" class="form-control" placeholder="First Name" autofocus="autofocus">
+                <h4>Contact form</h4>
+
+                <form action="#" method="POST" th:action="@{/contact}">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="firstName">Full Name *</label>
+                                <input id="firstName" type="text" name="firstName" class="form-control" placeholder="Please enter your name" required="required" data-error="Firstname is required.">
+                                <div class="help-block with-errors"></div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="form-group">
+                                <label for="email">Email Address *</label>
+                                <input id="email" type="text" name="email" class="form-control" placeholder="Please enter your email address" required="required" data-error="Email is required.">
+                                <div class="help-block with-errors"></div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-
-                <div class="form-group row">
-                    <label for="phonenumber" class="col-sm-2 col-form-label">Phone Number</label>
-                    <div class="col-sm-6">
-                        <input type="text" id="phonenumber" name="phonenumber" class="form-control" placeholder="+45 " autofocus="autofocus">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                             <label for="message">Message *</label>
+                             <textarea id="message" name="message" class="form-control" placeholder="Please type a message to send" rows="4" required="required" data-error="Please, leave us a message."></textarea>
+                             <div class="help-block with-errors"></div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-
-
-                <div class="form-group row">
-                    <label for="email" class="col-sm-2 col-form-label">Email Address</label>
-                    <div class="col-sm-6">
-                        <input type="text" id="email" name="email" class="form-control" placeholder="Email Address" autofocus="autofocus">
-                    </div>
-                </div>
-
-                <div class="form-group row">
-                    <label for="subject" class="col-sm-2 col-form-label">Subject</label>
-                    <div class="col-sm-6">
-                        <textarea id="subject" name="subject" placeholder="Subject.." style="height:200px"></textarea>
-                    </div>
-                </div>
-                <button type="Send" class="btn btn-primary">Send</button>
+                    <button type="submit" name="submit" value="value" class="btn btn-success">Send Message</button>
+                </form>
 
             </div>
         </div>
     </div>
 </div>
-</html>s
+</html>

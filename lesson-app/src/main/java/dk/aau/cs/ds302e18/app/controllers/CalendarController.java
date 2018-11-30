@@ -1,5 +1,6 @@
 package dk.aau.cs.ds302e18.app.controllers;
 
+import dk.aau.cs.ds302e18.app.auth.AccountRespository;
 import dk.aau.cs.ds302e18.app.domain.CalendarViewModel;
 import dk.aau.cs.ds302e18.app.domain.Lesson;
 import dk.aau.cs.ds302e18.app.domain.LessonModel;
@@ -11,6 +12,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -21,15 +23,19 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
+
 @Controller
 public class CalendarController
 {
     private final LessonService lessonService;
+    private final AccountRespository accountRespository;
 
-    public CalendarController(LessonService lessonService)
+    public CalendarController(LessonService lessonService, AccountRespository accountRespository)
     {
         super();
         this.lessonService = lessonService;
+        this.accountRespository = accountRespository;
     }
 
     @GetMapping(value = "/calendar")
@@ -60,15 +66,31 @@ public class CalendarController
                     lessonColor = "CYAN";
                 }
                 if (lesson.getLessonType() == LessonType.PRACTICAL_LESSON){
-                    lessonType = "Pratical lesson";
+                    lessonType = "Practical lesson";
                     lessonColor = "GREEN";
                 }
-                CalendarViewModel calendarViewModel = new CalendarViewModel(lesson.getCourseId(), lessonColor,lessonType, lesson.getLessonDate());
+                CalendarViewModel calendarViewModel = new CalendarViewModel(lesson.getCourseId(), lessonColor,lessonType, lesson.getLessonDate(), "Location : " + lesson.getLessonLocation());
 
                 lessonArrayModels.add(calendarViewModel);
             }
         }
         return lessonArrayModels;
+    }
+
+    @ModelAttribute("gravatar")
+    public String gravatar() {
+
+        //Models Gravatar
+        System.out.println(accountRespository.findByUsername(getAccountUsername()).getEmail());
+        String gravatar = ("http://0.gravatar.com/avatar/"+md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
+        return (gravatar);
+    }
+
+    public String getAccountUsername()
+    {
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String username = ((UserDetails) principal).getUsername();
+        return username;
     }
 
 }

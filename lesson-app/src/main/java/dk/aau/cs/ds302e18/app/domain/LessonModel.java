@@ -1,37 +1,28 @@
 package dk.aau.cs.ds302e18.app.domain;
 
-import dk.aau.cs.ds302e18.app.Instructor;
-import dk.aau.cs.ds302e18.app.Student;
 import org.springframework.format.annotation.DateTimeFormat;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 public class LessonModel
 {
     private LessonType lessonType;
-
     private String studentList;
-
     private String lessonInstructor;
-
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date lessonDate;
-
     private String lessonLocation;
+    private LessonState lessonState;
+    private long courseId;
 
-    private boolean isSigned;
-
-    private int courseId;
-
-    public boolean isSigned()
+    public LessonType getLessonType()
     {
-        return isSigned;
+        return lessonType;
     }
 
-    public void setSigned(boolean signed)
+    public void setLessonType(LessonType lessonType)
     {
-        isSigned = signed;
+        this.lessonType = lessonType;
     }
 
     public String getStudentList()
@@ -74,34 +65,34 @@ public class LessonModel
         this.lessonLocation = lessonLocation;
     }
 
-    public LessonType getLessonType()
+    public LessonState getLessonState()
     {
-        return lessonType;
+        return lessonState;
     }
 
-    public void setLessonType(LessonType lessonType)
+    public void setLessonState(LessonState lessonState)
     {
-        this.lessonType = lessonType;
+        this.lessonState = lessonState;
     }
 
-    public int getCourseId()
+    public long getCourseId()
     {
         return courseId;
     }
 
-    public void setCourseId(int courseId)
+    public void setCourseId(long courseId)
     {
         this.courseId = courseId;
     }
 
-    Lesson translateModelToLesson(){
+    public Lesson translateModelToLesson(){
         Lesson lesson = new Lesson();
         lesson.setLessonType(this.lessonType);
         lesson.setStudentList(this.studentList);
         lesson.setLessonInstructor(this.lessonInstructor);
         lesson.setLessonDate(this.lessonDate);
         lesson.setLessonLocation(this.lessonLocation);
-        lesson.setSigned(this.isSigned);
+        lesson.setLessonState(this.lessonState);
         lesson.setCourseId(this.courseId);
         return lesson;
     }
