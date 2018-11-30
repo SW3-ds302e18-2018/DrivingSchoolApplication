@@ -37,10 +37,10 @@
                 <td th:text="${lesson.getCourseId()}"></td>
                 <td th:text="${lesson.getLessonDate()}"></td>
                 <td th:text="${lesson.getLessonType()}"></td>
-                <td th:text="${lesson.isSigned()}"></td>
+                <td th:text="${lesson.getLessonState()}"></td>
             </tr>
             </tbody>
-        </table>
+        </table>    
     </div>
     <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script th:src="@{/js/table.js}"></script>

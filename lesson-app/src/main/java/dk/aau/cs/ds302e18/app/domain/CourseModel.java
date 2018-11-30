@@ -10,15 +10,19 @@ public class CourseModel {
     private long courseTableID;
     private CourseType courseType;
     private Date courseStartDate;
+    private String courseLocation;
+    private String weekdays;
+    private int numberStudents;
 
+
+    /* Part of courseModel that can be changed to path variables */
     @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
     private Date startingPoint;
-    private ArrayList<Integer> weekdays;
+    private ArrayList<Integer> weekdaysIntArray;
     private int numberLessons;
     private int numberLessonsADay;
     private String studentList;
     private LessonType lessonType;
-    private String location;
     private String instructorUsername;
     private boolean isSigned;
     private ArrayList<String> StudentNameList;
@@ -52,12 +56,12 @@ public class CourseModel {
         this.startingPoint = startingPoint;
     }
 
-    public ArrayList<Integer> getWeekdays() {
-        return weekdays;
+    public ArrayList<Integer> getWeekdaysIntArray() {
+        return weekdaysIntArray;
     }
 
-    public void setWeekdays(ArrayList<Integer> weekdays) {
-        this.weekdays = weekdays;
+    public void setWeekdaysIntArray(ArrayList<Integer> weekdaysIntArray) {
+        this.weekdaysIntArray = weekdaysIntArray;
     }
 
     public int getNumberLessons() {
@@ -108,12 +112,12 @@ public class CourseModel {
         this.courseTableID = courseTableID;
     }
 
-    public String getLocation() {
-        return location;
+    public String getCourseLocation() {
+        return courseLocation;
     }
 
-    public void setLocation(String location) {
-        this.location = location;
+    public void setCourseLocation(String courseLocation) {
+        this.courseLocation = courseLocation;
     }
 
     public String getInstructorUsername() {
@@ -156,6 +160,30 @@ public class CourseModel {
         this.studentToUpdate = studentToUpdate;
     }
 
+    public CourseType getCourseType() {
+        return courseType;
+    }
+
+    public void setCourseType(CourseType courseType) {
+        this.courseType = courseType;
+    }
+
+    public String getWeekdays() {
+        return weekdays;
+    }
+
+    public void setWeekdays(String weekdays) {
+        this.weekdays = weekdays;
+    }
+
+    public int getNumberStudents() {
+        return numberStudents;
+    }
+
+    public void setNumberStudents(int numberStudents) {
+        this.numberStudents = numberStudents;
+    }
+
     public Course translateModelToCourse(){
         Course course = new Course();
         course.setInstructorUsername(this.instructorUsername);
@@ -169,12 +197,12 @@ public class CourseModel {
                 "studentUsernames='" + studentUsernames + '\'' +
                 ", courseTableID=" + courseTableID +
                 ", startingPoint=" + startingPoint +
-                ", weekdays=" + weekdays +
+                ", weekdaysIntArray=" + weekdaysIntArray +
                 ", numberLessons=" + numberLessons +
                 ", numberLessonsADay=" + numberLessonsADay +
                 ", studentList='" + studentList + '\'' +
                 ", lessonType=" + lessonType +
-                ", location='" + location + '\'' +
+                ", courseLocation='" + courseLocation + '\'' +
                 ", instructorUsername='" + instructorUsername + '\'' +
                 ", isSigned=" + isSigned +
                 ", StudentNameList=" + StudentNameList +

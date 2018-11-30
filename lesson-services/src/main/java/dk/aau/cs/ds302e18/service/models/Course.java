@@ -25,6 +25,15 @@ public class Course
     @Enumerated(EnumType.STRING)
     private CourseType courseType;
 
+    @Column(name = "COURSE_LOCATION")
+    private String courseLocation;
+
+    @Column(name = "WEEKDAYS")
+    private String weekdays;
+
+    @Column(name = "NUMBER_STUDENTS")
+    private int numberStudents;
+
     public Course() {
         super();
     }
@@ -67,5 +76,29 @@ public class Course
 
     public void setCourseType(CourseType courseType) {
         this.courseType = courseType;
+    }
+
+    public String getCourseLocation() {
+        return courseLocation;
+    }
+
+    public void setCourseLocation(String courseLocation) {
+        this.courseLocation = courseLocation;
+    }
+
+    public String getWeekdays() {
+        return weekdays;
+    }
+
+    public void setWeekdays(String weekdays) {
+        this.weekdays = weekdays;
+    }
+
+    public int getNumberStudents() {
+        return numberStudents;
+    }
+
+    public void setNumberStudents(int numberStudents) {
+        this.numberStudents = numberStudents;
     }
 }

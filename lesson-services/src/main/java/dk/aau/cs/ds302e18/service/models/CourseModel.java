@@ -9,6 +9,10 @@ public class CourseModel {
     private long courseTableID;
     private Date courseStartDate;
     private CourseType courseType;
+    private String courseLocation;
+    private int numberStudents;
+    private String weekdays;
+
     private String studentToDelete;
 
     public CourseType getCourseType()
@@ -61,12 +65,48 @@ public class CourseModel {
         this.courseStartDate = courseStartDate;
     }
 
+    public CourseType getCourseType() {
+        return courseType;
+    }
+
+    public void setCourseType(CourseType courseType) {
+        this.courseType = courseType;
+    }
+
+    public String getCourseLocation() {
+        return courseLocation;
+    }
+
+    public void setCourseLocation(String courseLocation) {
+        this.courseLocation = courseLocation;
+    }
+
+    public int getNumberStudents() {
+        return numberStudents;
+    }
+
+    public void setNumberStudents(int numberStudents) {
+        this.numberStudents = numberStudents;
+    }
+
+    public String getWeekdays() {
+        return weekdays;
+    }
+
+    public void setWeekdays(String weekdays) {
+        this.weekdays = weekdays;
+    }
+
     public Course translateModelToCourse(){
         Course course = new Course();
         course.setCourseStartDate(this.courseStartDate);
         course.setStudentUsernames(this.studentUsernames);
         course.setInstructorUsername(this.instructorUsername);
         course.setCourseType(this.courseType);
+
+        course.setCourseLocation(this.courseLocation);
+        course.setNumberStudents(this.numberStudents);
+        course.setWeekdays(this.weekdays);
         return course;
     }
 }

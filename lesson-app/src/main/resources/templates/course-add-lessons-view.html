@@ -63,10 +63,10 @@
 
             <div class="form-row">
                 <div class="col">
-                    <h4>Weekdays <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="top" title="Which weekdays theory lessons will be held."></span></h4>
+                    <h4>Weekdays <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="top" title="Which weekday theory lessons will be held."></span></h4>
                     <div class="container">
                         <select class="selectpicker" data-style="btn-info" multiple data-max-options="3" data-live-search="true"
-                                th:name="weekdays">
+                                th:name="weekdaysIntArray">
                             <option th:value="1">Monday</option>
                             <option th:value="2">Tuesday</option>
                             <option th:value="3">Wednesday</option>
@@ -88,17 +88,10 @@
             </div>
             <div class="form-row">
                 <div class="col">
-                    <h4> Number Lessons a Day <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="top" title="Number of lessons in a day. A second lesson will be placed right afterwards the first and a third lesson rigt after the second and so on."></span> </h4>
+                    <h4> Number Lessons a Day <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="top" title="Number of lessons in a day. A second lesson will be placed right afterwards the first and a third lesson right after the second and so on."></span> </h4>
                     <input thid="numberLessonsADay" th:name="numberLessonsADay" type="text" class="form-control"
                            placeholder="Number Lessons a day"
                            th:value="${course != null} ? ${course.numberLessonsADay}"/>
-                </div>
-            </div>
-            <div class="form-row">
-                <div class="col">
-                    <h4> Location </h4>
-                    <input thid="location" th:name="location" type="text" class="form-control" placeholder="Location"
-                           th:value="${course != null} ? ${course.location}"/>
                 </div>
             </div>
             <button type="submit" class="btn btn-primary">Submit</button>
