@@ -22,7 +22,6 @@ import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -239,11 +238,10 @@ public class LessonController
         return (gravatar);
     }
 
-    public String getAccountUsername()
+    private String getAccountUsername()
     {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = ((UserDetails) principal).getUsername();
-        return username;
+        UserDetails principal = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return principal.getUsername();
     }
 
 

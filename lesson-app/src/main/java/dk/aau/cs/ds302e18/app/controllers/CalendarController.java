@@ -82,15 +82,13 @@ public class CalendarController
 
         //Models Gravatar
         System.out.println(accountRespository.findByUsername(getAccountUsername()).getEmail());
-        String gravatar = ("http://0.gravatar.com/avatar/"+md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
-        return (gravatar);
+        return "http://0.gravatar.com/avatar/"+md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail());
     }
 
-    public String getAccountUsername()
+    private String getAccountUsername()
     {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = ((UserDetails) principal).getUsername();
-        return username;
+        UserDetails principal = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return principal.getUsername();
     }
 
 }

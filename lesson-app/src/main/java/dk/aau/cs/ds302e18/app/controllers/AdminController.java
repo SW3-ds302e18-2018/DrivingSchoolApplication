@@ -25,7 +25,7 @@ public class AdminController
     private final UserRepository userRepository;
 
     public AdminController(AccountRespository accountRespository, AuthGroupRepository authGroupRepository,
-                             UserRepository userRepository) {
+                           UserRepository userRepository) {
         this.accountRespository = accountRespository;
         this.authGroupRepository = authGroupRepository;
         this.userRepository = userRepository;
@@ -77,13 +77,13 @@ public class AdminController
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public RedirectView changeAccountDetailsAdmin(@RequestParam("Username") String username,
                                                   @RequestParam("FirstName") String firstName,
-                                             @RequestParam("LastName") String lastName,
-                                             @RequestParam("Email") String email,
-                                             @RequestParam("PhoneNumber") String phoneNumber,
-                                             @RequestParam("Birthday") String birthday,
-                                             @RequestParam("Address") String address,
-                                             @RequestParam("City") String city,
-                                             @RequestParam("Zip") int zip)
+                                                  @RequestParam("LastName") String lastName,
+                                                  @RequestParam("Email") String email,
+                                                  @RequestParam("PhoneNumber") String phoneNumber,
+                                                  @RequestParam("Birthday") String birthday,
+                                                  @RequestParam("Address") String address,
+                                                  @RequestParam("City") String city,
+                                                  @RequestParam("Zip") int zip)
     {
         Account account = new Account();
         account.setUsername(username);

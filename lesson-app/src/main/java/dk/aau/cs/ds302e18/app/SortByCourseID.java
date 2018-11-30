@@ -8,6 +8,6 @@ public class SortByCourseID implements Comparator<Course> {
 
     @Override
     public int compare(Course course1, Course course2) {
-        return (int)course1.getCourseTableID()-(int)course2.getCourseTableID();
+        return (int)(course1.getCourseTableID()-course2.getCourseTableID());
     }
 }
