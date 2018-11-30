@@ -1,5 +1,7 @@
 package dk.aau.cs.ds302e18.app.controllers;
 
+import dk.aau.cs.ds302e18.app.Notification;
+import dk.aau.cs.ds302e18.app.auth.Account;
 import dk.aau.cs.ds302e18.app.auth.AccountRespository;
 import dk.aau.cs.ds302e18.app.domain.*;
 import dk.aau.cs.ds302e18.app.service.CourseService;
@@ -25,13 +27,12 @@ import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
 
 @Controller
 @RequestMapping
-public class StoreController
-{
+public class StoreController {
     private final StoreService storeService;
     private final AccountRespository accountRespository;
     private final CourseService courseService;
     private final LogbookService logbookService;
-
+  
     public StoreController(StoreService storeService, AccountRespository accountRespository,
                            CourseService courseService, LogbookService logbookService)
     {
@@ -45,13 +46,13 @@ public class StoreController
     /**
      * Stores all the requests in the storeadmin ArrayList, and then iterates them through to the list ararylist to only
      * get the requets with the pending tag (0), and present it for the admins.
+     *
      * @param model
      * @return
      */
     @GetMapping(value = "/storeadmin")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String getStores(Model model)
-    {
+    public String getStores(Model model) {
         // Fetching all requests in a list
         List<Store> storeadmin = this.storeService.getAllStoreRequests();
         // Creating a new list, to store the filtered requests
@@ -64,8 +65,7 @@ public class StoreController
 
     @GetMapping(value = "/store")
     @PreAuthorize("hasAnyRole('ROLE_STUDENT', 'ROLE_ADMIN', 'ROLE_INSTRUCTOR')")
-    public String getStore(Model model)
-    {
+    public String getStore(Model model) {
         // Fetching all requests in a list
         List<Store> storeadmin = this.storeService.getAllStoreRequests();
         // Creating a new list, to store the filtered requests
@@ -82,8 +82,7 @@ public class StoreController
         Date today = new Date();
         System.out.println(today.getTime());
 
-        for (Course course: courses)
-        {
+        for (Course course : courses) {
             System.out.println();
             if ((course.getCourseType() == CourseType.TYPE_B_CAR)) BType.add(course);
             if ((course.getCourseType() == CourseType.TYPE_BE_CAR_TRAILER)) BEType.add(course);
@@ -101,19 +100,20 @@ public class StoreController
 
     /**
      * Get for the page.
+     *
      * @param model
      * @return
      */
     @GetMapping(value = "/storeadmin/add")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String getAddStoreForm(Model model)
-    {
+    public String getAddStoreForm(Model model) {
         return "store-view";
     }
 
 
     /**
      * Posts a newly added store in the requests list on the website
+     *
      * @param request
      * @param model
      * @param storeModel
@@ -121,8 +121,7 @@ public class StoreController
      */
     @PostMapping(value = "/storeadmin")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ModelAndView addStore(HttpServletRequest request, Model model, @ModelAttribute StoreModel storeModel)
-    {
+    public ModelAndView addStore(HttpServletRequest request, Model model, @ModelAttribute StoreModel storeModel) {
         /* The newly added store object is retrieved from the 8100 server.  */
         Store store = this.storeService.addStoreRequest(storeModel);
         model.addAttribute("store", store);
@@ -132,14 +131,14 @@ public class StoreController
 
     /**
      * Used for admins to hard change values in each request - view the information in each request
+     *
      * @param model
      * @param id
      * @return
      */
     @GetMapping(value = "/storeadmin/{id}")
     @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public String getStore(Model model, @PathVariable long id)
-    {
+    public String getStore(Model model, @PathVariable long id) {
         Store store = this.storeService.getStoreRequest(id);
         model.addAttribute("store", store);
         return "store-view";
@@ -147,6 +146,7 @@ public class StoreController
 
     /**
      * Used for admins to hard change values in each request - updates the request in the databasse with the id.
+     *
      * @param model
      * @param id
      * @param storeModel
@@ -154,8 +154,7 @@ public class StoreController
      */
     @PostMapping(value = "/storeadmin/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String updateRequest(Model model, @PathVariable long id, @ModelAttribute StoreModel storeModel)
-    {
+    public String updateRequest(Model model, @PathVariable long id, @ModelAttribute StoreModel storeModel) {
         /* Returns an lesson that is read from the 8100 server through updateLesson. */
         Store store = this.storeService.acceptStoreRequest(id, storeModel);
         model.addAttribute("store", store);
@@ -166,7 +165,7 @@ public class StoreController
     /**
      * Accept Application is a RequestMapping from the accept button, taking the request id, and setting the state to 1,
      * which is accepted.
-     *
+     * <p>
      * Pending ID is 0.
      *
      * @param appId
@@ -176,7 +175,7 @@ public class StoreController
      * @param storeModel
      * @return RedirectView (storeadmin)
      */
-    @RequestMapping(value="/accept", method=RequestMethod.POST)
+    @RequestMapping(value = "/accept", method = RequestMethod.POST)
     public RedirectView acceptAppState(@RequestParam("appId") long appId, @RequestParam("courseIdAccept") long courseId,
                                        @RequestParam("studentUsernameAccept") String studentUsername, Model model,
                                        @ModelAttribute StoreModel storeModel,
@@ -204,11 +203,22 @@ public class StoreController
 
         String studentUsernames = course.getStudentUsernames();
         /* Adds the new student */
+      
         studentUsernames += "," + studentUsername;
         courseModel.setStudentUsernames(studentUsernames);
-
         courseService.updateCourse(courseId, courseModel);
+      
+        /*
+        Send new Course Notification
+         */
+      
+        Account acceptedStudent = accountRespository.findByUsername(studentUsername);
+        String studentEmail = acceptedStudent.getEmail();
+        String studentFirstname = acceptedStudent.getFirstName();
 
+        Notification requestReceipt = new Notification("Hello "+studentUsername+ ".\n" +
+                "The course starts at "+course.getCourseStartDate()+". Should you not appear you will get a fine."
+                , studentEmail, true);
         /*
         Creates a logbook for the student
          */
@@ -228,6 +238,7 @@ public class StoreController
     /**
      * Deny Application is a RequestMapping from the deny button, taking the request id, and setting the state to 2,
      * which is denied.
+     *
      * @param appId
      * @param courseId
      * @param studentUsername
@@ -235,7 +246,7 @@ public class StoreController
      * @param storeModel
      * @return RedirectView (storeadmin)
      */
-    @RequestMapping(value="/deny", method=RequestMethod.POST)
+    @RequestMapping(value = "/deny", method = RequestMethod.POST)
     public RedirectView denyAppState(@RequestParam("appIdDeny") long appId, @RequestParam("courseIdDeny") long courseId,
                                      @RequestParam("studentUsernameDeny") String studentUsername, Model model,
                                      @ModelAttribute StoreModel storeModel) {
@@ -249,6 +260,13 @@ public class StoreController
 
         // Creating the storemodel with the set values above, and updaing it.
         Store store = this.storeService.acceptStoreRequest(appId, storeModel);
+        Account acceptedStudent = accountRespository.findByUsername(studentUsername);
+        String studentEmail = acceptedStudent.getEmail();
+        String studentFirstname = acceptedStudent.getFirstName();
+
+        Notification requestReceipt = new Notification("Hello "+studentUsername+ ".\n" +
+               "You have been sadly declined of your request because you have not met the requirements"
+                , studentEmail, true);
         model.addAttribute("store", store);
         model.addAttribute("storeModel", new StoreModel());
         return new RedirectView("storeadmin");
@@ -257,27 +275,30 @@ public class StoreController
     /**
      * Apply Post Mapping, for every time a student want to apply for a course, they post a request, where it checks
      * the id of the course, and post the request for the instructor.
+     *
      * @param request
      * @param model
      * @param storeModel
      * @return index page
      */
     @PostMapping(value = "/apply")
-    public String createAppState(HttpServletRequest request, Model model, @ModelAttribute StoreModel storeModel)
-    {
+    public String createAppState(HttpServletRequest request, Model model, @ModelAttribute StoreModel storeModel) {
         // Set the state of a lesson to Pending
         byte b = 0;
         storeModel.setState(b);
 
         //Fetches the username from the session
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = ((UserDetails)principal).getUsername();
+        String username = ((UserDetails) principal).getUsername();
 
         // Setting the username of the student who applied
         storeModel.setStudentUsername(username);
 
         // Creating the store mode, to be sent to the rest server
         Store store = this.storeService.addStoreRequest(storeModel);
+        String studentEmail = accountRespository.findByUsername(storeModel.getStudentUsername()).getEmail();
+        Notification requestReceipt = new Notification("Hello", studentEmail, true);
+
         model.addAttribute("store", store);
         request.setAttribute(View.RESPONSE_STATUS_ATTRIBUTE, HttpStatus.TEMPORARY_REDIRECT);
 
@@ -290,12 +311,11 @@ public class StoreController
 
         //Models Gravatar
         System.out.println(accountRespository.findByUsername(getAccountUsername()).getEmail());
-        String gravatar = ("http://0.gravatar.com/avatar/"+md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
+        String gravatar = ("http://0.gravatar.com/avatar/" + md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
         return (gravatar);
     }
 
-    public String getAccountUsername()
-    {
+    public String getAccountUsername() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = ((UserDetails) principal).getUsername();
         return username;

@@ -74,12 +74,14 @@
                     <thead>
                     <th scope="col">#Course</th>
                     <th scope="col">Created by Instructor</th>
+                    <th scope="col">Start Date</th>
                     </thead>
                     <tbody>
                     <tr th:each="course : ${courses}">
                         <th scope="row"><a th:href="@{'/course/' + ${course.courseTableID}}"
                                            th:text="${course.courseTableID}"></a></th>
                         <td th:text="${course.instructorFullName}"></td>
+                        <td th:text="${course.courseStartDate}"></td>
                     </tr>
                     </tbody>
                 </table>
@@ -89,7 +91,8 @@
             <div class="right">
                 <form method="post" action="#" th:action="'/course/addCourse'" th:object="${courseModel}">
                     <h3>Add new course</h3>
-                    <h4>Instructors <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="top" title="Instructor that will be assigned the theory part of the course"></span></h4>
+                    <h4>Instructors <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="top"
+                                          title="Instructor that will be assigned the theory part of the course"></span></h4>
                     <div class="container">
                         <select class="selectpicker" data-style="btn-info" data-live-search="true"
                                 th:name="instructorUsername">
@@ -98,7 +101,8 @@
                                     th:value="${instructorAccount.username}"></option>
                         </select>
                     </div>
-                    <h4>Students <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="top" title="Students that will be participating in the course. Click on several students to select more than one."></span></h4>
+                    <h4>Students <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="top"
+                                       title="Students that will be participating in the course. Click on several students to select more than one."></span></h4>
                     <div class="container">
                         <select class="selectpicker" data-style="btn-info" multiple data-max-options="3" data-live-search="true"
                                 th:name="studentUsernames">
@@ -119,6 +123,8 @@
                     </div>
                     <div class="form-row">
                         <button type="submit" class="btn btn-primary btn-lg " style="margin-left: 10%">Submit</button>
+                        <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip" data-placement="top"
+                              title="When submitting, you will be redirected to a site, where you can add the theory lessons to the course you just submitted"></span>
                     </div>
                 </form>
                 </tr>

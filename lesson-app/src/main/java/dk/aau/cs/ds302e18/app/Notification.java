@@ -60,6 +60,14 @@ public class Notification
         EmailMessageToAdmin(message, emailAddress);
     }
 
+    //Overloaded constructor to send a message to only an email address.
+    public Notification(String message, String emailAddress, boolean emailMessage)
+    {
+
+        // Send Email
+        EmailMessage(message, emailAddress);
+    }
+
     // Send SMS to a Phone Number
     private void SMSMessage(AmazonSNSClient snsClient,
                             String message, String phoneNumber, Map<String, MessageAttributeValue> smsAttributes)
@@ -100,6 +108,7 @@ public class Notification
         } catch (MessagingException mex)
         {
             mex.printStackTrace();
+
         }
     }
 
