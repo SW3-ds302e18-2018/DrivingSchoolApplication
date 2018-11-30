@@ -216,7 +216,11 @@ public class StoreController {
         String studentFirstname = acceptedStudent.getFirstName();
 
         new Notification("Hello "+studentFirstname+ ".\n" +
-                "The course starts at "+course.getCourseStartDate()+". If you are unable to attend this course, please contact us as soon as possible, and at least 24 hours before the first lesson."
+                "The course will start the "+course.getCourseStartDate()+" at "+course.getCourseLocation()+".\n Your instructor" +
+                "will be "+course.getInstructorFullName()+". If you are unable to attend this course, " +
+                "please contact us as soon as possible, and at least 24 hours before the first lesson..\n" +
+                "Kind regards .\n" +
+                "Driving School A/S "
                 , studentEmail, true);
       
         /*
@@ -266,7 +270,9 @@ public class StoreController {
         String studentFirstname = acceptedStudent.getFirstName();
 
         new Notification("Hello "+studentFirstname+ ".\n" +
-               "You have been sadly declined of your request because you have not met the requirements"
+               "You have been sadly declined of your request because you have not met the requirements.\n" +
+                "Kind regards .\n" +
+                        "Driving School A/S "
                 , studentEmail, true);
 
         model.addAttribute("store", store);
@@ -296,7 +302,7 @@ public class StoreController {
         Store store = this.storeService.addStoreRequest(storeModel);
         String studentEmail = accountRespository.findByUsername(getAccountUsername()).getEmail();
         System.out.println("APPLY : " + studentEmail);
-        new Notification("Hello", studentEmail, true);
+        new Notification("Hello .\n Kind regards .\n Driving School A/S ", studentEmail, true);
 
         model.addAttribute("store", store);
         request.setAttribute(View.RESPONSE_STATUS_ATTRIBUTE, HttpStatus.TEMPORARY_REDIRECT);
