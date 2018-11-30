@@ -1,40 +1,41 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{layout}" lang="en">
 <head>
     <title>Home</title>
-
     <style>
         .centerpane {
-            width: 85%;
+            width: 60%;
             height: available;
-            float: left;
-            background-color: #ffffff;
-            border-collapse: collapse;
-            margin-left: 3%;
-            margin-right: 3%;
-            margin-top: 7%;
+            max-height: 350px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
         }
     </style>
 </head>
 <body>
 
 <div layout:fragment="content">
+    <div class="container main-content">
+        <h1><span th:text="${username}"></span>, here are your logbooks:</h1>
+        <h3>You can select a logbook to view, by clicking on it's ID.</h3>
+    </div>
     <div class="centerpane">
-        <h1>Logbook lessons (Student)</h1>
-
-        <table id="todayLessonTable" class="table table-sm">
+        <table id="studentLogbookTable" class="table table-hover table-sm bordered">
             <thead>
-            <th scope="col">Lesson Date</th>
+            <th scope="col">Logbook ID</th>
             <th scope="col">Course ID</th>
-            <th scope="col">Lesson Instructor</th>
-            <th scope="col">Lesson location</th>
+            <th scope="col">Logbook Owner</th>
+            <th scope="col">Logbook Active?</th>
             </thead>
             <tbody>
-            <tr th:each="lesson : ${logbookLessonList}">
-                <td th:text="${lesson.lessonDate}"></td>
-                <td th:text="${lesson.getCourseId()}"></td>
-                <td th:text="${lesson.getLessonInstructor()}"></td>
-                <td th:text="${lesson.getLessonLocation()}"></td>
+            <tr th:each="logbook : ${studentLogbookList}">
+                <th scope="row"><a th:href="@{'/logbook/' + ${logbook.getId()}}" th:text="${logbook.getId()}"></a></th>
+                <td th:text="${logbook.getCourseID()}"></td>
+                <td th:text="${logbook.getStudent()}"></td>
+                <td th:text="${logbook.isActive()}"></td>
             </tr>
             </tbody>
         </table>
