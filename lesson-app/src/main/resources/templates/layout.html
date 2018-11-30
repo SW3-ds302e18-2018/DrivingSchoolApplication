@@ -40,8 +40,11 @@
                         <li class="nav-item" sec:authorize="hasAnyRole('ROLE_INSTRUCTOR', 'ROLE_ADMIN')">
                             <a class="nav-link" th:href="@{/admin}">User Manager</a>
                         </li>
+                        <li class="nav-item" sec:authorize="hasRole('ROLE_INSTRUCTOR')">
+                            <a class="nav-link" th:href="@{/salary}">Salary</a>
+                        </li>
                         <li class="nav-item" sec:authorize="hasRole('ROLE_ADMIN')">
-                            <a class="nav-link" th:href="@{/salary}">Salary Manager</a>
+                            <a class="nav-link" th:href="@{/salary/admin}">Salary Manager</a>
                         </li>
                     </ul>
                 </div>
