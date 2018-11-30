@@ -95,4 +95,16 @@ public class Lesson
     {
         this.courseId = courseId;
     }
+
+    public LessonModel translateLessonToModel(){
+        LessonModel lessonModel = new LessonModel();
+        lessonModel.setLessonType(this.lessonType);
+        lessonModel.setStudentList(this.studentList);
+        lessonModel.setLessonInstructor(this.lessonInstructor);
+        lessonModel.setLessonDate(this.lessonDate);
+        lessonModel.setLessonLocation(this.lessonLocation);
+        lessonModel.setLessonState(this.lessonState);
+        lessonModel.setCourseId(this.courseId);
+        return lessonModel;
+    }
 }
