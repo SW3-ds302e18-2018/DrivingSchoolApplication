@@ -1,141 +1,308 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security" xmlns:margin-top="http://www.w3.org/1999/xhtml"
-      layout:decorate="~{layout}" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+    xmlns:margin-top="http://www.w3.org/1999/xhtml" layout:decorate="~{layout}" lang="en">
+
 <head>
     <title>Home</title>
 </head>
+
 <body>
 
-<div layout:fragment="content" align="center">
-    <div class="container main-content" align="center">
+    <div layout:fragment="content" align="center">
+        <div class="container main-content" align="center">
 
-        <div class="col-lg-10">
+            <div class="col-lg-10">
 
-            <div class="row">
+                <div class="row">
 
-                <div class="col-lg-4 col-md-6 mb-4 column">
-                    <div class="card h-100 ">
-                        <a href="#"><img class="card-img-top" src="https://s3.eu-west-2.amazonaws.com/p3-project/store/rsz_1adult-automotive-blur-13861.png " alt=""></a>
-                        <div class="card-body">
-                            <h4 class="card-title">
-                                <a href="#">Car (B)</a>
-                            </h4>
-                            <h5>$2449</h5>
-                            <br class="card-text">Start Date : 20/11-2018</br>
-                            End Date : 20/12-2018</p>
-                        </div>
-                        <div class="card-footer">
-                            <form th:action="@{/apply}" method="post">
-                                <input type="hidden" name="courseId" id="courseId" th:value="101"/>
-                                <input type="hidden" name="applyStudentUsername" id="applyStudentUsername" th:value="${#authentication.getPrincipal().getUsername()}"/>
-                                <button type="submit" name="submit" value="value" class="btn btn-success">Apply for this Course!</button>
-                            </form>
+                    <div class="col-lg-4 col-md-6 mb-4 column">
+                        <div class="card h-100 ">
+                            <a href="#"><img class="card-img-top" src="https://s3.eu-west-2.amazonaws.com/p3-project/store/rsz_1adult-automotive-blur-13861.png "
+                                    alt=""></a>
+                            <div class="card-body">
+                                <h4 class="card-title">
+                                    <a href="#">Car (B)</a>
+                                </h4>
+                                <h5>$2449</h5>
+                            </div>
+                            <div class="card-footer">
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal1">Search
+                                    Available Dates</button>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-4 col-md-6 mb-4 column">
-                    <div class="card h-100">
-                        <a href="#"><img class="card-img-top" src="https://s3.eu-west-2.amazonaws.com/p3-project/store/trailer.jpg" alt=""></a>
-                        <div class="card-body">
-                            <h4 class="card-title">
-                                <a href="#">Large Trailer Car (BE)</a>
-                            </h4>
-                            <h5>$1994</h5>
-                            <br class="card-text">Start Date : 20/11-2018</br>
-                            End Date : 20/12-2018</p>
-                        </div>
-                        <div class="card-footer">
-                            <form th:action="@{/apply}" method="post">
-                                <input type="hidden" name="courseId" id="courseId" th:value="102"/>
-                                <input type="hidden" name="applyStudentUsername" id="applyStudentUsername" th:value="${#authentication.getPrincipal().getUsername()}"/>
-                                <button type="submit" name="submit" value="value" class="btn btn-success">Apply for this Course!</button>
-                            </form>
+                    <div class="col-lg-4 col-md-6 mb-4 column">
+                        <div class="card h-100">
+                            <a href="#"><img class="card-img-top" src="https://s3.eu-west-2.amazonaws.com/p3-project/store/trailer.jpg"
+                                    alt=""></a>
+                            <div class="card-body">
+                                <h4 class="card-title">
+                                    <a href="#">Large Trailer Car (BE)</a>
+                                </h4>
+                                <h5>$1994</h5>
+                            </div>
+                            <div class="card-footer">
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal2">Search
+                                    Available Dates</button>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-4 col-md-6 mb-4 column">
-                    <div class="card h-100">
-                        <a href="#"><img class="card-img-top" src="https://s3.eu-west-2.amazonaws.com/p3-project/store/bike.jpg" alt=""></a>
-                        <div class="card-body">
-                            <h4 class="card-title">
-                                <a href="#">Bike (A)</a>
-                            </h4>
-                            <h5>$1859</h5>
-                            <br class="card-text">Start Date : 20/11-2018</br>
-                            End Date : 20/12-2018</p>
-                        </div>
-                        <div class="card-footer">
-                            <form th:action="@{/apply}" method="post">
-                                <input type="hidden" name="courseId" id="courseId" th:value="103"/>
-                                <input type="hidden" name="applyStudentUsername" id="applyStudentUsername" th:value="${#authentication.getPrincipal().getUsername()}"/>
-                                <button type="submit" name="submit" value="value" class="btn btn-success">Apply for this Course!</button>
-                            </form>
+                    <div class="col-lg-4 col-md-6 mb-4 column">
+                        <div class="card h-100">
+                            <a href="#"><img class="card-img-top" src="https://s3.eu-west-2.amazonaws.com/p3-project/store/bike.jpg"
+                                    alt=""></a>
+                            <div class="card-body">
+                                <h4 class="card-title">
+                                    <a href="#">Bike (A)</a>
+                                </h4>
+                                <h5>$1859</h5>
+                            </div>
+                            <div class="card-footer">
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal3">Search
+                                    Available Dates</button>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="col-lg-4 col-md-6 mb-4 column">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h4 class="card-title">
-                                <a href="#">Extra Lesson</a>
-                            </h4>
-                            <h5>$24.99</h5>
-                        </div>
-                        <div class="card-footer">
-                            <form th:action="@{/apply}" method="post">
-                                <input type="hidden" name="courseId" id="courseId" th:value="111"/>
-                                <input type="hidden" name="applyStudentUsername" id="applyStudentUsername" th:value="${#authentication.getPrincipal().getUsername()}"/>
-                                <button type="submit" name="submit" value="value" class="btn btn-success">Apply for extra lesson!</button>
-                            </form>
+                    <div class="col-lg-4 col-md-6 mb-4 column">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h4 class="card-title">
+                                    <a href="#">Extra Lesson</a>
+                                </h4>
+                                <h5>$24.99</h5>
+                            </div>
+                            <div class="card-footer">
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal4">Search
+                                    Available Dates</button>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="col-lg-4 col-md-6 mb-4 column">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h4 class="card-title">
-                                <a href="#">Ice Course Track</a>
-                            </h4>
-                            <h5>$50</h5>
-                        </div>
-                        <div class="card-footer">
-                            <form th:action="@{/apply}" method="post">
-                                <input type="hidden" name="courseId" id="courseId" th:value="112"/>
-                                <input type="hidden" name="applyStudentUsername" id="applyStudentUsername" th:value="${#authentication.getPrincipal().getUsername()}"/>
-                                <button type="submit" name="submit" value="value" class="btn btn-success">Apply for this Course!</button>
-                            </form>
+                    <div class="col-lg-4 col-md-6 mb-4 column">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h4 class="card-title">
+                                    <a href="#">Ice Course Track</a>
+                                </h4>
+                                <h5>$50</h5>
+                            </div>
+                            <div class="card-footer">
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal5">Search
+                                    Available Dates</button>
+                            </div>
                         </div>
                     </div>
-                </div>
 
-                <div class="col-lg-4 col-md-6 mb-4 column">
-                    <div class="card h-100">
-                        <div class="card-body">
-                            <h4 class="card-title">
-                                <a href="#">First Aid</a>
-                            </h4>
-                            <h5>$34.99</h5>
-                        </div>
-                        <div class="card-footer">
-                            <form th:action="@{/apply}" method="post">
-                                <input type="hidden" name="courseId" id="courseId" th:value="113"/>
-                                <input type="hidden" name="applyStudentUsername" id="applyStudentUsername" th:value="${#authentication.getPrincipal().getUsername()}"/>
-                                <button type="submit" name="submit" value="value" class="btn btn-success">Apply for this Course!</button>
-                            </form>
+                    <div class="col-lg-4 col-md-6 mb-4 column">
+                        <div class="card h-100">
+                            <div class="card-body">
+                                <h4 class="card-title">
+                                    <a href="#">First Aid</a>
+                                </h4>
+                                <h5>$34.99</h5>
+                            </div>
+                            <div class="card-footer">
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal6">Search
+                                    Available Dates</button>
+                            </div>
                         </div>
                     </div>
+
                 </div>
+                <!-- /.row -->
 
             </div>
-            <!-- /.row -->
+            <!-- /.col-lg-9 -->
+
+            <!-- Modal 1 -->
+            <div class="modal fade" id="modal1" tabindex="-1" role="dialog" aria-labelledby="modal1Title" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-centered" role="document">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title" id="exampleModalLongTitle">Available Courses</h5>
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <div class="modal-body">
+                            <table id="tableb" class="table table-sm" width="450">
+                                <thead>
+                                    <th scope="col">Course ID</th>
+                                    <th scope="col">Course Type</th>
+                                    <th scope="col">Instructor</th>
+                                    <th scope="col">Apply for the Course</th>
+                                </thead>
+                                <tbody>
+                                    <tr th:each="course : ${b_car_list}">
+                                        <td th:text="${course.getCourseTableID()}"></td>
+                                        <td th:text="${course.getCourseType()}"></td>
+                                        <td th:text="${course.getInstructorUsername()}"></td>
+                                        <td>
+                                            <form th:action="@{/apply}" method="post">
+                                                <input type="hidden" name="courseId" id="courseId" th:value="${course.getCourseTableID()}"/>
+                                                <input type="hidden" name="applyStudentUsername" id="applyStudentUsername" th:value="${#authentication.getPrincipal().getUsername()}"/>
+                                                <button type="submit" name="submit" value="value" class="btn btn-success">Apply for this Course!</button>
+                                            </form>    
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 col-md-6 mb-4 column">
+                    </div>
+                </div>
+            </div>
 
         </div>
-        <!-- /.col-lg-9 -->
 
+        <!-- Modal 2 -->
+        <div class="modal fade" id="modal2" tabindex="-1" role="dialog" aria-labelledby="modal2Title" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="exampleModalLongTitle">Available Courses</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <table id="tablebe" class="table table-sm" width="550">
+                            <thead>
+                                <th scope="col">Course ID</th>
+                                <th scope="col">Course Type</th>
+                                <th scope="col">Instructor</th>
+                                <th scope="col">Apply</th>
+                            </thead>
+                            <tbody>
+                                <tr th:each="course : ${be_car_list}">
+                                    <td th:text="${course.getCourseTableID()}"></td>
+                                    <td th:text="${course.getCourseType()}"></td>
+                                    <td th:text="${course.getInstructorUsername()}"></td>
+                                    <td>
+                                        <form th:action="@{/apply}" method="post">
+                                            <input type="hidden" name="courseId" id="courseId" th:value="${course.getCourseTableID()}"/>
+                                            <input type="hidden" name="applyStudentUsername" id="applyStudentUsername" th:value="${#authentication.getPrincipal().getUsername()}"/>
+                                            <button type="submit" name="submit" value="value" class="btn btn-success">Apply!</button>
+                                        </form>    
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 mb-4 column">
+                </div>
+            </div>
+        </div>
+
+    <!-- Modal 3 -->
+    <div class="modal fade" id="modal3" tabindex="-1" role="dialog" aria-labelledby="modal3Title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Available Courses</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <table id="tablea" class="table table-sm" width="450">
+                        <thead>
+                            <th scope="col">Course ID</th>
+                            <th scope="col">Course Type</th>
+                            <th scope="col">Instructor</th>
+                            <th scope="col">Apply for the Course</th>
+                        </thead>
+                        <tbody>
+                            <tr th:each="course : ${a_bike_list}">
+                                <td th:text="${course.getCourseTableID()}"></td>
+                                <td th:text="${course.getCourseType()}"></td>
+                                <td th:text="${course.getInstructorUsername()}"></td>
+                                <td>
+                                    <form th:action="@{/apply}" method="post">
+                                        <input type="hidden" name="courseId" id="courseId" th:value="${course.getCourseTableID()}"/>
+                                        <input type="hidden" name="applyStudentUsername" id="applyStudentUsername" th:value="${#authentication.getPrincipal().getUsername()}"/>
+                                        <button type="submit" name="submit" value="value" class="btn btn-success">Apply for this Course!</button>
+                                    </form>    
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4 column">
+            </div>
+        </div>
     </div>
+
+
+
+    <!-- Modal 4 -->
+    <div class="modal fade" id="modal4" tabindex="-1" role="dialog" aria-labelledby="modal4Title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Available Courses</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <p>To be implemented...</p>
+
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4 column">
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 5 -->
+    <div class="modal fade" id="modal5" tabindex="-1" role="dialog" aria-labelledby="modal5Title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Available Courses</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <p>To be implemented...</p>
+
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4 column">
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal 6 -->
+    <div class="modal fade" id="modal6" tabindex="-1" role="dialog" aria-labelledby="modal6Title" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Available Courses</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+
+                    <p>To be implemeted...</p>
+
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-4 column">
+            </div>
+        </div>
+    </div>
+
 
 </div>
 </body>
+
 </html>

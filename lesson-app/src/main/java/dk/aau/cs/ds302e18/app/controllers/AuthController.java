@@ -76,9 +76,9 @@ public class AuthController
         authGroup.setUsername(username);
         authGroup.setAuthGroup("STUDENT");
 
-        accountRespository.save(account);
-        authGroupRepository.save(authGroup);
-        userRepository.save(user);
+        this.accountRespository.save(account);
+        this.authGroupRepository.save(authGroup);
+        this.userRepository.save(user);
 
         return new RedirectView("login");
     }

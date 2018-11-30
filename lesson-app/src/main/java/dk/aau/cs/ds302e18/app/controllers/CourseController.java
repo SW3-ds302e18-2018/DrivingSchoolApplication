@@ -47,7 +47,6 @@ public class CourseController {
         setInstructorFullName(courses);
         courses.sort(new SortByCourseID());
 
-
         model.addAttribute("instructorAccounts", findInstructors());
         model.addAttribute("studentAccounts", findStudents());
         model.addAttribute("courses", courses);
@@ -300,7 +299,7 @@ public class CourseController {
     }
 
 
-    private void setInstructorFullName(List<Course> courseList) {
+    private void setInstructorFullName(List<Course> courseList){
         /*  Finds and sets the full name for every instructor in a courseList */
         for (Course course : courseList) {
             String firstName = accountRespository.findByUsername(course.getInstructorUsername()).getFirstName();

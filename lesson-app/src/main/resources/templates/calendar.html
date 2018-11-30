@@ -32,27 +32,28 @@
     <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.9.0/fullcalendar.min.css" />
 
     <script>
-        <!--
         $(document).ready(function() {
             $('#calendar').fullCalendar({
                 buttonText: {
-                    today: 'I dag'
+                    today: 'Today'
                 },
                 header: {
-                    left: 'prev,next today',
-                    center: 'title',
-                    right: ''
+                    left: 'prev, next today',
+            center: 'title',
+            right: 'month, basicWeek, basicDay'
                 },
                 events: {
                     url: '/calendar/getData',
                     cache: true
                 },
+                eventRender: function(event, element) { 
+            element.find('.fc-title').append("<br/>" + event.description);
+        },
                 lang: 'da',
                 timeFormat: 'H:mm'
             });
 
         });
-        -->
     </script>
 
     <style>

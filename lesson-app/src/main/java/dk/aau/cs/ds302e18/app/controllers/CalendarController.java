@@ -66,10 +66,10 @@ public class CalendarController
                     lessonColor = "CYAN";
                 }
                 if (lesson.getLessonType() == LessonType.PRACTICAL_LESSON){
-                    lessonType = "Pratical lesson";
+                    lessonType = "Practical lesson";
                     lessonColor = "GREEN";
                 }
-                CalendarViewModel calendarViewModel = new CalendarViewModel(lesson.getCourseId(), lessonColor,lessonType, lesson.getLessonDate());
+                CalendarViewModel calendarViewModel = new CalendarViewModel(lesson.getCourseId(), lessonColor,lessonType, lesson.getLessonDate(), "Location : " + lesson.getLessonLocation());
 
                 lessonArrayModels.add(calendarViewModel);
             }
