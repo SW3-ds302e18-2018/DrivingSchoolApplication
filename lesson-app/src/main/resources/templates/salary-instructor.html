@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}" lang="en">
+<head>
+    <title>Home</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+
+    <style>
+        .centerpane {
+            width: 85%;
+            background-color: #ffffff;
+            border-collapse: collapse;
+            margin-left: 3%;
+            margin-right: 3%;
+            margin-top: 7%;
+        }
+    </style>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="container main-content">
+        <h2><span th:text="${username}"></span>, here are the finished lessons within the time period:</h2>
+        <h4>There are <span th:text="${salaryLessonTotal}"></span> lessons with <span th:text="${uniqueCourseIdTotal}"></span> unique course ids.<br>
+            <span th:text="${courseTypeBLessonTotal}"></span> of them are type B. <span th:text="${courseTypeBELessonTotal}"></span> of them are type BE. <span th:text="${courseTypeALessonTotal}"></span> of them are type A.</h4>
+        <br><hr>
+        <h5>Search within time period:</h5>
+        <form method="post" th:action="'/salary'">
+            <div class="form-row">
+                <h6>From date: </h6>
+                <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                    <input th:id="instructorSalaryFromDate" th:name="instructorSalaryFromDate" type="text" class="form-control datetimepicker-input" data-target="#datetimepicker1" th:placeholder="'yyyy-mm-dd hh:mm'" th:value="${instructorSalaryFromDate}"/>
+                    <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    </div>
+                </div>
+                <script type="text/javascript">
+                    $.fn.datetimepicker.Constructor.Default = $.extend($.fn.datetimepicker.Constructor.Default, {
+                        icons: {
+                            time: 'fas fa-clock',
+                            date: 'fas fa-calendar',
+                            up: 'fas fa-arrow-up',
+                            down: 'fas fa-arrow-down',
+                            previous: 'fas fa-chevron-left',
+                            next: 'fas fa-chevron-right',
+                            today: 'fas fa-calendar-check-o',
+                            clear: 'fas fa-trash',
+                            close: 'fas fa-times'
+                        },
+                        format: 'YYYY-MM-DD HH:mm'
+                    });
+                </script>
+                <h6>To date: </h6>
+                <div class="input-group date" id="datetimepicker2" data-target-input="nearest">
+                    <input th:id="instructorSalaryToDate" th:name="instructorSalaryToDate" type="text" class="form-control datetimepicker-input" data-target="#datetimepicker2" th:placeholder="'yyyy-mm-dd hh:mm'" th:value="${instructorSalaryToDate}"/>
+                    <div class="input-group-append" data-target="#datetimepicker2" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    </div>
+                </div>
+                <script type="text/javascript">
+                    $.fn.datetimepicker.Constructor.Default = $.extend($.fn.datetimepicker.Constructor.Default, {
+                        icons: {
+                            time: 'fas fa-clock',
+                            date: 'fas fa-calendar',
+                            up: 'fas fa-arrow-up',
+                            down: 'fas fa-arrow-down',
+                            previous: 'fas fa-chevron-left',
+                            next: 'fas fa-chevron-right',
+                            today: 'fas fa-calendar-check-o',
+                            clear: 'fas fa-trash',
+                            close: 'fas fa-times'
+                        },
+                        format: 'YYYY-MM-DD HH:mm'
+                    });
+                </script>
+            </div>
+            <div class="form-row">
+                <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+        </form>
+        <br><hr>
+        <div class="centerpane">
+            <table id="salaryLessonTable" class="table table-hover table-sm bordered">
+                <thead>
+                <th scope="col">Lesson ID</th>
+                <th scope="col">Course ID</th>
+                <th scope="col">Lesson Date</th>
+                <th scope="col">Lesson State</th>
+                <th scope="col">Lesson Instructor</th>
+                <th scope="col">Lesson Student List</th>
+                </thead>
+                <tbody>
+                <tr th:each="lesson : ${salaryLessonList}">
+                    <th scope="row"><a th:href="@{'/lessons/' + ${lesson.getId()}}" th:text="${lesson.getId()}"></a></th>
+                    <th scope="row"><a th:href="@{'/course/' + ${lesson.getCourseId()}}" th:text="${lesson.getCourseId()}"></a></th>
+                    <td th:text="${lesson.getLessonDate()}"></td>
+                    <td th:text="${lesson.getLessonState()}"></td>
+                    <td th:text="${lesson.getLessonInstructor()}"></td>
+                    <td th:text="${lesson.getStudentList()}"></td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="col-lg-4 col-md-6 mb-4 column">
+        </div>
+    </div>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script th:src="@{/js/table.js}"></script>
+</div>
+
+</body>
+</html>
