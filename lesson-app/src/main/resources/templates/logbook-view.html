@@ -1,0 +1,49 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}" lang="en">
+<head>
+    <title>Home</title>
+    <style>
+        .centerpane {
+            width: 60%;
+            height: available;
+            max-height: 350px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+    </style>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="container main-content">
+        <h1><span th:text="${username}"></span>, here are the lessons in logbook <span th:text="${logbookId}"></span>:</h1>
+        <h3>You can select a lesson to view, by clicking on it's ID.</h3>
+    </div>
+        <div class="centerpane">
+        <table id="logbookLessonsTable" class="table table-hover table-sm bordered">
+            <thead>
+            <th scope="col">Lesson ID</th>
+            <th scope="col">Course ID</th>
+            <th scope="col">Lesson Date</th>
+            <th scope="col">Lesson Type</th>
+            <th scope="col">Lesson Signed?</th>
+            </thead>
+            <tbody>
+            <tr th:each="lesson : ${logbookLessonList}">
+                <th scope="row"><a th:href="@{'/lessons/' + ${lesson.getId()}}" th:text="${lesson.getId()}"></a></th>
+                <td th:text="${lesson.getCourseId()}"></td>
+                <td th:text="${lesson.getLessonDate()}"></td>
+                <td th:text="${lesson.getLessonType()}"></td>
+                <td th:text="${lesson.isSigned()}"></td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script th:src="@{/js/table.js}"></script>
+</div>
+</body>
+</html>
