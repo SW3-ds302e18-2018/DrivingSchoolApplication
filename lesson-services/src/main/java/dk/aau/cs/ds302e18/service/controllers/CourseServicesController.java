@@ -4,8 +4,6 @@ import dk.aau.cs.ds302e18.service.models.Course;
 import dk.aau.cs.ds302e18.service.models.CourseModel;
 import dk.aau.cs.ds302e18.service.models.CourseNotFoundException;
 import dk.aau.cs.ds302e18.service.models.CourseRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +11,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,25 +56,8 @@ public class CourseServicesController
     links to the new information. */
     @PostMapping(value = "/addCourse")
     public ResponseEntity<Course> addCourse(@RequestBody CourseModel courseModel){
-        Course course = new Course();
-        course.setInstructorUsername(courseModel.getInstructorUsername());
-        course.setCourseType(courseModel.getCourseType());
-        if(courseModel.getStudentUsernames() == null) {
-            course.setStudentUsernames("empty");
-        }else {
-            course.setStudentUsernames(courseModel.getStudentUsernames());
-        }
-        if(courseModel.getCourseStartDate() == null){
-            /* Default date when no first lesson has been created is set to 2000. A date "should" be set immediately after when the initial
-             * theory lessons are created in addCourseLessons, but in case an error has occurred the default date is set, to prevent
-             * crashes when accessing the rest of the program caused by accessing an null database. An instructor can then chose
-             * to delete the faulty course through the websites delete course functionality. */
-            Date defaultDate = new Date(101,0,0);
-            course.setCourseStartDate(defaultDate);
-        } else {
-            course.setCourseStartDate(courseModel.getCourseStartDate());
-        }
-        course = this.courseRepository.save(course);
+        System.out.println(courseModel.getWeekdays());
+        Course course = this.courseRepository.save(courseModel.translateModelToCourse());
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(course.getCourseTableID()).toUri();
         return ResponseEntity.created(location).body(course);
     }
@@ -109,5 +89,14 @@ public class CourseServicesController
             throw new CourseNotFoundException("Course not found with id: " + id);
         }
         this.courseRepository.deleteById(id);
+    }
+
+    private ArrayList<String> saveUsernameStringAsList(String usernames) {
+        ArrayList<String> studentList = new ArrayList<>();
+        String[] parts = usernames.split(",");
+        for(String part: parts){
+            studentList.add(part);
+        }
+        return studentList;
     }
 }
