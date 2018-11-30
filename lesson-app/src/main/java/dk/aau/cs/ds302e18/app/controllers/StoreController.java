@@ -3,6 +3,7 @@ package dk.aau.cs.ds302e18.app.controllers;
 import dk.aau.cs.ds302e18.app.auth.AccountRespository;
 import dk.aau.cs.ds302e18.app.domain.*;
 import dk.aau.cs.ds302e18.app.service.CourseService;
+import dk.aau.cs.ds302e18.app.service.LogbookService;
 import dk.aau.cs.ds302e18.app.service.StoreService;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -29,13 +30,16 @@ public class StoreController
     private final StoreService storeService;
     private final AccountRespository accountRespository;
     private final CourseService courseService;
+    private final LogbookService logbookService;
 
-    public StoreController(StoreService storeService, AccountRespository accountRespository, CourseService courseService)
+    public StoreController(StoreService storeService, AccountRespository accountRespository,
+                           CourseService courseService, LogbookService logbookService)
     {
         super();
         this.storeService = storeService;
         this.accountRespository = accountRespository;
         this.courseService = courseService;
+        this.logbookService = logbookService;
     }
 
     /**
@@ -176,7 +180,8 @@ public class StoreController
     public RedirectView acceptAppState(@RequestParam("appId") long appId, @RequestParam("courseIdAccept") long courseId,
                                        @RequestParam("studentUsernameAccept") String studentUsername, Model model,
                                        @ModelAttribute StoreModel storeModel,
-                                       @ModelAttribute CourseModel courseModel) {
+                                       @ModelAttribute CourseModel courseModel,
+                                       @ModelAttribute LogbookModel logbookModel) {
         // Predefining byte to state 1 (accepted application)
         Byte b = 1;
 
@@ -187,6 +192,10 @@ public class StoreController
 
         // Creating the storemodel with the set values above, and updaing it.
         Store store = this.storeService.acceptStoreRequest(appId, storeModel);
+
+        /*
+        Adds the student to the course
+         */
 
         Course course = courseService.getCourse(courseId);
 
@@ -199,6 +208,16 @@ public class StoreController
         courseModel.setStudentUsernames(studentUsernames);
 
         courseService.updateCourse(courseId, courseModel);
+
+        /*
+        Creates a logbook for the student
+         */
+
+        logbookModel.setActive(true);
+        logbookModel.setCourseID(courseId);
+        logbookModel.setStudent(studentUsername);
+
+        logbookService.addLogbook(logbookModel);
 
         model.addAttribute("store", store);
         model.addAttribute("storeModel", new StoreModel());
