@@ -36,6 +36,7 @@ public class ApplicationSecurityConfiguration extends WebSecurityConfigurerAdapt
     public GrantedAuthoritiesMapper authoritiesMapper(){
         SimpleAuthorityMapper authorityMapper = new SimpleAuthorityMapper();
         authorityMapper.setConvertToUpperCase(true);
+        authorityMapper.setDefaultAuthority("STUDENT");
         return authorityMapper;
     }
 

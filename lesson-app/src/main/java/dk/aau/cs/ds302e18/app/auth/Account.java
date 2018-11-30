@@ -7,11 +7,11 @@ import javax.persistence.*;
  * Represents information about the account, such as first name, last name etc.
  */
 @Entity
-@Table(name="ACCOUNT_DETAIL")
+@Table(name="Account")
 public class Account
 {
     @Id
-    @Column(name="ID")
+    @Column(name="AUTH_USER_ACCOUNT_ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column(name="USERNAME", nullable = false)

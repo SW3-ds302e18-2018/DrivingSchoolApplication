@@ -7,10 +7,10 @@ import javax.persistence.*;
  * such as the username, password and whether the account is active
  */
 @Entity
-@Table(name="ACCOUNT")
+@Table(name="USER")
 public class User {
     @Id
-    @Column(name="ID")
+    @Column(name="USER_ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @Column(name="USERNAME", nullable = false, unique = true)
