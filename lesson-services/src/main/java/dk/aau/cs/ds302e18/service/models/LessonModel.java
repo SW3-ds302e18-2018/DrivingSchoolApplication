@@ -15,20 +15,8 @@ public class LessonModel
     //final so that lesson type cannot be changed once it's been set.
     //This is to prevent lessons from changing type after compeletion.
     //It lesson needs to be changed, a new lesson must be created.
-    private boolean isSigned;
-    private long courseId;
-    private CourseType courseType;
     private LessonState lessonState;
-
-    public CourseType getCourseType()
-    {
-        return courseType;
-    }
-
-    public void setCourseType(CourseType courseType)
-    {
-        this.courseType = courseType;
-    }
+    private long courseId;
 
     public LessonType getLessonType()
     {
