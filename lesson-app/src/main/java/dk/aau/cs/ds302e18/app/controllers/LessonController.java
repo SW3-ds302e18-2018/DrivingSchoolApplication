@@ -113,11 +113,17 @@ public class LessonController
     @PreAuthorize("hasAnyRole('ROLE_INSTRUCTOR', 'ROLE_ADMIN')")
     public String getAddLessonForm(Model model)
     {
-        ArrayList<Account> userAccounts = findAccountsOfType("USER");
+        ArrayList<Account> userAccounts = findAccountsOfType("STUDENT");
         model.addAttribute("userAccountlist", userAccounts);
 
-        ArrayList<Account> instrutorAccounts = findAccountsOfType("ADMIN");
-        model.addAttribute("instructorAccountList", instrutorAccounts);
+        ArrayList<Account> instructors = findAccountsOfType("INSTRUCTOR");
+        ArrayList<Account> admins = findAccountsOfType("ADMIN");
+        ArrayList<Account> instructorList = new ArrayList<>();
+
+        instructorList.addAll(instructors);
+        instructorList.addAll(admins);
+
+        model.addAttribute("instructorAccountList", instructorList);
 
         List<Course> courses = this.courseService.getAllCourseRequests();
         model.addAttribute("courseList", courses);
@@ -153,11 +159,17 @@ public class LessonController
     {
         Lesson lesson = this.lessonService.getLesson(id);
 
-        ArrayList<Account> userAccounts = findAccountsOfType("USER");
+        ArrayList<Account> userAccounts = findAccountsOfType("STUDENT");
         model.addAttribute("userAccountlist", userAccounts);
 
-        ArrayList<Account> instrutorAccounts = findAccountsOfType("ADMIN");
-        model.addAttribute("instructorAccountList", instrutorAccounts);
+        ArrayList<Account> instructors = findAccountsOfType("INSTRUCTOR");
+        ArrayList<Account> admins = findAccountsOfType("ADMIN");
+        ArrayList<Account> instructorList = new ArrayList<>();
+
+        instructorList.addAll(instructors);
+        instructorList.addAll(admins);
+
+        model.addAttribute("instructorAccountList", instructorList);
 
         model.addAttribute("lesson", lesson);
 
