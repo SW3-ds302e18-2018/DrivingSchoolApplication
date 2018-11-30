@@ -24,8 +24,8 @@
 <div layout:fragment="content">
     <div class="container main-content">
         <h2><span th:text="${username}"></span>, here are the finished lessons within the time period:</h2>
-        <h4>There are <span th:text="${salaryLessonTotal}"></span> lessons with <span th:text="${uniqueCourseIdTotal}"></span> unique course ids.<br>
-            <span th:text="${courseTypeBLessonTotal}"></span> of them are type B. <span th:text="${courseTypeBELessonTotal}"></span> of them are type BE. <span th:text="${courseTypeALessonTotal}"></span> of them are type A.</h4>
+        <h4>There are <span th:text="${salaryLessonTotal}"></span> Lessons with <span th:text="${uniqueCourseIdTotal}"></span> unique Course Ids.<br>
+            Type B: <span th:text="${courseTypeBLessonTotal}"></span> | Type BE: <span th:text="${courseTypeBELessonTotal}"></span> | Type A: <span th:text="${courseTypeALessonTotal}"></span></h4>
         <br><hr>
         <h5>Search within time period:</h5>
         <form method="post" th:action="'/salary'">
