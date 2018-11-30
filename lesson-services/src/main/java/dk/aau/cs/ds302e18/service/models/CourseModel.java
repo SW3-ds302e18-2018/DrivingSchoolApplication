@@ -65,14 +65,6 @@ public class CourseModel {
         this.courseStartDate = courseStartDate;
     }
 
-    public CourseType getCourseType() {
-        return courseType;
-    }
-
-    public void setCourseType(CourseType courseType) {
-        this.courseType = courseType;
-    }
-
     public String getCourseLocation() {
         return courseLocation;
     }
