@@ -14,23 +14,10 @@ public class LessonModel
     private String lessonLocation;
     private LessonState lessonState;
     private long courseId;
-    private boolean signed;
 
-    private CourseType courseType;
-
-    public CourseType getCourseType()
+    public LessonType getLessonType()
     {
-        return courseType;
-    }
-
-    public void setCourseType(CourseType courseType)
-    {
-        this.courseType = courseType;
-    }
-
-    public boolean isSigned()
-    {
-        return signed;
+        return lessonType;
     }
 
     public void setLessonType(LessonType lessonType)

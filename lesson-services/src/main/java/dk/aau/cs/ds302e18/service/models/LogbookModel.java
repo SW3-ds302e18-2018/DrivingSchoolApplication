@@ -1,40 +1,102 @@
 package dk.aau.cs.ds302e18.service.models;
 
-public class LogbookModel {
+import org.springframework.format.annotation.DateTimeFormat;
 
-    private long courseID;
-    private String student;
-    private boolean isActive;
+import java.util.Date;
 
-    public long getCourseID() {
-        return courseID;
+public class LessonModel
+{
+    private LessonType lessonType;
+    private String studentList;
+    private String lessonInstructor;
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
+    private Date lessonDate;
+    private String lessonLocation;
+    //final so that lesson type cannot be changed once it's been set.
+    //This is to prevent lessons from changing type after compeletion.
+    //It lesson needs to be changed, a new lesson must be created.
+    private LessonState lessonState;
+    private long courseId;
+
+    public LessonType getLessonType()
+    {
+        return lessonType;
     }
 
-    public void setCourseID(long courseID) {
-        this.courseID = courseID;
+    public void setLessonType(LessonType lessonType)
+    {
+        this.lessonType = lessonType;
     }
 
-    public String getStudent() {
-        return student;
+    public String getStudentList()
+    {
+        return studentList;
     }
 
-    public void setStudent(String student) {
-        this.student = student;
+    public void setStudentList(String studentList)
+    {
+        this.studentList = studentList;
     }
 
-    public boolean isActive() {
-        return isActive;
+    public String getLessonInstructor()
+    {
+        return lessonInstructor;
     }
 
-    public void setActive(boolean active) {
-        isActive = active;
+    public void setLessonInstructor(String lessonInstructor)
+    {
+        this.lessonInstructor = lessonInstructor;
     }
 
-    public Logbook translateModelToLogbook(){
-        Logbook logbook = new Logbook();
-        logbook.setCourseID(this.courseID);
-        logbook.setStudent(this.student);
-        logbook.setActive(this.isActive);
-        return logbook;
+    public Date getLessonDate()
+    {
+        return lessonDate;
+    }
+
+    public void setLessonDate(Date lessonDate)
+    {
+        this.lessonDate = lessonDate;
+    }
+
+    public String getLessonLocation()
+    {
+        return lessonLocation;
+    }
+
+    public void setLessonLocation(String lessonLocation)
+    {
+        this.lessonLocation = lessonLocation;
+    }
+
+    public LessonState getLessonState()
+    {
+        return lessonState;
+    }
+
+    public void setLessonState(LessonState lessonState)
+    {
+        this.lessonState = lessonState;
+    }
+
+    public long getCourseId()
+    {
+        return courseId;
+    }
+
+    public void setCourseId(long courseId)
+    {
+        this.courseId = courseId;
+    }
+
+    public Lesson translateModelToLesson(){
+        Lesson lesson = new Lesson();
+        lesson.setLessonType(this.lessonType);
+        lesson.setStudentList(this.studentList);
+        lesson.setLessonInstructor(this.lessonInstructor);
+        lesson.setLessonDate(this.lessonDate);
+        lesson.setLessonLocation(this.lessonLocation);
+        lesson.setLessonState(this.lessonState);
+        lesson.setCourseId(this.courseId);
+        return lesson;
     }
 }

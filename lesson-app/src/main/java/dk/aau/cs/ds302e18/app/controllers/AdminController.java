@@ -2,6 +2,7 @@ package dk.aau.cs.ds302e18.app.controllers;
 
 import dk.aau.cs.ds302e18.app.auth.*;
 import dk.aau.cs.ds302e18.app.domain.AccountViewModel;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -24,13 +25,14 @@ public class AdminController
     private final UserRepository userRepository;
 
     public AdminController(AccountRespository accountRespository, AuthGroupRepository authGroupRepository,
-                             UserRepository userRepository) {
+                           UserRepository userRepository) {
         this.accountRespository = accountRespository;
         this.authGroupRepository = authGroupRepository;
         this.userRepository = userRepository;
     }
 
     @GetMapping(value = "/admin")
+    @PreAuthorize("hasAnyRole('ROLE_INSTRUCTOR', 'ROLE_ADMIN')")
     public String getAdminPage(Model model)
     {
         List<AccountViewModel> accountViewModelList = new ArrayList<>();
@@ -61,6 +63,7 @@ public class AdminController
 
 
     @GetMapping(value = "/admin/{username}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String getAdminPageForUser(Model model, @PathVariable String username)
     {
         model.addAttribute("user", accountRespository.findByUsername(username));
@@ -71,15 +74,16 @@ public class AdminController
 
 
     @RequestMapping(value = "/adminChangeDetails", method = RequestMethod.POST)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public RedirectView changeAccountDetailsAdmin(@RequestParam("Username") String username,
                                                   @RequestParam("FirstName") String firstName,
-                                             @RequestParam("LastName") String lastName,
-                                             @RequestParam("Email") String email,
-                                             @RequestParam("PhoneNumber") String phoneNumber,
-                                             @RequestParam("Birthday") String birthday,
-                                             @RequestParam("Address") String address,
-                                             @RequestParam("City") String city,
-                                             @RequestParam("Zip") int zip)
+                                                  @RequestParam("LastName") String lastName,
+                                                  @RequestParam("Email") String email,
+                                                  @RequestParam("PhoneNumber") String phoneNumber,
+                                                  @RequestParam("Birthday") String birthday,
+                                                  @RequestParam("Address") String address,
+                                                  @RequestParam("City") String city,
+                                                  @RequestParam("Zip") int zip)
     {
         Account account = new Account();
         account.setUsername(username);
@@ -97,6 +101,7 @@ public class AdminController
     }
 
     @RequestMapping(value = "/adminChangePassword", method = RequestMethod.POST)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public RedirectView resetAccountPassword(
             @RequestParam("Username") String username,
             @RequestParam("Password") String password
@@ -116,6 +121,7 @@ public class AdminController
     }
 
     @RequestMapping(value = "/adminChangeRole", method = RequestMethod.POST)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public RedirectView changeRole(
             @RequestParam("Username") String username,
             @RequestParam("Role") String role
@@ -140,7 +146,7 @@ public class AdminController
         return (gravatar);
     }
 
-    private String getAccountUsername()
+    public String getAccountUsername()
     {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = ((UserDetails) principal).getUsername();
