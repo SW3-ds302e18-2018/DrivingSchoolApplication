@@ -88,10 +88,9 @@
             <div class="right">
                 <form method="post" action="#" th:action="'/course/addCourse'" th:object="${courseModel}">
                     <h3 style="margin-left: 3%">Add new course</h3>
-                    <h4 style="margin-left: 3%">Instructors <span class="glyphicon glyphicon-question-sign"
-                                                                  data-toggle="tooltip"
-                                                                  data-placement="top"
-                                                                  title="Instructor that will be assigned the theory part of the course"></span>
+                    <h4 style="margin-left: 3%">Instructors <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip"
+                                          data-placement="top"
+                                          title="Instructor that will be assigned the theory part of the course"></span>
                     </h4>
                     <div class="container">
                         <select class="selectpicker" data-style="btn-info" data-live-search="true"
@@ -101,10 +100,9 @@
                                     th:value="${instructorAccount.username}"></option>
                         </select>
                     </div>
-                    <h4 style="margin-left: 3%">Students <span class="glyphicon glyphicon-question-sign"
-                                                               data-toggle="tooltip"
-                                                               data-placement="top"
-                                                               title="Students that will be participating in the course. Click on several students to select more than one."></span>
+                    <h4 style="margin-left: 3%">Students <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip"
+                                       data-placement="top"
+                                       title="Students that will be participating in the course. Click on several students to select more than one."></span>
                     </h4>
                     <div class="container">
                         <select class="selectpicker" data-style="btn-info" data-live-search="true" multiple
@@ -139,99 +137,6 @@
     </div>
     <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script th:src="@{/js/table.js}"></script>
-    <!-- Modal 1 -->
-    <div class="modal fade" id="modal1" tabindex="-1" role="dialog" aria-labelledby="modal1Title" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLongTitle">Available Courses</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <h3>Add Initial Theory Lessons <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip"
-                                                         data-placement="top"
-                                                         title="Option to add theory lessons at certain times of the week."></span>
-                    </h3>
-                    <form method="post" action="#" th:action="'/course/courseAddLessons'">
-                        <h4> Lessons Will Be Distributed After Date <span class="glyphicon glyphicon-question-sign"
-                                                                          data-toggle="tooltip" data-placement="top"
-                                                                          title="From what date the lessons will be distributed. So if startdate is an monday and Tuesday is chosen in weekdays, every tuesday from the startdate will be distributed lessons."></span>
-                        </h4>
-                        <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
-                            <input th:id="startingPoint" th:name="startingPoint" type="text"
-                                   class="form-control datetimepicker-input"
-                                   data-target="#datetimepicker1" th:value="${course != null} ? ${course.startingPoint}"/>
-                            <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
-                                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
-                            </div>
-                        </div>
-                        <script type="text/javascript">
-                            $.fn.datetimepicker.Constructor.Default = $.extend($.fn.datetimepicker.Constructor.Default, {
-                                icons: {
-                                    time: 'fas fa-clock',
-                                    date: 'fas fa-calendar',
-                                    up: 'fas fa-arrow-up',
-                                    down: 'fas fa-arrow-down',
-                                    previous: 'fas fa-chevron-left',
-                                    next: 'fas fa-chevron-right',
-                                    today: 'fas fa-calendar-check-o',
-                                    clear: 'fas fa-trash',
-                                    close: 'fas fa-times'
-                                },
-                                format: 'YYYY-MM-DD HH:mm'
-                            });
-                        </script>
-
-                        <div class="form-row">
-                            <div class="col">
-                                <h4>Weekdays <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip"
-                                                   data-placement="top" title="Which weekday theory lessons will be held."></span>
-                                </h4>
-                                <div class="container">
-                                    <select class="selectpicker" data-style="btn-info" data-live-search="true" multiple
-                                            th:name="weekdaysIntArray">
-                                        <option th:value="1">Monday</option>
-                                        <option th:value="2">Tuesday</option>
-                                        <option th:value="3">Wednesday</option>
-                                        <option th:value="4">Thursday</option>
-                                        <option th:value="5">Friday</option>
-                                        <option th:value="6">Saturday</option>
-                                        <option th:value="0">Sunday</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-row">
-                            <div class="col">
-                                <h4> Number of Lessons </h4>
-                                <input th:id="numberLessons" th:name="numberLessons" type="text" class="form-control"
-                                       placeholder="Number lessons" th:value="${course != null} ? ${course.numberLessons}"/>
-                            </div>
-                        </div>
-                        <div class="form-row">
-                            <div class="col">
-                                <h4> Number Lessons a Day <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip"
-                                                                data-placement="top"
-                                                                title="Number of lessons in a day. A second lesson will be placed right afterwards the first and a third lesson right after the second and so on."></span>
-                                </h4>
-                                <input thid="numberLessonsADay" th:name="numberLessonsADay" type="text" class="form-control"
-                                       placeholder="Number Lessons a day"
-                                       th:value="${course != null} ? ${course.numberLessonsADay}"/>
-                            </div>
-                        </div>
-                        <div style="margin-top: 1%">
-                            <button type="submit" class="btn btn-primary">Submit</button>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 mb-4 column">
-            </div>
-        </div>
-    </div>
 </div>
 </body>
 </html>
