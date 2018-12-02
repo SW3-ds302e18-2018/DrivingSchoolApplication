@@ -1,5 +1,6 @@
 package dk.aau.cs.ds302e18.app.controllers;
 
+import dk.aau.cs.ds302e18.app.SortByCourseID;
 import dk.aau.cs.ds302e18.app.auth.Account;
 import dk.aau.cs.ds302e18.app.auth.AccountRespository;
 import dk.aau.cs.ds302e18.app.auth.AuthGroup;
@@ -22,7 +23,6 @@ import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -113,11 +113,11 @@ public class LessonController
     @PreAuthorize("hasAnyRole('ROLE_INSTRUCTOR', 'ROLE_ADMIN')")
     public String getAddLessonForm(Model model)
     {
-        ArrayList<Account> userAccounts = findAccountsOfType("STUDENT");
-        model.addAttribute("userAccountlist", userAccounts);
+        List<Account> studentAccounts = findAccountsOfType("STUDENT");
+        model.addAttribute("studentAccountlist", studentAccounts);
 
-        ArrayList<Account> instructors = findAccountsOfType("INSTRUCTOR");
-        ArrayList<Account> admins = findAccountsOfType("ADMIN");
+        List<Account> instructors = findAccountsOfType("INSTRUCTOR");
+        List<Account> admins = findAccountsOfType("ADMIN");
         ArrayList<Account> instructorList = new ArrayList<>();
 
         instructorList.addAll(instructors);
@@ -128,7 +128,7 @@ public class LessonController
         List<Course> courses = this.courseService.getAllCourseRequests();
         model.addAttribute("courseList", courses);
 
-        return "lesson-view";
+        return "add-lesson";
     }
 
     /* Posts a newly added lesson in the lessons list on the website */
@@ -159,11 +159,11 @@ public class LessonController
     {
         Lesson lesson = this.lessonService.getLesson(id);
 
-        ArrayList<Account> userAccounts = findAccountsOfType("STUDENT");
-        model.addAttribute("userAccountlist", userAccounts);
+        List<Account> studentAccounts = findAccountsOfType("STUDENT");
+        model.addAttribute("studentAccountlist", studentAccounts);
 
-        ArrayList<Account> instructors = findAccountsOfType("INSTRUCTOR");
-        ArrayList<Account> admins = findAccountsOfType("ADMIN");
+        List<Account> instructors = findAccountsOfType("INSTRUCTOR");
+        List<Account> admins = findAccountsOfType("ADMIN");
         ArrayList<Account> instructorList = new ArrayList<>();
 
         instructorList.addAll(instructors);
@@ -173,7 +173,11 @@ public class LessonController
 
         model.addAttribute("lesson", lesson);
 
+        List<Account> studentsBelongingToLesson = findStudentsBelongingToLesson(lesson);
+        model.addAttribute("studentsBelongingToLesson", studentsBelongingToLesson);
+
         List<Course> courses = this.courseService.getAllCourseRequests();
+        courses.sort(new SortByCourseID());
         model.addAttribute("courseList", courses);
 
         String lessonYear = String.valueOf(Math.addExact(1900,lesson.getLessonDate().getYear()));
@@ -195,7 +199,7 @@ public class LessonController
         model.addAttribute("lesson", lesson);
         model.addAttribute("lessonModel", new LessonModel());
 
-        return "lesson-view";
+        return "add-lesson";
     }
 
     @GetMapping(value = "/gdpr")
@@ -215,19 +219,22 @@ public class LessonController
     }
 
 
-    private ArrayList<Account> findAccountsOfType(String accountType){
-        List<AuthGroup> users = authGroupRepository.findAll();
-        ArrayList<AuthGroup> studentsAuthList = new ArrayList<>();
-        for(AuthGroup user: users){
-            if(user.getAuthGroup().equals(accountType)){
-                studentsAuthList.add(user);
-            }
+    private List<Account> findAccountsOfType(String accountType) {
+
+        List<AuthGroup> authGroups = this.authGroupRepository.findAll();
+        List<Account> accountList = this.accountRespository.findAll();
+
+        List<Account> accountsOfSelectedType = new ArrayList<>();
+
+        /* When an account is created it is at the same time added to authGroup. Elements in a result-set are per default
+           fetched with the order they were entered in the database, so account[0] will be the same as the
+           authGroup[0]. This means that we do not have to manually check which authGroups matches which accounts. */
+        for (int i = 0; i < accountList.size(); i++) {
+            if (authGroups.get(i).getAuthGroup().equals(accountType))
+                accountsOfSelectedType.add(accountList.get(i));
         }
-        ArrayList<Account> studentAccounts = new ArrayList<>();
-        for(AuthGroup studentAuth : studentsAuthList){
-            studentAccounts.add(accountRespository.findByUsername(studentAuth.getUsername()));
-        }
-        return studentAccounts;
+
+        return accountsOfSelectedType;
     }
 
     @ModelAttribute("gravatar")
@@ -246,5 +253,29 @@ public class LessonController
         return username;
     }
 
+    private List<Account> findStudentsBelongingToLesson(Lesson lesson) {
+        List<Account> studentAccounts = findAccountsOfType("STUDENT");
+        List<String> studentUsernamesInCourseAsStringArray = saveStringsSeparatedByCommaAsArray(lesson.getStudentList());
+        List<Account> studentAccountsBelongingToLesson = new ArrayList<>();
+        for (Account studentAccount : studentAccounts) {
+            for (String studentUsernameInLesson : studentUsernamesInCourseAsStringArray) {
+                if (studentUsernameInLesson.equals((studentAccount.getUsername()))) {
+                    studentAccountsBelongingToLesson.add(studentAccount);
+                    System.out.println(studentAccount.getUsername());
+                }
+            }
+
+        }
+        return studentAccountsBelongingToLesson;
+    }
+
+    private ArrayList<String> saveStringsSeparatedByCommaAsArray(String string) {
+        ArrayList<String> studentList = new ArrayList<>();
+        String[] parts = string.split(",");
+        for (String part : parts) {
+            studentList.add(part);
+        }
+        return studentList;
+    }
 
 }

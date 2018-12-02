@@ -44,8 +44,7 @@
     </style>
     <!-- Sources for select -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.7.5/css/bootstrap-select.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.7.5/css/bootstrap-select.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.7.5/js/bootstrap-select.min.js"></script>
@@ -72,6 +71,8 @@
                     <th scope="col">#Course</th>
                     <th scope="col">Created by Instructor</th>
                     <th scope="col">Start Date</th>
+                    <th scope="col">Location</th>
+                    <th scope="col">Number of Students</th>
                     </thead>
                     <tbody>
                     <tr th:each="course : ${courses}">
@@ -79,6 +80,8 @@
                                            th:text="${course.courseTableID}"></a></th>
                         <td th:text="${course.instructorFullName}"></td>
                         <td th:text="${course.courseStartDate}"></td>
+                        <td th:text="${course.courseLocation}"></td>
+                        <td th:text="${course.numberStudents}"></td>
                     </tr>
                     </tbody>
                 </table>
@@ -87,10 +90,11 @@
         <div class="split right">
             <div class="right">
                 <form method="post" action="#" th:action="'/course/addCourse'" th:object="${courseModel}">
-                    <h3 style="margin-left: 3%">Add new course</h3>
-                    <h4 style="margin-left: 3%">Instructors <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip"
-                                          data-placement="top"
-                                          title="Instructor that will be assigned the theory part of the course"></span>
+                    <h3 style="margin-left: 1.5%">Add new course</h3>
+                    <h4 style="margin-left: 1.5%">Instructors <span class="glyphicon glyphicon-question-sign"
+                                                                  data-toggle="tooltip"
+                                                                  data-placement="top"
+                                                                  title="Instructor that will be assigned the theory part of the course"></span>
                     </h4>
                     <div class="container">
                         <select class="selectpicker" data-style="btn-info" data-live-search="true"
@@ -100,9 +104,10 @@
                                     th:value="${instructorAccount.username}"></option>
                         </select>
                     </div>
-                    <h4 style="margin-left: 3%">Students <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip"
-                                       data-placement="top"
-                                       title="Students that will be participating in the course. Click on several students to select more than one."></span>
+                    <h4 style="margin-left: 1.5%">Students <span class="glyphicon glyphicon-question-sign"
+                                                               data-toggle="tooltip"
+                                                               data-placement="top"
+                                                               title="Students that will be participating in the course. Click on several students to select more than one."></span>
                     </h4>
                     <div class="container">
                         <select class="selectpicker" data-style="btn-info" data-live-search="true" multiple
@@ -122,7 +127,7 @@
                     </div>
                     <div class="col">
                         <h4>Location</h4>
-                        <input th:name="courseLocation" required/>
+                        <input th:name="courseLocation" placeholder="Location" required/>
                     </div>
 
                     <div class="form-row">

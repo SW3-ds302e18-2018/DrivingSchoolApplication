@@ -1,0 +1,125 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}"
+    lang="en">
+
+<head>
+    <title>Home</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.7.5/css/bootstrap-select.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.7.5/js/bootstrap-select.min.js"></script>
+
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css" />
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU"
+        crossorigin="anonymous">
+</head>
+
+<body>
+
+    <div layout:fragment="content">
+        <div class="container main-content">
+            <h2>Add Lesson</h2>
+            <form method="post" action="#" th:action="${lesson != null} ? '/lessons/'+${lesson.id} : '/lessons'"
+                th:object="${lessonModel}">
+                <div class="form-row">
+                    <div class="col">
+                        <h3>Lesson Type</h3>
+                        <select class="selectpicker" data-style="btn-info" id="lessonType" name="lessonType">
+                            <option value="THEORY_LESSON" selected="selected">Theory Lesson</option>
+                            <option value="PRACTICAL_LESSON">Practical Lesson</option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <h3>Student List</h3>
+                        <select class="selectpicker" data-style="btn-info" data-live-search="true" multiple
+                                th:name="studentList">
+                            <option th:each="studentAccount : ${studentAccountlist}"
+                                    th:text="${studentAccount.firstName + ' ' + studentAccount.lastName}"
+                                    th:value="${studentAccount.username}"></option>
+                        </select>
+                        <!--input th:id="studentList" th:name="studentList" type="text" class="form-control" placeholder="Students" th:value="${lesson != null} ? ${lesson.studentList}"/-->
+                    </div>
+                </div>
+
+                <h3>Date</h3></br>
+                <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                    <input th:id="lessonDate" th:name="lessonDate" type="text" class="form-control datetimepicker-input"
+                        data-target="#datetimepicker1" th:value="${calendarDate}" />
+                    <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
+                        <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                    </div>
+                </div>
+                <script type="text/javascript">
+                    $.fn.datetimepicker.Constructor.Default = $.extend($.fn.datetimepicker.Constructor.Default, {
+                        icons: {
+                            time: 'fas fa-clock',
+                            date: 'fas fa-calendar',
+                            up: 'fas fa-arrow-up',
+                            down: 'fas fa-arrow-down',
+                            previous: 'fas fa-chevron-left',
+                            next: 'fas fa-chevron-right',
+                            today: 'fas fa-calendar-check-o',
+                            clear: 'fas fa-trash',
+                            close: 'fas fa-times'
+                        },
+                        format: 'YYYY-MM-DD HH:mm'
+                    });
+
+                </script>
+
+
+                <div class="form-row">
+                    <div class="col">
+                        <h3>Instructor</h3>
+                        <select class="selectpicker" data-style="btn-info" data-live-search="true"
+                                th:name="lessonInstructor">
+                            <option th:each="instructorAccount : ${instructorAccountList}"
+                                    th:text="${instructorAccount.firstName + ' ' + instructorAccount.lastName}"
+                                    th:value="${instructorAccount.username}"></option>
+                        </select>
+                    </div>
+                    <div class="col">
+                        <h3>Location</h3>
+                        <input th:name="lessonLocation" th:id="lessonLocation" placeholder="Location" required/>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="col">
+                        <h3>Lesson State</h3>
+                        <p th:text="${lessonState}"></p>
+                        <select class="selectpicker" data-style="btn-info" id="lessonState" name="lessonState">
+                            <option value="PENDING">Pending</option>
+                            <option value="COMPLETED_UNSIGNED">Completed (Unsigned)</option>
+                            <option value="COMPLETED_SIGNED">Completed (Signed)</option>
+                            <option value="STUDENT_ABSENT">Student Absent</option>
+                        </select>
+                    </div>
+
+                    <div class="col">
+                        <h3>Course ID</h3>
+                        <select class="selectpicker" data-style="btn-info" data-live-search="true"
+                                th:name="courseList">
+                            <option th:each="course : ${courseList}"
+                                    th:text="${course.courseTableID}"
+                                    th:value="${course.courseTableID}"></option>
+                        </select>
+                    </div>
+
+                </div>
+                <div class="form-row">
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </form>
+            <a th:href="@{/lessons}">Return to All Lessons</a>
+        </div>
+        <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+        <script th:src="@{/js/table.js}"></script>
+    </div>
+</body>
+
+</html>
