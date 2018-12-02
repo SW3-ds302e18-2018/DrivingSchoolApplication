@@ -39,7 +39,7 @@ public class ScheduledTasks {
 
                     Statement usernameResultStatement = conn.createStatement();
 
-                    ResultSet usernameResultSet = usernameResultStatement.executeQuery("SELECT `email`, `phone_number`, `notification_reminder` FROM `account_detail` WHERE `username` = '" + studentUsername + "'");
+                    ResultSet usernameResultSet = usernameResultStatement.executeQuery("SELECT `email`, `phone_number`, `notification_reminder` FROM `account` WHERE `username` = '" + studentUsername + "'");
 
                     while(usernameResultSet.next()) {
 
@@ -62,7 +62,7 @@ public class ScheduledTasks {
                         String phoneNumber = usernameResultSet.getString("phone_number");
 
                         String message = "Hello " + studentUsername + ",\n You have a lesson at " + lessonLocation + " on the\n" + lessonDate;
-                        Notification notification = new Notification(message, "+45" + phoneNumber, email); // +45 is the region code for Denmark.
+                        new Notification(message, "+45" + phoneNumber, email); // +45 is the region code for Denmark.
                     }
 
                     usernameResultSet.close();

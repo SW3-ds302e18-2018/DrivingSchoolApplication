@@ -52,6 +52,43 @@ public class LessonController
         this.courseService = courseService;
     }
 
+    @GetMapping(value = "/signature/{id}")
+    public String getSignaturePage(Model model, @PathVariable long id)
+    {
+        SignatureCanvas signatureCanvas = new SignatureCanvas();
+        System.out.println("GETSIGNATURE" + id);
+
+        String imagePath = "https://s3.eu-west-2.amazonaws.com/p3-project/"+getAccountUsername()+id+".png";
+
+        SignatureModel signatureModel = new SignatureModel();
+
+        List<Lesson> lessons = lessonService.getAllLessons();
+
+        List<SignatureModel> signatureList = new ArrayList<>();
+
+        for (Lesson lesson: lessons)
+        {
+            if (lesson.getId() == id)
+            {
+                String[] studentListArray = lesson.getStudentList().split(",");
+                for (String username: studentListArray)
+                {
+                    signatureModel.setUsername(username);
+                    signatureModel.setSignatureUrl("https://s3.eu-west-2.amazonaws.com/p3-project/"+username+id+".png");
+                    signatureList.add(signatureModel);
+                }
+            }
+        }
+
+       // signatureCanvas.getSignature("p3-project", signatureId);
+        model.addAttribute("IMAGETEST", imagePath);
+        model.addAttribute("SignatureList", signatureList);
+
+        System.out.println(signatureList);
+        System.out.println("Username" + signatureList.get(0).getUsername() + "Signature" + signatureList.get(0).getSignatureUrl());
+
+        return "signature";
+    }
 
     @GetMapping(value = "/canvas/{id}")
     public String getCanvasPage(HttpSession session, @PathVariable long id)
@@ -67,15 +104,15 @@ public class LessonController
         System.out.println("Received");
         System.out.println("Canvas ID" + id);
 
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = ((UserDetails)principal).getUsername();
-
         SignatureCanvas signatureCanvas = new SignatureCanvas();
 
-        signatureCanvas.upload("p3-project", username, canvasModel.getDataUrl());
+        String signatureId = getAccountUsername()+id;
+
+        signatureCanvas.upload("p3-project", signatureId, canvasModel.getDataUrl());
 
         return "canvas";
     }
+
 
     @GetMapping(value = "/lessons")
     @PreAuthorize("hasAnyRole('ROLE_STUDENT', 'ROLE_ADMIN', 'ROLE_INSTRUCTOR')")

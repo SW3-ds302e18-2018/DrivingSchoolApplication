@@ -1,0 +1,31 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.w3.org/1999/xhtml" layout:decorate="~{layout}" lang="en">
+<head>
+    <title>Home</title>
+    <style>
+        .centerpane {
+            width: 60%;
+            height: available;
+            max-height: 350px;
+            position: absolute;
+            top: 22%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+    </style>
+</head>
+<body>
+
+<div layout:fragment="content">
+    <div class="container main-content centerpane">
+        <h1>Signatures</h1>
+        <h3>Here you can view the signatures from all Students and Instructors.</h3>
+        <img th:src="${IMAGETEST}">
+    </div>
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script th:src="@{/js/table.js}"></script>
+</div>
+</body>
+</html>
