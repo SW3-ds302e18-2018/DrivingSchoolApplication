@@ -7,6 +7,7 @@ import java.util.Date;
 
 public class CourseModel {
     private String studentUsernames;
+    private String instructorUsername;
     private long courseTableID;
     private CourseType courseType;
     private Date courseStartDate;
@@ -14,20 +15,9 @@ public class CourseModel {
     private String weekdays;
     private int numberStudents;
 
-
-    /* Part of courseModel that can be changed to path variables */
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-    private Date startingPoint;
-    private ArrayList<Integer> weekdaysIntArray;
-    private int numberLessons;
-    private int numberLessonsADay;
-    private String studentList;
-    private LessonType lessonType;
-    private String instructorUsername;
-    private boolean isSigned;
-    private ArrayList<String> StudentNameList;
+    /* Spring does not recognize an checkbox RequestParameter if it is unchecked. One of the ways to avoid that is to
+       bind the boolean value to an variable in a model. */
     private boolean deleteAssociatedLessons;
-    private String studentToUpdate;
 
 
     public String getStudentUsernames() {
@@ -38,25 +28,6 @@ public class CourseModel {
         this.studentUsernames = studentUsernames;
     }
 
-    public Date getStartingPoint() {
-        return startingPoint;
-    }
-
-    public void setStartingPoint(Date startingPoint) {
-        this.startingPoint = startingPoint;
-    }
-
-    public ArrayList<Integer> getWeekdaysIntArray() {
-        return weekdaysIntArray;
-    }
-
-    public void setWeekdaysIntArray(ArrayList<Integer> weekdaysIntArray) {
-        this.weekdaysIntArray = weekdaysIntArray;
-    }
-
-    public int getNumberLessons() {
-        return numberLessons;
-    }
 
     public Date getCourseStartDate() {
         return courseStartDate;
@@ -64,34 +35,6 @@ public class CourseModel {
 
     public void setCourseStartDate(Date courseStartDate) {
         this.courseStartDate = courseStartDate;
-    }
-
-    public void setNumberLessons(int numberLessons) {
-        this.numberLessons = numberLessons;
-    }
-
-    public int getNumberLessonsADay() {
-        return numberLessonsADay;
-    }
-
-    public void setNumberLessonsADay(int numberLessonsADay) {
-        this.numberLessonsADay = numberLessonsADay;
-    }
-
-    public String getStudentList() {
-        return studentList;
-    }
-
-    public void setStudentList(String studentList) {
-        this.studentList = studentList;
-    }
-
-    public LessonType getLessonType() {
-        return lessonType;
-    }
-
-    public void setLessonType(LessonType lessonType) {
-        this.lessonType = lessonType;
     }
 
     public long getCourseTableID() {
@@ -118,21 +61,6 @@ public class CourseModel {
         this.instructorUsername = instructorUsername;
     }
 
-    public boolean isSigned() {
-        return isSigned;
-    }
-
-    public void setSigned(boolean signed) {
-        isSigned = signed;
-    }
-
-    public ArrayList<String> getStudentNameList() {
-        return StudentNameList;
-    }
-
-    public void setStudentNameList(ArrayList<String> studentNameList) {
-        StudentNameList = studentNameList;
-    }
 
     public boolean isDeleteAssociatedLessons() {
         return deleteAssociatedLessons;
@@ -140,14 +68,6 @@ public class CourseModel {
 
     public void setDeleteAssociatedLessons(boolean deleteAssociatedLessons) {
         this.deleteAssociatedLessons = deleteAssociatedLessons;
-    }
-
-    public String getStudentToUpdate() {
-        return studentToUpdate;
-    }
-
-    public void setStudentToUpdate(String studentToUpdate) {
-        this.studentToUpdate = studentToUpdate;
     }
 
     public CourseType getCourseType() {
@@ -174,28 +94,18 @@ public class CourseModel {
         this.numberStudents = numberStudents;
     }
 
-    public Course translateModelToCourse(){
-        Course course = new Course();
-        course.setInstructorUsername(this.instructorUsername);
-        course.setStudentUsernames(this.studentUsernames);
-        return course;
-    }
-
     @Override
     public String toString() {
         return "CourseModel{" +
                 "studentUsernames='" + studentUsernames + '\'' +
-                ", courseTableID=" + courseTableID +
-                ", startingPoint=" + startingPoint +
-                ", weekdaysIntArray=" + weekdaysIntArray +
-                ", numberLessons=" + numberLessons +
-                ", numberLessonsADay=" + numberLessonsADay +
-                ", studentList='" + studentList + '\'' +
-                ", lessonType=" + lessonType +
-                ", courseLocation='" + courseLocation + '\'' +
                 ", instructorUsername='" + instructorUsername + '\'' +
-                ", isSigned=" + isSigned +
-                ", StudentNameList=" + StudentNameList +
+                ", courseTableID=" + courseTableID +
+                ", courseType=" + courseType +
+                ", courseStartDate=" + courseStartDate +
+                ", courseLocation='" + courseLocation + '\'' +
+                ", weekdays='" + weekdays + '\'' +
+                ", numberStudents=" + numberStudents +
+                ", deleteAssociatedLessons=" + deleteAssociatedLessons +
                 '}';
     }
 }

@@ -66,13 +66,12 @@
                 <h3 style="padding-bottom: 1%">Manage Students</h3>
                 
                 <form method="post" th:action="@{'/course/addStudent/' + ${course.courseTableID}}"
-                      style="padding-bottom: 0.8%"
-                      th:object="${courseModel}">
+                      style="padding-bottom: 0.8%">
                     <div class="form-group mb-4 row">
                         <div class="col-4">
                     <div class="container">
                         <select class="selectpicker" data-style="btn-info"  data-live-search="true"
-                                th:name="studentToUpdate">
+                                th:name="studentToAdd">
                             <option th:each="studentAccount : ${studentAccounts}"
                                     th:text="${studentAccount.firstName + ' ' + studentAccount.lastName}"
                                     th:value="${studentAccount.username}"></option>
@@ -84,16 +83,15 @@
                 </form>
                 <form method="post" th:action="@{'/course/removeStudent/' + ${course.courseTableID}}"
                       style="padding-bottom: 1%"
-                      onsubmit="return confirm('Are you sure you want to remove this student?');"
-                      th:object="${courseModel}">
+                      onsubmit="return confirm('Are you sure you want to remove this student?');">
                     <div class="form-group mb-4 row">
                         <div class="col-12">
                     <div class="container">
                         <select class="selectpicker" data-style="btn-info" multiple data-max-options="3" data-live-search="true"
-                                th:name="studentToUpdate">
-                            <option th:each="studentAccount : ${studentAccounts}"
-                                    th:text="${studentAccount.firstName + ' ' + studentAccount.lastName}"
-                                    th:value="${studentAccount.username}"></option>
+                                th:name="studentToRemove">
+                            <option th:each="studentAccountBelongingToCourse : ${studentAccountsBelongingToCourse}"
+                                    th:text="${studentAccountBelongingToCourse.firstName + ' ' + studentAccountBelongingToCourse.lastName}"
+                                    th:value="${studentAccountBelongingToCourse.username}"></option>
                         </select>
                         <button type="submit" name="submit" value="value" class="btn btn-danger">Remove Student</button>
                     </div>
