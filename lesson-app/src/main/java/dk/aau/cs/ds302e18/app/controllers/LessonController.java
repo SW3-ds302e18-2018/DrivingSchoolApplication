@@ -60,8 +60,6 @@ public class LessonController
 
         String imagePath = "https://s3.eu-west-2.amazonaws.com/p3-project/"+getAccountUsername()+id+".png";
 
-        SignatureModel signatureModel = new SignatureModel();
-
         List<Lesson> lessons = lessonService.getAllLessons();
 
         List<SignatureModel> signatureList = new ArrayList<>();
@@ -73,15 +71,33 @@ public class LessonController
                 String[] studentListArray = lesson.getStudentList().split(",");
                 for (String username: studentListArray)
                 {
+                    Account tempAccount = accountRespository.findByUsername(username);
+                    List<AuthGroup> tempAuthGroup = authGroupRepository.findByUsername(username);
+                    SignatureModel signatureModel = new SignatureModel();
                     signatureModel.setUsername(username);
-                    signatureModel.setSignatureUrl("https://s3.eu-west-2.amazonaws.com/p3-project/"+username+id+".png");
+                    signatureModel.setFirstName(tempAccount.getFirstName());
+                    signatureModel.setLastName(tempAccount.getLastName());
+                    signatureModel.setPosition(tempAuthGroup.get(0).getAuthGroup());
+                    if (signatureCanvas.getSignatureDate("p3-project",
+                        username+id).equals("Sun Dec 02 23:30:02 CET 2018")) {
+                        signatureModel.setSignatureUrl("https://s3.eu-west-2.amazonaws.com/p3-project/notsigned.png");
+                        signatureModel.setSignatureDate("Not signed");
+                    }
+                    else
+                    {
+                        signatureModel.setSignatureUrl("https://s3.eu-west-2.amazonaws.com/p3-project/" + username + id + ".png");
+                        signatureModel.setSignatureDate(signatureCanvas.getSignatureDate("p3-project",
+                                username+id));
+                    }
                     signatureList.add(signatureModel);
                 }
+
+
             }
         }
 
        // signatureCanvas.getSignature("p3-project", signatureId);
-        model.addAttribute("IMAGETEST", imagePath);
+        model.addAttribute("pathid", id);
         model.addAttribute("SignatureList", signatureList);
 
         System.out.println(signatureList);

@@ -3,6 +3,7 @@ package dk.aau.cs.ds302e18.app.domain;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
+import com.amazonaws.services.kms.model.NotFoundException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3Client;
 import com.amazonaws.services.s3.model.GetObjectRequest;
@@ -47,15 +48,26 @@ public class SignatureCanvas
 
     }
 
-    public void getSignature(String bucketName, String imageName)
+    public String getSignatureDate(String bucketName, String imageName)
     {
         AmazonS3 s3 = new AmazonS3Client(new BasicAWSCredentials(ACCESS_KEY, SECRET_KEY));
         Region region = Region.getRegion(Regions.EU_WEST_2);
         s3.setRegion(region);
 
-        S3Object s3Object = s3.getObject(new GetObjectRequest(bucketName, (imageName+".png")));
-        System.out.println(s3Object.getObjectMetadata().getContentType());
-        System.out.println("Content " + s3Object.getObjectContent());
+        String lastModifyed;
+
+        try
+        {
+            S3Object s3Object = s3.getObject(new GetObjectRequest(bucketName, (imageName + ".png")));
+            lastModifyed = String.valueOf(s3Object.getObjectMetadata().getLastModified());
+        }
+        catch(Exception ex)
+        {
+            S3Object s3Object = s3.getObject(new GetObjectRequest(bucketName, ("notsigned.png")));
+            lastModifyed = String.valueOf(s3Object.getObjectMetadata().getLastModified());
+        }
+
+        return lastModifyed;
     }
 
     private static File createFile(String imageName, String imageData) throws IOException
