@@ -56,18 +56,20 @@ public class LessonController
     public String getSignaturePage(Model model, @PathVariable long id)
     {
         SignatureCanvas signatureCanvas = new SignatureCanvas();
-        System.out.println("GETSIGNATURE" + id);
-
-        String imagePath = "https://s3.eu-west-2.amazonaws.com/p3-project/"+getAccountUsername()+id+".png";
 
         List<Lesson> lessons = lessonService.getAllLessons();
-
         List<SignatureModel> signatureList = new ArrayList<>();
+
+        int signed = 0;
+        int unsigned = 0;
 
         for (Lesson lesson: lessons)
         {
             if (lesson.getId() == id)
             {
+                /*
+                 * Student Signatures
+                 */
                 String[] studentListArray = lesson.getStudentList().split(",");
                 for (String username: studentListArray)
                 {
@@ -78,30 +80,54 @@ public class LessonController
                     signatureModel.setFirstName(tempAccount.getFirstName());
                     signatureModel.setLastName(tempAccount.getLastName());
                     signatureModel.setPosition(tempAuthGroup.get(0).getAuthGroup());
+
                     if (signatureCanvas.getSignatureDate("p3-project",
                         username+id).equals("Sun Dec 02 23:30:02 CET 2018")) {
                         signatureModel.setSignatureUrl("https://s3.eu-west-2.amazonaws.com/p3-project/notsigned.png");
                         signatureModel.setSignatureDate("Not signed");
+                        unsigned++;
                     }
                     else
                     {
                         signatureModel.setSignatureUrl("https://s3.eu-west-2.amazonaws.com/p3-project/" + username + id + ".png");
                         signatureModel.setSignatureDate(signatureCanvas.getSignatureDate("p3-project",
                                 username+id));
+                        signed++;
                     }
                     signatureList.add(signatureModel);
                 }
 
+                /*
+                 * Instructor Signature
+                 */
+                Account tempAccount = accountRespository.findByUsername(lesson.getLessonInstructor());
+                SignatureModel signatureModel = new SignatureModel();
+                signatureModel.setUsername(lesson.getLessonInstructor());
+                signatureModel.setFirstName(tempAccount.getFirstName());
+                signatureModel.setLastName(tempAccount.getLastName());
+                signatureModel.setPosition("Instructor");
 
+                if (signatureCanvas.getSignatureDate("p3-project",
+                        lesson.getLessonInstructor()+id).equals("Sun Dec 02 23:30:02 CET 2018")) {
+                    signatureModel.setSignatureUrl("https://s3.eu-west-2.amazonaws.com/p3-project/notsigned.png");
+                    signatureModel.setSignatureDate("Not signed");
+                    unsigned++;
+                }
+                else
+                {
+                    signatureModel.setSignatureUrl("https://s3.eu-west-2.amazonaws.com/p3-project/" + lesson.getLessonInstructor() + id + ".png");
+                    signatureModel.setSignatureDate(signatureCanvas.getSignatureDate("p3-project",
+                            lesson.getLessonInstructor()+id));
+                    signed++;
+                }
+                signatureList.add(signatureModel);
             }
         }
 
-       // signatureCanvas.getSignature("p3-project", signatureId);
         model.addAttribute("pathid", id);
         model.addAttribute("SignatureList", signatureList);
-
-        System.out.println(signatureList);
-        System.out.println("Username" + signatureList.get(0).getUsername() + "Signature" + signatureList.get(0).getSignatureUrl());
+        model.addAttribute("signed", signed);
+        model.addAttribute("unsigned", unsigned);
 
         return "signature";
     }
@@ -296,6 +322,7 @@ public class LessonController
         UserDetails principal = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return principal.getUsername();
     }
+
 
 
 }

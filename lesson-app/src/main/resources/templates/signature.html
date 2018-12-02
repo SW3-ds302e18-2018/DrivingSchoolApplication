@@ -30,7 +30,10 @@
             </nav>
             <h1>Signatures</h1>
             <h3>Here you can view the signatures from all Students and Instructors.</h3>
-
+            <h5>
+            <a th:text="${signed} + ' people already signed this lesson'"></a></br>
+            <a th:text="${unsigned} + ' people haven't signed this lesson"></a></br>
+            </h5>
             <th:block th:each="signature : ${SignatureList}">
                 <tr>
                     <td>
