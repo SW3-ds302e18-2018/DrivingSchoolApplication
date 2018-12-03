@@ -34,6 +34,7 @@
             <th scope="col">Lesson Type</th>
             <th scope="col">Sign Lesson</th>
             <th scope="col">Delete Lesson</th>
+            <th scope="col">View Signatures</th>
             </thead>
             <tbody>
             <tr th:each="lesson : ${lessons}">
@@ -55,6 +56,13 @@
                     <form action="#" th:action="@{'/deletelesson/' + ${lesson.id}}" method="get">
                         <button class="btn btn-primary" th:id="'lessonId' + ${lesson.id}" type="submit">
                             <i>Delete Lesson</i>
+                        </button>
+                    </form>
+                </td>
+                <td>
+                    <form action="#" th:action="@{'/siganture/' + ${lesson.id}}" method="get">
+                        <button class="btn btn-primary" th:id="'lessonId' + ${lesson.id}" type="submit">
+                            <i>Signatures</i>
                         </button>
                     </form>
                 </td>

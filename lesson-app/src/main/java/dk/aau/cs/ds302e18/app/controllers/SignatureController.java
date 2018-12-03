@@ -121,7 +121,7 @@ public class SignatureController
     }
 
     @GetMapping(value = "/signature/{id}")
-    public String getSignaturePage(Model model, @PathVariable long id)
+    public String getSignaturePage(Model model, @PathVariable long id, LessonModel lessonModel)
     {
         SignatureCanvas signatureCanvas = new SignatureCanvas();
 
@@ -197,6 +197,14 @@ public class SignatureController
         model.addAttribute("pathid", id);
         model.addAttribute("SignatureList", signatureList);
         model.addAttribute("SNS", signedNotSigned);
+
+        if (unsigned == 0)
+        {
+            Lesson lesson = this.lessonService.getLesson(id);
+            lessonModel = lesson.translateLessonToModel();
+            lessonModel.setLessonState(LessonState.COMPLETED_SIGNED);
+            this.lessonService.updateLesson(id, lessonModel);
+        }
 
         return "signature";
     }
