@@ -62,8 +62,8 @@ public class CourseController {
         if (courseModel.getStudentUsernames() == null) {
             courseModel.setStudentUsernames("temporal value");
         }
+        Date temporaryDate = new Date();
         if (courseModel.getCourseStartDate() == null) {
-            Date temporaryDate = new Date();
             courseModel.setCourseStartDate(temporaryDate);
         }
         /* Weekdays is not set when adding a course, so it also needs to be an empty value. */
@@ -77,8 +77,12 @@ public class CourseController {
             courseModel.setNumberStudents(studentUsernamesList.size());
         courseService.addCourse(courseModel);
 
-        courseModel.setStudentUsernames("");
-        courseModel.setCourseStartDate(null);
+        /* If studentUsernames or date was empty update them to become empty. */
+        if(courseModel.getStudentUsernames().equals("temporal value"))
+            courseModel.setStudentUsernames("");
+        if(courseModel.getCourseStartDate() == temporaryDate)
+            courseModel.setCourseStartDate(null);
+
         courseModel.setWeekdays("");
         Course latestCourse = courseService.getLastCourseOrderedByID();
         courseService.updateCourse(latestCourse.getCourseTableID(), courseModel);
