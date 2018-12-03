@@ -52,31 +52,6 @@ public class LessonController
         this.courseService = courseService;
     }
 
-
-    @GetMapping(value = "/canvas/{id}")
-    public String getCanvasPage(HttpSession session, @PathVariable long id)
-    {
-        System.out.println("GETMAP" + id);
-        System.out.println(session.getAttribute("testSession"));
-        return "canvas";
-    }
-
-    @PostMapping(value = "/canvas/{id}")
-    public String postCanvasPage(@RequestBody CanvasModel canvasModel, @PathVariable long id)
-    {
-        System.out.println("Received");
-        System.out.println("Canvas ID" + id);
-
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = ((UserDetails)principal).getUsername();
-
-        SignatureCanvas signatureCanvas = new SignatureCanvas();
-
-        signatureCanvas.upload("p3-project", username, canvasModel.getDataUrl());
-
-        return "canvas";
-    }
-
     @GetMapping(value = "/lessons")
     @PreAuthorize("hasAnyRole('ROLE_STUDENT', 'ROLE_ADMIN', 'ROLE_INSTRUCTOR')")
     public String getLessons(Model model)
@@ -243,6 +218,7 @@ public class LessonController
         UserDetails principal = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return principal.getUsername();
     }
+
 
 
 }

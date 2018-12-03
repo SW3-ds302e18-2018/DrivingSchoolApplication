@@ -32,6 +32,7 @@
             <th scope="col">Logbook Owner</th>
             <th scope="col">Logbook Active?</th>
             <th scope="col">Delete Logbook</th>
+            <th scope="col">Export Logbook</th>
             </thead>
             <tbody>
             <tr th:each="logbook : ${allLogbookList}">
@@ -45,6 +46,13 @@
                         <button type="submit" name="submit" value="value" class="btn btn-danger">Delete</button>
                     </form>
                 </td>
+                <th scope="row">
+                    <form action="#" th:action="@{'/logbook/export/' + ${logbook.getId()}}" method="get">
+                        <button class="btn btn-primary" type="submit">
+                            <i>Export Logbook</i>
+                        </button>
+                    </form>
+                </th>
             </tr>
             </tbody>
         </table>

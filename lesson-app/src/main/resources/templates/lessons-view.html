@@ -46,14 +46,14 @@
                 <td th:text="${lesson.lessonState}"></td>
                 <td>
                     <form action="#" th:action="@{'/canvas/' + ${lesson.id}}" method="get">
-                        <button th:id="'lessonId' + ${lesson.id}" type="submit">
-                            <i>Sign Course</i>
+                        <button class="btn btn-primary" th:id="'lessonId' + ${lesson.id}" type="submit">
+                            <i>Sign Lesson</i>
                         </button>
                     </form>
                 </td>
                 <td>
                     <form action="#" th:action="@{'/deletelesson/' + ${lesson.id}}" method="get">
-                        <button th:id="'lessonId' + ${lesson.id}" type="submit">
+                        <button class="btn btn-primary" th:id="'lessonId' + ${lesson.id}" type="submit">
                             <i>Delete Lesson</i>
                         </button>
                     </form>
