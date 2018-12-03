@@ -9,6 +9,7 @@ import dk.aau.cs.ds302e18.app.auth.AuthGroupRepository;
 import dk.aau.cs.ds302e18.app.domain.*;
 import dk.aau.cs.ds302e18.app.service.CourseService;
 import dk.aau.cs.ds302e18.app.service.LessonService;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -47,8 +47,8 @@ public class CourseController {
         setInstructorFullName(courses);
         courses.sort(new SortByCourseID());
 
-        model.addAttribute("instructorAccounts", findInstructors());
-        model.addAttribute("studentAccounts", findStudents());
+        model.addAttribute("instructorAccounts", findAccountsOfType("INSTRUCTOR"));
+        model.addAttribute("studentAccounts", findAccountsOfType("STUDENT"));
         model.addAttribute("courses", courses);
         return "courses-view";
     }
@@ -57,53 +57,54 @@ public class CourseController {
     @PostMapping(value = "/course/addCourse")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ModelAndView addCourse(@ModelAttribute CourseModel courseModel) {
-        /* Prevents that NULL is added as the value, which spring cannot handle when saving the course. */
+        /* Prevents that NULL is added as the value, which spring cannot handle when making an insert statement with empty values.
+           After the course has been saved, the course is updated to empty values. */
         if (courseModel.getStudentUsernames() == null) {
-            courseModel.setStudentUsernames(",");
+            courseModel.setStudentUsernames("temporal value");
         }
         if (courseModel.getCourseStartDate() == null) {
-            /* Default date when no first lesson has been created is set to 2000. A date "should" be set immediately after when the initial
-             * theory lessons are created in addCourseLessons, but in case an error has occurred the default date is set, to prevent
-             * crashes when accessing the rest of the program caused by accessing an null database. An instructor can then chose
-             * to delete the faulty course through the websites delete course functionality. */
-            Date defaultDate = new Date(101, 0, 0);
-            courseModel.setCourseStartDate(defaultDate);
+            Date temporaryDate = new Date();
+            courseModel.setCourseStartDate(temporaryDate);
         }
-        /* Set the weekdays default value to "," in order to prevent database error if courseAddLessons somehow has not been filled
-         * after course creation. */
-        courseModel.setWeekdays(",");
+        /* Weekdays is not set when adding a course, so it also needs to be an empty value. */
+        courseModel.setWeekdays("temporal value");
+
+        /* The username selected are separated as an string array so the arrays size can be counted. */
         ArrayList<String> studentUsernamesList = saveStringsSeparatedByCommaAsArray(courseModel.getStudentUsernames());
-        courseModel.setNumberStudents(studentUsernamesList.size());
+        if(studentUsernamesList.get(0).equals("temporal value"))
+            courseModel.setNumberStudents(0);
+        else
+            courseModel.setNumberStudents(studentUsernamesList.size());
         courseService.addCourse(courseModel);
-        return new ModelAndView("redirect:/course/courseAddLessons");
+
+        courseModel.setStudentUsernames("");
+        courseModel.setCourseStartDate(null);
+        courseModel.setWeekdays("");
+        Course latestCourse = courseService.getLastCourseOrderedByID();
+        courseService.updateCourse(latestCourse.getCourseTableID(), courseModel);
+
+
+        return new ModelAndView("redirect:/course/");
     }
 
-    /* When an course has been created the instructor will be redirected to this site, where they can decide
-     * if they want to assign initial theory lessons. */
-    @GetMapping(value = "/course/courseAddLessons")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String getCourseAddLessonsForm(Model model) {
-        List<Course> courses = this.courseService.getAllCourseRequests();
-        List<Account> instructorAccounts = findInstructors();
 
-        model.addAttribute("instructorAccounts", instructorAccounts);
-        model.addAttribute("courses", courses);
-        return "course-add-lessons-view";
-    }
-
-    @PostMapping(value = "/course/courseAddLessons")
+    @PostMapping(value = "/course/courseAddLessons/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ModelAndView courseAddLessons(@ModelAttribute CourseModel courseModel) {
-        ArrayList<Date> lessonDates = createLessonDates(courseModel.getStartingPoint(), courseModel.getWeekdaysIntArray(), courseModel.getNumberLessons(), courseModel.getNumberLessonsADay());
+    public ModelAndView courseAddLessons(@ModelAttribute CourseModel courseModel, @PathVariable long id,
+                                         @RequestParam("numberLessons") int numberLessons,
+                                         @RequestParam("startingPoint") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Date startingPoint,
+                                         @RequestParam("weekdaysIntArray") ArrayList<Integer> weekdaysIntArray,
+                                         @RequestParam("numberLessonsADay") int numberLessonsADay) {
+        ArrayList<Date> lessonDates = createLessonDates(startingPoint, weekdaysIntArray, numberLessons, numberLessonsADay);
         /* Converts the weekdaysIntArray into an string */
-        ArrayList<Integer> weekdaysIntArray = courseModel.getWeekdaysIntArray();
         String weekdays = "";
-        for(int weekday: weekdaysIntArray){
-            weekdays +=  Integer.toString(weekday) + ",";
+        for (int weekday : weekdaysIntArray) {
+            weekdays += Integer.toString(weekday) + ",";
         }
         Date firstCreatedLessonDate = null;
 
-        Course lastCourseOrderedByID = courseService.getLastCourseOrderedByID();
+        Course course = courseService.getCourse(id);
+
 
         /* For every lesson date, a lesson will be created */
         for (int j = 0; j < lessonDates.size(); j++) {
@@ -111,10 +112,10 @@ public class CourseController {
             LessonModel lesson = new LessonModel();
             lesson.setLessonState(LessonState.PENDING);
             lesson.setLessonDate(lessonDate);
-            lesson.setLessonLocation(lastCourseOrderedByID.getCourseLocation());
-            lesson.setLessonInstructor(lastCourseOrderedByID.getInstructorUsername());
-            lesson.setStudentList(lastCourseOrderedByID.getStudentUsernames());
-            lesson.setCourseId(lastCourseOrderedByID.getCourseTableID());
+            lesson.setLessonLocation(course.getCourseLocation());
+            lesson.setLessonInstructor(course.getInstructorUsername());
+            lesson.setStudentList(course.getStudentUsernames());
+            lesson.setCourseId(course.getCourseTableID());
             lesson.setLessonType(LessonType.THEORY_LESSON);
 
             lessonService.addLesson(lesson);
@@ -126,13 +127,13 @@ public class CourseController {
         }
 
 
-        CourseModel updatedCourse = lastCourseOrderedByID.translateCourseToModel();
+        CourseModel updatedCourse = course.translateCourseToModel();
         /* Updates the created latest created course start_date with the date of the first lesson created and weekdays with the string converted from the weekdaysArray. */
-        updatedCourse.setWeekdays(weekdays);
+        updatedCourse.setWeekdays(convertWeekdaysIntStringToWeekdaysInWords(weekdays));
         updatedCourse.setCourseStartDate(firstCreatedLessonDate);
-        courseService.updateCourse(lastCourseOrderedByID.getCourseTableID(), updatedCourse);
+        courseService.updateCourse(course.getCourseTableID(), updatedCourse);
 
-        return new ModelAndView("redirect:/lessons");
+        return new ModelAndView("redirect:/course/" + id);
     }
 
 
@@ -161,15 +162,17 @@ public class CourseController {
     public String getCourse(Model model, @PathVariable long id) {
         Course course = this.courseService.getCourse(id);
         List<Lesson> lessons = lessonService.getAllLessons();
+
         ArrayList<Lesson> lessonsMatchingCourse = new ArrayList<>();
         for (Lesson lesson : lessons) {
             if (lesson.getCourseId() == id)
                 lessonsMatchingCourse.add(lesson);
         }
 
-        List<Account> studentAccounts = findStudents();
-        List<Account> studentsBelongingToCourse = findAccountTypeBelongingToCourse(course, "STUDENT");
         /* Finds all user accounts and adds those that belongs to the course in a separate arrayList */
+        List<Account> studentAccounts = findAccountsOfType("STUDENT");
+        List<Account> studentsBelongingToCourse = findStudentsBelongingToCourse(course);
+
         model.addAttribute("course", course);
         model.addAttribute("studentAccounts", studentAccounts);
         model.addAttribute("lessonsMatchingCourse", lessonsMatchingCourse);
@@ -178,30 +181,73 @@ public class CourseController {
         return "course-view";
     }
 
-
-    private List<Account> findAccountTypeBelongingToCourse(Course course, String accountType) {
-        List<Account> studentAccounts = findStudents();
-        List<String> studentsInCourseAsStringArray = saveStringsSeparatedByCommaAsArray(course.getStudentUsernames());
-        List<Account> studentsBelongingToCourse = new ArrayList<>();
-        for (Account studentAccount : studentAccounts) {
-            if (studentsInCourseAsStringArray.contains(studentAccount.getUsername()))
-                studentsBelongingToCourse.add(studentAccount);
+    /* Function that converts an string of ints from 0-6 to weekdays in words with regards to the Date java class.
+       Also adds a space and "," between each word. */
+    private String convertWeekdaysIntStringToWeekdaysInWords(String weekdaysAsIntegers){
+        ArrayList<String> weekdaysAsIntegersArray = saveStringsSeparatedByCommaAsArray(weekdaysAsIntegers);
+        String weekDaysInWords = "";
+        for(int i = 0; i<weekdaysAsIntegersArray.size(); i++){
+            switch (weekdaysAsIntegersArray.get(i)){
+                case "0":
+                    weekDaysInWords += "Sunday";
+                    break;
+                case "1":
+                    weekDaysInWords += "Monday";
+                    break;
+                case "2":
+                    weekDaysInWords += "Tuesday";
+                    break;
+                case "3":
+                    weekDaysInWords += "Wednesday";
+                    break;
+                case "4":
+                    weekDaysInWords += "Thursday";
+                    break;
+                case "5":
+                    weekDaysInWords += "Friday";
+                    break;
+                case "6":
+                    weekDaysInWords += "Saturday";
+                    break;
+            }
+            /* Refrains from adding an "," at the end for appearances sake */
+            if(i!=weekdaysAsIntegersArray.size()-1){
+                weekDaysInWords += ", ";
+            }
         }
-        return studentsBelongingToCourse;
+        return weekDaysInWords;
+    }
+
+    /* Finds student accounts. Saves the student usernames in the course as an string array. Checks if any of the
+       student usernames equals any of the student accounts, and adds them to an the array studentsAccountsBelongToCourse. */
+    private List<Account> findStudentsBelongingToCourse(Course course) {
+        List<Account> studentAccounts = findAccountsOfType("STUDENT");
+        List<String> studentUsernamesInCourseAsStringArray = saveStringsSeparatedByCommaAsArray(course.getStudentUsernames());
+        List<Account> studentAccountsBelongingToCourse = new ArrayList<>();
+        for (Account studentAccount : studentAccounts) {
+            for (String studentUsernameInCourse : studentUsernamesInCourseAsStringArray) {
+                if (studentUsernameInCourse.equals((studentAccount.getUsername())))
+                    studentAccountsBelongingToCourse.add(studentAccount);
+            }
+
+        }
+        return studentAccountsBelongingToCourse;
     }
 
     @RequestMapping(value = "/course/addStudent/{id}", method = RequestMethod.POST)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public RedirectView addStudent(@PathVariable long id, @ModelAttribute CourseModel courseModel) {
+    public ModelAndView addStudent(@PathVariable long id, @ModelAttribute CourseModel courseModel,
+                                   @RequestParam("studentToAdd") String studentToAdd) {
         Course courseBeforeUpdate = courseService.getCourse(id);
         /* Sets the courseModel with the values of the current course before it has been changed. */
         CourseModel updatedCourse = courseBeforeUpdate.translateCourseToModel();
-        /* Adds the new student */
+        /* Adds the new student. */
         String studentUsernames = updatedCourse.getStudentUsernames();
-        studentUsernames += "," + courseModel.getStudentToUpdate();
+        studentUsernames += studentToAdd + ",";
+
         updatedCourse.setStudentUsernames(studentUsernames);
         /* Increments studentNumber by one */
-        updatedCourse.setNumberStudents(updatedCourse.getNumberStudents()+1);
+        updatedCourse.setNumberStudents(updatedCourse.getNumberStudents() + 1);
 
         courseService.updateCourse(id, updatedCourse);
 
@@ -209,30 +255,31 @@ public class CourseController {
         /* Updates every lesson with the student in it. */
         updateUsernamesAssociatedWithCourse(id, studentUsernames);
 
-        return new RedirectView("redirect:/course/");
+        return new ModelAndView("redirect:/course/" + id);
     }
 
     @RequestMapping(value = "/course/removeStudent/{id}", method = RequestMethod.POST)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public RedirectView removeStudent(@PathVariable long id, @ModelAttribute CourseModel courseModel) {
+    public ModelAndView removeStudent(@PathVariable long id, @ModelAttribute CourseModel courseModel,
+                                      @RequestParam("studentToRemove") String studentToRemove) {
         Course courseBeforeUpdate = courseService.getCourse(id);
         /* Sets the courseModel with the values of the current course before it has been changed. */
         CourseModel updatedCourse = courseBeforeUpdate.translateCourseToModel();
         /* Removes the targeted student */
         String studentUsernames = courseBeforeUpdate.getStudentUsernames();
-        String studentUsernamesWithoutRemovedStudent = studentUsernames.replace("," + courseModel.getStudentToUpdate(), "");
+        String studentUsernamesWithoutRemovedStudent = studentUsernames.replace(studentToRemove + ",", "");
         updatedCourse.setStudentUsernames(studentUsernamesWithoutRemovedStudent);
         /* Decrements studentNumber by one */
-        updatedCourse.setNumberStudents(updatedCourse.getNumberStudents()-1);
+        updatedCourse.setNumberStudents(updatedCourse.getNumberStudents() - 1);
 
         courseService.updateCourse(id, updatedCourse);
 
         updateUsernamesAssociatedWithCourse(id, studentUsernamesWithoutRemovedStudent);
-        return new RedirectView("redirect:/course/");
+        return new ModelAndView("redirect:/course/" + id);
     }
 
     /* Replaces studentUsernames in every lesson with the studentToUpdate username in it and the courseID specified, with the updatedUsernamesString */
-    public void updateUsernamesAssociatedWithCourse(long courseID, String updatedUsernamesString) {
+    private void updateUsernamesAssociatedWithCourse(long courseID, String updatedUsernamesString) {
         List<Lesson> lessons = lessonService.getAllLessons();
         for (Lesson lesson : lessons) {
             /* If the student that is being added to the course is in a lesson associated with that courseID, update it. */
@@ -248,7 +295,7 @@ public class CourseController {
         }
     }
 
-    public ArrayList<Date> createLessonDates(Date startDate, ArrayList<Integer> weekdaysArrays, int numberLessonsToDistribute,
+    private ArrayList<Date> createLessonDates(Date startDate, ArrayList<Integer> weekdaysArrays, int numberLessonsToDistribute,
                                              int numberLessonsADay) {
         ArrayList<Date> lessonDates = new ArrayList<>();
         Date currentDayDate = startDate;
@@ -281,14 +328,6 @@ public class CourseController {
         return lessonDates;
     }
 
-    private String saveStringListAsSingleString(ArrayList<String> studentNameList) {
-        String combinedString = "";
-        for (String student : studentNameList) {
-            combinedString += student + ",";
-        }
-        return combinedString;
-    }
-
     private ArrayList<String> saveStringsSeparatedByCommaAsArray(String string) {
         ArrayList<String> studentList = new ArrayList<>();
         String[] parts = string.split(",");
@@ -299,7 +338,7 @@ public class CourseController {
     }
 
 
-    private void setInstructorFullName(List<Course> courseList){
+    private void setInstructorFullName(List<Course> courseList) {
         /*  Finds and sets the full name for every instructor in a courseList */
         for (Course course : courseList) {
             String firstName = accountRespository.findByUsername(course.getInstructorUsername()).getFirstName();
@@ -323,31 +362,21 @@ public class CourseController {
         return principal.getUsername();
     }
 
-    private List<Account> findStudents() {
+    private List<Account> findAccountsOfType(String accountType) {
 
         List<AuthGroup> authGroups = this.authGroupRepository.findAll();
         List<Account> accountList = this.accountRespository.findAll();
 
-        List<Account> studentAccounts = new ArrayList<>();
+        List<Account> accountsOfSelectedType = new ArrayList<>();
 
+        /* When an account is created it is at the same time added to authGroup. Elements in a result-set are per default
+           fetched with the order they were entered in the database, so account[0] will be the same as the
+           authGroup[0]. This means that we do not have to manually check which authGroups matches which accounts. */
         for (int i = 0; i < accountList.size(); i++) {
-            if (authGroups.get(i).getAuthGroup().contains("STUDENT")) studentAccounts.add(accountList.get(i));
+            if (authGroups.get(i).getAuthGroup().equals(accountType))
+                accountsOfSelectedType.add(accountList.get(i));
         }
 
-        return studentAccounts;
-    }
-
-    private List<Account> findInstructors() {
-
-        List<AuthGroup> authGroups = this.authGroupRepository.findAll();
-        List<Account> accountList = this.accountRespository.findAll();
-
-        List<Account> instructorAccounts = new ArrayList<>();
-
-        for (int i = 0; i < accountList.size(); i++) {
-            if (authGroups.get(i).getAuthGroup().contains("INSTRUCTOR")) instructorAccounts.add(accountList.get(i));
-        }
-
-        return instructorAccounts;
+        return accountsOfSelectedType;
     }
 }
