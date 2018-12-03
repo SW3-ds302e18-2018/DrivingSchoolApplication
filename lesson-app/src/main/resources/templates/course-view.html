@@ -77,6 +77,8 @@
             <div class="left">
                 <h2 th:text="${'Course: #'+course.courseTableID}" style="padding-bottom: 1%"></h2>
                 <h3>Course Details</h3>
+                <h4>Course Type:</h4>
+                <h5 th:text="${course.courseType}"></h5>
                 <h4>Start Date:</h4>
                 <h5 th:text="${course.courseStartDate}"></h5>
                 <h4>Location:</h4>

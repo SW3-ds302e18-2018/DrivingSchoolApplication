@@ -69,6 +69,7 @@
                 <table id="table" class="table table-sm">
                     <thead>
                     <th scope="col">#Course</th>
+                    <th scope="col">Course Type</th>
                     <th scope="col">Created by Instructor</th>
                     <th scope="col">Start Date</th>
                     <th scope="col">Location</th>
@@ -78,6 +79,7 @@
                     <tr th:each="course : ${courses}">
                         <th scope="row"><a th:href="@{'/course/' + ${course.courseTableID}}"
                                            th:text="${course.courseTableID}"></a></th>
+                        <td th:text="${course.courseType}"></td>
                         <td th:text="${course.instructorFullName}"></td>
                         <td th:text="${course.courseStartDate}"></td>
                         <td th:text="${course.courseLocation}"></td>
