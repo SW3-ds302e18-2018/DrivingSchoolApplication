@@ -1,0 +1,55 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:sec="http://www.w3.org/1999/xhtml"
+    layout:decorate="~{layout}" lang="en">
+
+<head>
+    <title>Home</title>
+    <style>
+        .centerpane {
+            width: 60%;
+            height: available;
+            max-height: 350px;
+            position: absolute;
+            top: 22%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+    </style>
+</head>
+
+<body>
+
+    <div layout:fragment="content">
+        <div class="container main-content centerpane">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a th:href="@{/lessons/}">Lesson</a></li>
+                    <li class="breadcrumb-item"><a th:href="@{|/lessons/${pathid}|}">View Lesson</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">View Signatures</li>
+                </ol>
+            </nav>
+            <h1>Signatures</h1>
+            <h3>Here you can view the signatures from all Students and Instructors.</h3>
+            <h5 th:text="${SNS}"></h5>
+            <th:block th:each="signature : ${SignatureList}">
+                <tr>
+                    <td>
+                        <ul>
+                            <li class="list-group-item active">
+                                <span th:text="${signature.getFirstName()} + ' ' + ${signature.getLastName()} + ' ( ' + ${signature.getUsername()} + ' ) '"></span>
+                                Position : <span th:text="${signature.getPosition()}"></span>
+                            </li>
+                            <li class="list-group-item"><img th:src="${signature.getSignatureUrl()}" height="300" width="300"></li>
+                            <li class="list-group-item">Signed : <span th:text="${signature.getSignatureDate()}"></span>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+            </th:block>
+        </div>
+        <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+        <script th:src="@{/js/table.js}"></script>
+    </div>
+</body>
+
+</html>

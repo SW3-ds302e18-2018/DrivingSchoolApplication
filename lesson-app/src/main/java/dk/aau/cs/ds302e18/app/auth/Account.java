@@ -3,8 +3,9 @@ package dk.aau.cs.ds302e18.app.auth;
 import javax.persistence.*;
 
 
-/* Ensures that the table Account exists in the database and has the following columns.
-   Also provides setters and getters. */
+/**
+ * Represents information about the account, such as first name, last name etc.
+ */
 @Entity
 @Table(name="Account")
 public class Account
@@ -31,6 +32,18 @@ public class Account
     private int zipCode;
     @Column(name = "CITY", nullable = false)
     private String city;
+    @Column(name = "NOTIFICATION_REMINDER", nullable = false)
+    private int notificationInMinutes;
+
+    public int getNotificationInMinutes()
+    {
+        return notificationInMinutes;
+    }
+
+    public void setNotificationInMinutes(int notificationInMinutes)
+    {
+        this.notificationInMinutes = notificationInMinutes;
+    }
 
     public long getId()
     {

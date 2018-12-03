@@ -107,9 +107,9 @@ public class LogbookController {
 
                     //Compares every student on the lesson's student list, if the logbook owner is on it, add the lesson to the logbook
                     for (String student : lessonStudentList) {
-                       if (logbook.getStudent().equals(student)) {
-                           logbookLessonList.add(lesson);
-                       }
+                        if (logbook.getStudent().equals(student)) {
+                            logbookLessonList.add(lesson);
+                        }
                     }
                 }
             }

@@ -1,5 +1,6 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec="http://www.w3.org/1999/xhtml" layout:decorate="~{layout}" lang="en">
 <head>
     <title>Home</title>
     <style>
@@ -8,7 +9,7 @@
             height: available;
             max-height: 350px;
             position: absolute;
-            top: 50%;
+            top: 22%;
             left: 50%;
             transform: translate(-50%, -50%);
         }
@@ -18,11 +19,9 @@
 <body>
 
 <div layout:fragment="content">
-    <div class="container main-content">
+    <div class="container main-content centerpane">
         <h1><span th:text="${username}"></span>, here are the lessons in logbook <span th:text="${logbookId}"></span>:</h1>
         <h3>You can select a lesson to view, by clicking on it's ID.</h3>
-    </div>
-        <div class="centerpane">
         <table id="logbookLessonsTable" class="table table-hover table-sm bordered">
             <thead>
             <th scope="col">Lesson ID</th>
@@ -30,6 +29,8 @@
             <th scope="col">Lesson Date</th>
             <th scope="col">Lesson Type</th>
             <th scope="col">Lesson Signed?</th>
+            <th scope="col">Sign Lesson</th>
+            <th scope="col">View Signatures</th>
             </thead>
             <tbody>
             <tr th:each="lesson : ${logbookLessonList}">
@@ -38,6 +39,20 @@
                 <td th:text="${lesson.getLessonDate()}"></td>
                 <td th:text="${lesson.getLessonType()}"></td>
                 <td th:text="${lesson.getLessonState()}"></td>
+                <td>
+                    <form action="#" th:action="@{'/canvas/' + ${lesson.id}}" method="get">
+                        <button class="btn btn-primary" th:id="'lessonId' + ${lesson.id}" type="submit">
+                            <i>Sign Lesson</i>
+                        </button>
+                    </form>
+                </td>
+                <td>
+                    <form action="#" th:action="@{'/signature/' + ${lesson.id}}" method="get">
+                        <button class="btn btn-primary" th:id="'lessonId' + ${lesson.id}" type="submit">
+                            <i>Signatures</i>
+                        </button>
+                    </form>
+                </td>
             </tr>
             </tbody>
         </table>    

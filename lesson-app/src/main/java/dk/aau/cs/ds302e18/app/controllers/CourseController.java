@@ -356,10 +356,10 @@ public class CourseController {
         return (gravatar);
     }
 
-    public String getAccountUsername() {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = ((UserDetails) principal).getUsername();
-        return username;
+    private String getAccountUsername()
+    {
+        UserDetails principal = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return principal.getUsername();
     }
 
     private List<Account> findAccountsOfType(String accountType) {

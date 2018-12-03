@@ -1,10 +1,11 @@
 package dk.aau.cs.ds302e18.app.auth;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 
-/* Ensures that the table User exists in the database and has the following columns.
-   Also provides setters and getters. */
+/**
+ * Contains authentication information about the user,
+ * such as the username, password and whether the account is active
+ */
 @Entity
 @Table(name="USER")
 public class User {
@@ -18,7 +19,6 @@ public class User {
     private String password;
     @Column(name = "IS_ACTIVE", nullable = false)
     private boolean isActive;
-
 
     public long getId()
     {

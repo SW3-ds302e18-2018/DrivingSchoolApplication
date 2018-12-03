@@ -1,4 +1,4 @@
-package dk.aau.cs.ds302e18.service.NotificationService;
+package dk.aau.cs.ds302e18.service.notification;
 
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.sns.AmazonSNSClient;
@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
+
+// TODO: Change the methods here to be lowercase as PascalCase is used for classes
 
 public class Notification
 {
