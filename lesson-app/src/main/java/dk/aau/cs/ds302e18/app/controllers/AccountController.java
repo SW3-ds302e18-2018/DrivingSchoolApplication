@@ -91,6 +91,16 @@ public class AccountController {
         return new RedirectView("redirect:/account/edit");
     }
 
+    @RequestMapping(value = "/account/edit/delete", method = RequestMethod.POST)
+    public RedirectView deleteAccount() {
+        User user = this.userRepository.findByUsername(getAccountUsername());
+        this.userRepository.deleteById(user.getId());
+        this.accountRespository.deleteById(user.getId());
+        this.authGroupRepository.deleteById(user.getId());
+        return new RedirectView("redirect:/logout");
+    }
+
+
     @ModelAttribute("gravatar")
     public String gravatar() {
         //Models Gravatar
