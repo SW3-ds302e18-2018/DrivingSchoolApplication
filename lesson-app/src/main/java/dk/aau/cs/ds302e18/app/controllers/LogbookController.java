@@ -1,9 +1,9 @@
 package dk.aau.cs.ds302e18.app.controllers;
 
-import dk.aau.cs.ds302e18.app.auth.AccountRespository;
 import dk.aau.cs.ds302e18.app.auth.AuthGroup;
 import dk.aau.cs.ds302e18.app.auth.AuthGroupRepository;
 import dk.aau.cs.ds302e18.app.domain.*;
+import dk.aau.cs.ds302e18.app.service.AccountService;
 import dk.aau.cs.ds302e18.app.service.LessonService;
 import dk.aau.cs.ds302e18.app.service.LogbookService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,15 +25,15 @@ public class LogbookController {
     private final LessonService lessonService;
     private final LogbookService logbookService;
     private final AuthGroupRepository authGroupRepository;
-    private final AccountRespository accountRespository;
+    private final AccountService accountService;
 
     public LogbookController(LessonService lessonService, LogbookService logbookService,
-                             AuthGroupRepository authGroupRepository, AccountRespository accountRespository) {
+                             AuthGroupRepository authGroupRepository, AccountService accountService) {
         super();
         this.lessonService = lessonService;
         this.logbookService = logbookService;
         this.authGroupRepository = authGroupRepository;
-        this.accountRespository = accountRespository;
+        this.accountService = accountService;
     }
 
     /**
@@ -137,7 +137,7 @@ public class LogbookController {
     @ModelAttribute("gravatar")
     public String gravatar() {
         //Models Gravatar
-        String gravatar = ("http://0.gravatar.com/avatar/"+md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
+        String gravatar = ("http://0.gravatar.com/avatar/"+md5Hex(accountService.getAccount(getAccountUsername()).getEmail()));
         return (gravatar);
     }
 

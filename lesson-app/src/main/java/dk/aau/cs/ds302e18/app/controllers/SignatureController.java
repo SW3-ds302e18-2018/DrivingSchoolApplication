@@ -1,10 +1,10 @@
 package dk.aau.cs.ds302e18.app.controllers;
 
-import dk.aau.cs.ds302e18.app.auth.Account;
-import dk.aau.cs.ds302e18.app.auth.AccountRespository;
+import dk.aau.cs.ds302e18.app.domain.Account;
 import dk.aau.cs.ds302e18.app.auth.AuthGroup;
 import dk.aau.cs.ds302e18.app.auth.AuthGroupRepository;
 import dk.aau.cs.ds302e18.app.domain.*;
+import dk.aau.cs.ds302e18.app.service.AccountService;
 import dk.aau.cs.ds302e18.app.service.CourseService;
 import dk.aau.cs.ds302e18.app.service.LessonService;
 import dk.aau.cs.ds302e18.app.service.LogbookService;
@@ -24,18 +24,18 @@ import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
 public class SignatureController
 {
     private final LessonService lessonService;
-    private final AccountRespository accountRespository;
+    private final AccountService accountService;
     private final AuthGroupRepository authGroupRepository;
     private final CourseService courseService;
     private final LogbookService logbookService;
 
 
-    public SignatureController(LessonService lessonService, AccountRespository accountRespository,
+    public SignatureController(LessonService lessonService, AccountService accountService,
                             AuthGroupRepository authGroupRepository, CourseService courseService,
                                LogbookService logbookService) {
         super();
         this.lessonService = lessonService;
-        this.accountRespository = accountRespository;
+        this.accountService = accountService;
         this.authGroupRepository = authGroupRepository;
         this.courseService = courseService;
         this.logbookService = logbookService;
@@ -64,7 +64,7 @@ public class SignatureController
                  * Student Signatures
                  */
 
-                Account tempAccount = accountRespository.findByUsername(logbook.getStudent());
+                Account tempAccount = accountService.getAccount(logbook.getStudent());
                 List<AuthGroup> tempAuthGroup = authGroupRepository.findByUsername(logbook.getStudent());
                 LogbookExportModel logbookExportModel = new LogbookExportModel();
                 logbookExportModel.setUsername(logbook.getStudent());
@@ -89,7 +89,7 @@ public class SignatureController
                 /*
                  * Instructor Signatures
                  */
-                Account tempIns = accountRespository.findByUsername(lesson.getLessonInstructor());
+                Account tempIns = accountService.getAccount(lesson.getLessonInstructor());
                 List<AuthGroup> tempInsAuth = authGroupRepository.findByUsername(lesson.getLessonInstructor());
                 LogbookExportModel logbookExportModelIns = new LogbookExportModel();
                 logbookExportModelIns.setUsername(lesson.getLessonInstructor());
@@ -141,7 +141,7 @@ public class SignatureController
                 String[] studentListArray = lesson.getStudentList().split(",");
                 for (String username: studentListArray)
                 {
-                    Account tempAccount = accountRespository.findByUsername(username);
+                    Account tempAccount = accountService.getAccount(username);
                     List<AuthGroup> tempAuthGroup = authGroupRepository.findByUsername(username);
                     SignatureModel signatureModel = new SignatureModel();
                     signatureModel.setUsername(username);
@@ -168,7 +168,7 @@ public class SignatureController
                 /*
                  * Instructor Signature
                  */
-                Account tempAccount = accountRespository.findByUsername(lesson.getLessonInstructor());
+                Account tempAccount = accountService.getAccount(lesson.getLessonInstructor());
                 SignatureModel signatureModel = new SignatureModel();
                 signatureModel.setUsername(lesson.getLessonInstructor());
                 signatureModel.setFirstName(tempAccount.getFirstName());
@@ -236,8 +236,8 @@ public class SignatureController
     public String gravatar() {
 
         //Models Gravatar
-        System.out.println(accountRespository.findByUsername(getAccountUsername()).getEmail());
-        String gravatar = ("http://0.gravatar.com/avatar/"+md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
+        System.out.println(accountService.getAccount(getAccountUsername()).getEmail());
+        String gravatar = ("http://0.gravatar.com/avatar/"+md5Hex(accountService.getAccount(getAccountUsername()).getEmail()));
         return (gravatar);
     }
 

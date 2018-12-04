@@ -1,14 +1,14 @@
 package dk.aau.cs.ds302e18.app.controllers;
 
 import dk.aau.cs.ds302e18.app.SortByCourseID;
-import dk.aau.cs.ds302e18.app.auth.Account;
-import dk.aau.cs.ds302e18.app.auth.AccountRespository;
+import dk.aau.cs.ds302e18.app.domain.Account;
 import dk.aau.cs.ds302e18.app.auth.AuthGroup;
 import dk.aau.cs.ds302e18.app.auth.AuthGroupRepository;
 import dk.aau.cs.ds302e18.app.domain.Course;
 import dk.aau.cs.ds302e18.app.domain.Lesson;
 import dk.aau.cs.ds302e18.app.domain.LessonModel;
 import dk.aau.cs.ds302e18.app.domain.LessonType;
+import dk.aau.cs.ds302e18.app.service.AccountService;
 import dk.aau.cs.ds302e18.app.service.CourseService;
 import dk.aau.cs.ds302e18.app.service.LessonService;
 import org.springframework.http.HttpStatus;
@@ -37,16 +37,16 @@ public class LessonController {
        @PreAuthorize defines what role is necessary to access the url. */
 
     private final LessonService lessonService;
-    private final AccountRespository accountRespository;
+    private final AccountService accountService;
     private final AuthGroupRepository authGroupRepository;
     private final CourseService courseService;
 
 
-    public LessonController(LessonService lessonService, AccountRespository accountRespository,
+    public LessonController(LessonService lessonService, AccountService accountService,
                             AuthGroupRepository authGroupRepository, CourseService courseService) {
         super();
         this.lessonService = lessonService;
-        this.accountRespository = accountRespository;
+        this.accountService = accountService;
         this.authGroupRepository = authGroupRepository;
         this.courseService = courseService;
     }
@@ -179,7 +179,7 @@ public class LessonController {
 
     private List<Account> findAccountsOfType(String accountType) {
         List<AuthGroup> authGroups = this.authGroupRepository.findAll();
-        List<Account> accountList = this.accountRespository.findAll();
+        List<Account> accountList = this.accountService.getAllAccounts();
         List<Account> accountsOfSelectedType = new ArrayList<>();
 
         /* When an account is created it is at the same time added to authGroup. Elements in a result-set are per default
@@ -221,7 +221,7 @@ public class LessonController {
     @ModelAttribute("gravatar")
     public String gravatar() {
         //Models Gravatar
-        String gravatar = ("http://0.gravatar.com/avatar/" + md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
+        String gravatar = ("http://0.gravatar.com/avatar/" + md5Hex(accountService.getAccount(getAccountUsername()).getEmail()));
         return (gravatar);
     }
 

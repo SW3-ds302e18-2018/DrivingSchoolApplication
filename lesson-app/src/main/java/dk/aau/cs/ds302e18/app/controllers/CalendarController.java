@@ -1,9 +1,9 @@
 package dk.aau.cs.ds302e18.app.controllers;
 
-import dk.aau.cs.ds302e18.app.auth.AccountRespository;
 import dk.aau.cs.ds302e18.app.domain.CalendarViewModel;
 import dk.aau.cs.ds302e18.app.domain.Lesson;
 import dk.aau.cs.ds302e18.app.domain.LessonType;
+import dk.aau.cs.ds302e18.app.service.AccountService;
 import dk.aau.cs.ds302e18.app.service.LessonService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -22,12 +22,12 @@ import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
 @Controller
 public class CalendarController {
     private final LessonService lessonService;
-    private final AccountRespository accountRespository;
+    private final AccountService accountService;
 
-    public CalendarController(LessonService lessonService, AccountRespository accountRespository) {
+    public CalendarController(LessonService lessonService, AccountService accountService) {
         super();
         this.lessonService = lessonService;
-        this.accountRespository = accountRespository;
+        this.accountService = accountService;
     }
 
     @GetMapping(value = "/calendar")
@@ -106,7 +106,7 @@ public class CalendarController {
     @ModelAttribute("gravatar")
     public String gravatar() {
         //Models Gravatar
-        return "http://0.gravatar.com/avatar/" + md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail());
+        return "http://0.gravatar.com/avatar/" + md5Hex(accountService.getAccount(getAccountUsername()).getEmail());
     }
 
     private String getAccountUsername() {
