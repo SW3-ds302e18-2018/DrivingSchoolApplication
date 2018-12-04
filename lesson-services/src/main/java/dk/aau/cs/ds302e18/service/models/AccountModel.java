@@ -7,7 +7,6 @@ public class AccountModel {
     private String email;
     private String phoneNumber;
     private String birthday;
-    private String address;
     private int zipCode;
     private String city;
     private int notificationInMinutes;
@@ -60,14 +59,6 @@ public class AccountModel {
         this.birthday = birthday;
     }
 
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
     public int getZipCode() {
         return zipCode;
     }
@@ -100,7 +91,6 @@ public class AccountModel {
         account.setEmail(this.email);
         account.setPhoneNumber(this.phoneNumber);
         account.setBirthday(this.birthday);
-        account.setAddress(this.address);
         account.setZipCode(this.zipCode);
         account.setCity(this.city);
         account.setNotificationInMinutes(this.notificationInMinutes);

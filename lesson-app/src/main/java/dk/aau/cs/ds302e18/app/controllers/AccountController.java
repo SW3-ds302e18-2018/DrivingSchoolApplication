@@ -1,8 +1,6 @@
 package dk.aau.cs.ds302e18.app.controllers;
 
 import dk.aau.cs.ds302e18.app.auth.*;
-import dk.aau.cs.ds302e18.app.domain.Account;
-import dk.aau.cs.ds302e18.app.service.AccountService;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -18,20 +16,20 @@ import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
  */
 @Controller
 public class AccountController {
-    private final AccountService accountService;
+    private final AccountRespository accountRespository;
     private final AuthGroupRepository authGroupRepository;
     private final UserRepository userRepository;
 
-    public AccountController(AccountService accountService, AuthGroupRepository authGroupRepository,
+    public AccountController(AccountRespository accountRespository, AuthGroupRepository authGroupRepository,
                              UserRepository userRepository) {
-        this.accountService = accountService;
+        this.accountRespository = accountRespository;
         this.authGroupRepository = authGroupRepository;
         this.userRepository = userRepository;
     }
 
     @GetMapping(value = "/account/edit")
     public String getManageAccount(Model model) {
-        model.addAttribute("user", accountService.getAccount(getAccountUsername()));
+        model.addAttribute("user", accountRespository.findByUsername(getAccountUsername()));
         model.addAttribute("userAuth",
                 authGroupRepository.findByUsername(getAccountUsername()).get(0).getAuthGroup());
         return "manage-account";
@@ -59,7 +57,7 @@ public class AccountController {
                                              @RequestParam("Zip") int zip,
                                              @RequestParam("NotificationInMinutes") int notificationInMinutes) {
         // Retrieve account from the repository
-        Account account = accountService.getAccount(getAccountUsername());
+        Account account = accountRespository.findByUsername(getAccountUsername());
 
         account.setFirstName(firstName);
         account.setLastName(lastName);
@@ -70,7 +68,7 @@ public class AccountController {
         account.setCity(city);
         account.setZipCode(zip);
         account.setNotificationInMinutes(notificationInMinutes);
-        this.accountService.addAccount(account.translateAccountToModel());
+        this.accountRespository.save(account);
         return new RedirectView("redirect:/account/edit");
     }
 
@@ -96,7 +94,7 @@ public class AccountController {
     @ModelAttribute("gravatar")
     public String gravatar() {
         //Models Gravatar
-        return "http://0.gravatar.com/avatar/" + md5Hex(accountService.getAccount(getAccountUsername()).getEmail());
+        return "http://0.gravatar.com/avatar/" + md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail());
     }
 
     private String getAccountUsername() {

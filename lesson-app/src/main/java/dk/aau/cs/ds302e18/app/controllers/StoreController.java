@@ -1,9 +1,9 @@
 package dk.aau.cs.ds302e18.app.controllers;
 
 import dk.aau.cs.ds302e18.app.Notification;
-import dk.aau.cs.ds302e18.app.domain.Account;
+import dk.aau.cs.ds302e18.app.auth.Account;
+import dk.aau.cs.ds302e18.app.auth.AccountRespository;
 import dk.aau.cs.ds302e18.app.domain.*;
-import dk.aau.cs.ds302e18.app.service.AccountService;
 import dk.aau.cs.ds302e18.app.service.CourseService;
 import dk.aau.cs.ds302e18.app.service.LogbookService;
 import dk.aau.cs.ds302e18.app.service.StoreService;
@@ -29,15 +29,15 @@ import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
 @RequestMapping
 public class StoreController {
     private final StoreService storeService;
-    private final AccountService accountService;
+    private final AccountRespository accountRespository;
     private final CourseService courseService;
     private final LogbookService logbookService;
 
-    public StoreController(StoreService storeService, AccountService accountService,
+    public StoreController(StoreService storeService, AccountRespository accountRespository,
                            CourseService courseService, LogbookService logbookService){
         super();
         this.storeService = storeService;
-        this.accountService = accountService;
+        this.accountRespository = accountRespository;
         this.courseService = courseService;
         this.logbookService = logbookService;
     }
@@ -210,7 +210,7 @@ public class StoreController {
         Send an notification to the student
          */
 
-        Account acceptedStudent = accountService.getAccount(studentUsername);
+        Account acceptedStudent = accountRespository.findByUsername(studentUsername);
         String studentEmail = acceptedStudent.getEmail();
         String studentFirstname = acceptedStudent.getFirstName();
 
@@ -265,7 +265,7 @@ public class StoreController {
         // Creating the storemodel with the set values above, and updaing it.
         Store store = this.storeService.acceptStoreRequest(appId, storeModel);
 
-        Account acceptedStudent = accountService.getAccount(studentUsername);
+        Account acceptedStudent = accountRespository.findByUsername(studentUsername);
         String studentEmail = acceptedStudent.getEmail();
         String studentFirstname = acceptedStudent.getFirstName();
 
@@ -300,7 +300,7 @@ public class StoreController {
 
         // Creating the store mode, to be sent to the rest server
         Store store = this.storeService.addStoreRequest(storeModel);
-        String studentEmail = accountService.getAccount(getAccountUsername()).getEmail();
+        String studentEmail = accountRespository.findByUsername(getAccountUsername()).getEmail();
         System.out.println("APPLY : " + studentEmail);
         new Notification("Hello .\n Kind regards .\n Driving School A/S ", studentEmail, true);
 
@@ -314,7 +314,7 @@ public class StoreController {
     @ModelAttribute("gravatar")
     public String gravatar() {
         //Models Gravatar
-        String gravatar = ("http://0.gravatar.com/avatar/" + md5Hex(accountService.getAccount(getAccountUsername()).getEmail()));
+        String gravatar = ("http://0.gravatar.com/avatar/" + md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
         return (gravatar);
     }
 

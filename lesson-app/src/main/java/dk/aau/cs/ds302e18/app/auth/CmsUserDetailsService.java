@@ -1,7 +1,5 @@
 package dk.aau.cs.ds302e18.app.auth;
 
-import dk.aau.cs.ds302e18.app.domain.Account;
-import dk.aau.cs.ds302e18.app.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -20,13 +18,13 @@ public class CmsUserDetailsService implements UserDetailsService{
 
     private final UserRepository userRepository;
     private final AuthGroupRepository authGroupRepository;
-    private final AccountService accountService;
+    private final AccountRespository accountRespository;
     
-    public CmsUserDetailsService(UserRepository userRepository, AuthGroupRepository authGroupRepository, AccountService accountService){
+    public CmsUserDetailsService(UserRepository userRepository, AuthGroupRepository authGroupRepository, AccountRespository accountRespository){
         super();
         this.userRepository = userRepository;
         this.authGroupRepository = authGroupRepository;
-        this.accountService = accountService;
+        this.accountRespository = accountRespository;
     }
 
     // nah m8 this is login, not storing. also pls use // not /* */ it's not C89
@@ -43,7 +41,7 @@ public class CmsUserDetailsService implements UserDetailsService{
         /* All the authorities an user has is read from the database and added to an list.  */
         List<AuthGroup> authGroups = this.authGroupRepository.findByUsername(username);
         /* Account information is read from the database and stored in an account object. */
-        Account account = this.accountService.getAccount(username);
+        Account account = this.accountRespository.findByUsername(username);
         /* User credentials, authorities and account information is stored and returned as an UserDetails object.  */
         request.getSession().setAttribute("testSession", "testing!");
         return new CmsUserPrincipal(user, authGroups, account);

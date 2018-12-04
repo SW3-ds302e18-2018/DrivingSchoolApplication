@@ -29,13 +29,13 @@ public class AccountServiceController
     }
 
     /* Get = responsible for retrieving information only */
-    @GetMapping("/{username}")
-    public Account getAccount(@PathVariable String username){
-        Optional<Account> account = Optional.ofNullable(this.accountRespository.findByUsername(username));
+    @GetMapping("/{id}")
+    public Account getAccount(@PathVariable Long id){
+        Optional<Account> account = this.accountRespository.findById(id);
         if(account.isPresent()){
             return account.get();
         }
-        throw new AccountNotFoundException("Account not found with username " + username);
+        throw new LessonNotFoundException("Lesson not found with id: " + id);
     }
 
 
@@ -45,36 +45,36 @@ public class AccountServiceController
     public ResponseEntity<Account> addAccount(@RequestBody AccountModel model){
         /* Translates the input entered in the add account menu into input that can be entered in the database. */
         Account account = this.accountRespository.save(model.translateModelToAccount());
-        /* The new account will be placed in the current browser /username , with an username that matches the entered accounts ID. */
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{username}").buildAndExpand(account.getId()).toUri();
+        /* The new account will be placed in the current browser /id , with an id that matches the entered lessons ID. */
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(account.getId()).toUri();
         /* The connection to the new account is created. */
         return ResponseEntity.created(location).body(account);
     }
 
 
     /* Put = responsible for updating existing database entries*/
-    @PutMapping("/{username}")
-    public Account updateAccount(@PathVariable String username, @RequestBody AccountModel model){
-        /* Throw an error if the selected account do not exist. */
-        Optional<Account> existing = Optional.ofNullable(this.accountRespository.findByUsername(username));
+    @PutMapping("/{id}")
+    public Account updateLesson(@PathVariable Long id, @RequestBody AccountModel model){
+        /* Throw an error if the selected lesson do not exist. */
+        Optional<Account> existing = this.accountRespository.findById(id);
         if(!existing.isPresent()){
-            throw new AccountNotFoundException("Account not found with username: " + username);
+            throw new LessonNotFoundException("Lesson not found with id: " + id);
         }
         /* Translates input from the interface into an lesson object */
         Account account = model.translateModelToAccount();
         /* Uses the ID the lesson already had to save the lesson */
-        account.setUsername(username);
+        account.setId(id);
         return this.accountRespository.save(account);
     }
 
     /* NOT IMPLEMENTED: Delete = responsible for deleting database entries. */
-    @DeleteMapping("/{username}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.RESET_CONTENT)
-    public void deleteAccount(@PathVariable String username){
-        Optional<Account> existing = Optional.ofNullable(this.accountRespository.findByUsername(username));
+    public void deleteLesson(@PathVariable Long id){
+        Optional<Account> existing = this.accountRespository.findById(id);
         if(!existing.isPresent()){
-            throw new AccountNotFoundException("Account not found with username: " + username);
+            throw new LessonNotFoundException("Lesson not found with id: " + id);
         }
-        this.accountRespository.deleteByUsername(username);
+        this.accountRespository.deleteById(id);
     }
 }

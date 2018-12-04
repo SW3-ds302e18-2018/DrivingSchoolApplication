@@ -2,11 +2,11 @@ package dk.aau.cs.ds302e18.app.controllers;
 
 
 import dk.aau.cs.ds302e18.app.SortByCourseID;
-import dk.aau.cs.ds302e18.app.domain.Account;
+import dk.aau.cs.ds302e18.app.auth.Account;
+import dk.aau.cs.ds302e18.app.auth.AccountRespository;
 import dk.aau.cs.ds302e18.app.auth.AuthGroup;
 import dk.aau.cs.ds302e18.app.auth.AuthGroupRepository;
 import dk.aau.cs.ds302e18.app.domain.*;
-import dk.aau.cs.ds302e18.app.service.AccountService;
 import dk.aau.cs.ds302e18.app.service.CourseService;
 import dk.aau.cs.ds302e18.app.service.LessonService;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -30,13 +30,13 @@ public class CourseController {
 
     private final CourseService courseService;
     private final LessonService lessonService;
-    private final AccountService accountService;
+    private final AccountRespository accountRespository;
     private final AuthGroupRepository authGroupRepository;
 
-    public CourseController(CourseService courseService, LessonService lessonService, AccountService accountService, AuthGroupRepository authGroupRepository) {
+    public CourseController(CourseService courseService, LessonService lessonService, AccountRespository accountRespository, AuthGroupRepository authGroupRepository) {
         this.courseService = courseService;
         this.lessonService = lessonService;
-        this.accountService = accountService;
+        this.accountRespository = accountRespository;
         this.authGroupRepository = authGroupRepository;
     }
 
@@ -342,8 +342,8 @@ public class CourseController {
     private void setInstructorFullName(List<Course> courseList) {
         /*  Finds and sets the full name for every instructor in a courseList */
         for (Course course : courseList) {
-            String firstName = accountService.getAccount(course.getInstructorUsername()).getFirstName();
-            String lastName = accountService.getAccount(course.getInstructorUsername()).getLastName();
+            String firstName = accountRespository.findByUsername(course.getInstructorUsername()).getFirstName();
+            String lastName = accountRespository.findByUsername(course.getInstructorUsername()).getLastName();
             String fullName = firstName + " " + lastName;
             course.setInstructorFullName(fullName);
         }
@@ -351,7 +351,7 @@ public class CourseController {
 
     private List<Account> findAccountsOfType(String accountType) {
         List<AuthGroup> authGroups = this.authGroupRepository.findAll();
-        List<Account> accountList = this.accountService.getAllAccounts();
+        List<Account> accountList = this.accountRespository.findAll();
         List<Account> accountsOfSelectedType = new ArrayList<>();
 
         /* When an account is created it is at the same time added to authGroup. Elements in a result-set are per default
@@ -368,7 +368,7 @@ public class CourseController {
     @ModelAttribute("gravatar")
     public String gravatar() {
         //Models Gravatar
-        String gravatar = ("http://0.gravatar.com/avatar/" + md5Hex(accountService.getAccount(getAccountUsername()).getEmail()));
+        String gravatar = ("http://0.gravatar.com/avatar/" + md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
         return (gravatar);
     }
 

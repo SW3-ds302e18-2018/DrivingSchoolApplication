@@ -1,9 +1,7 @@
 package dk.aau.cs.ds302e18.app.controllers;
 
 import dk.aau.cs.ds302e18.app.auth.*;
-import dk.aau.cs.ds302e18.app.domain.Account;
 import dk.aau.cs.ds302e18.app.domain.AccountViewModel;
-import dk.aau.cs.ds302e18.app.service.AccountService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -20,13 +18,13 @@ import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
 
 @Controller
 public class AdminController {
-    private final AccountService accountService;
+    private final AccountRespository accountRespository;
     private final AuthGroupRepository authGroupRepository;
     private final UserRepository userRepository;
 
-    public AdminController(AccountService accountService, AuthGroupRepository authGroupRepository,
+    public AdminController(AccountRespository accountRespository, AuthGroupRepository authGroupRepository,
                            UserRepository userRepository) {
-        this.accountService = accountService;
+        this.accountRespository = accountRespository;
         this.authGroupRepository = authGroupRepository;
         this.userRepository = userRepository;
     }
@@ -37,7 +35,7 @@ public class AdminController {
         List<AccountViewModel> accountViewModelList = new ArrayList<>();
 
         List<User> userArrayList = this.userRepository.findAll();
-        List<Account> accounts = this.accountService.getAllAccounts();
+        List<Account> accounts = this.accountRespository.findAll();
         List<AuthGroup> authGroups = this.authGroupRepository.findAll();
 
         for (int i = 0; i < userArrayList.size(); i++) {
@@ -56,7 +54,7 @@ public class AdminController {
     @GetMapping(value = "/admin/{username}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String getAdminPageForUser(Model model, @PathVariable String username) {
-        model.addAttribute("user", accountService.getAccount(username));
+        model.addAttribute("user", accountRespository.findByUsername(username));
         model.addAttribute("userName", username);
         return "admin-edituser";
     }
@@ -74,7 +72,7 @@ public class AdminController {
                                                   @RequestParam("Zip") int zip) {
         Account account = new Account();
         account.setUsername(username);
-        account.setId(accountService.getAccount(username).getId());
+        account.setId(accountRespository.findByUsername(username).getId());
         account.setFirstName(firstName);
         account.setLastName(lastName);
         account.setEmail(email);
@@ -83,7 +81,7 @@ public class AdminController {
         account.setAddress(address);
         account.setCity(city);
         account.setZipCode(zip);
-        this.accountService.addAccount(account.translateAccountToModel());
+        this.accountRespository.save(account);
         return new RedirectView("admin");
     }
 
@@ -121,7 +119,7 @@ public class AdminController {
     @ModelAttribute("gravatar")
     public String gravatar() {
         //Models Gravatar
-        String gravatar = ("http://0.gravatar.com/avatar/" + md5Hex(accountService.getAccount(getAccountUsername()).getEmail()));
+        String gravatar = ("http://0.gravatar.com/avatar/" + md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
         return (gravatar);
     }
 
