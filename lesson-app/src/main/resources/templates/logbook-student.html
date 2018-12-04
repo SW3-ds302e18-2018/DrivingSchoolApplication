@@ -5,13 +5,12 @@
     <title>Home</title>
     <style>
         .centerpane {
-            width: 60%;
-            height: available;
-            max-height: 350px;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
+            width: 85%;
+            background-color: #ffffff;
+            border-collapse: collapse;
+            margin-left: 3%;
+            margin-right: 3%;
+            margin-top: 7%;
         }
     </style>
 </head>
@@ -21,12 +20,13 @@
     <div class="container main-content">
         <h1><span th:text="${username}"></span>, here are your logbooks:</h1>
         <h3>You can select a logbook to view, by clicking on it's ID.</h3>
-    </div>
+
     <div class="centerpane">
         <table id="studentLogbookTable" class="table table-hover table-sm bordered">
             <thead>
             <th scope="col">Logbook ID</th>
             <th scope="col">Course ID</th>
+            <th scope="col">Logbook Type</th>
             <th scope="col">Logbook Owner</th>
             <th scope="col">Logbook Active?</th>
             </thead>
@@ -34,11 +34,15 @@
             <tr th:each="logbook : ${studentLogbookList}">
                 <th scope="row"><a th:href="@{'/logbook/' + ${logbook.getId()}}" th:text="${logbook.getId()}"></a></th>
                 <td th:text="${logbook.getCourseID()}"></td>
+                <td th:text="${logbook.getLogbookType()}"></td>
                 <td th:text="${logbook.getStudent()}"></td>
                 <td th:text="${logbook.isActive()}"></td>
             </tr>
             </tbody>
         </table>
+    </div>
+        <div class="col-lg-4 col-md-6 mb-4 column">
+        </div>
     </div>
     <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
     <script th:src="@{/js/table.js}"></script>

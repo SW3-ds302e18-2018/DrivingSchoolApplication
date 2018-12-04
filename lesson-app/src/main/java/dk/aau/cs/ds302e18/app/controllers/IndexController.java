@@ -4,7 +4,6 @@ import dk.aau.cs.ds302e18.app.SortLessonsByDateTime;
 import dk.aau.cs.ds302e18.app.auth.AccountRespository;
 import dk.aau.cs.ds302e18.app.domain.Lesson;
 import dk.aau.cs.ds302e18.app.service.LessonService;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -57,9 +56,8 @@ public class IndexController {
         //86400000 is one day in milliseconds
         nextDate.setTime(nextDate.getTime() + 86400000);
 
-        //Fetches the username from the session
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = ((UserDetails) principal).getUsername();
+        //Fetches the username from private method
+        String username = getAccountUsername();
 
         /**
          * If there is more then 9 lessons in the database, it limits the listed lesson to 9,
@@ -136,18 +134,14 @@ public class IndexController {
         return "index";
     }
 
-
     @ModelAttribute("gravatar")
     public String gravatar() {
-
         //Models Gravatar
-        System.out.println(accountRespository.findByUsername(getAccountUsername()).getEmail());
         String gravatar = ("http://0.gravatar.com/avatar/"+md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
         return (gravatar);
     }
 
-    private String getAccountUsername()
-    {
+    private String getAccountUsername() {
         UserDetails principal = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return principal.getUsername();
     }

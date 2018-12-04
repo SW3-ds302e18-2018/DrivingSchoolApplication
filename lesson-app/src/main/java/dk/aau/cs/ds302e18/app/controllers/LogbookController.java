@@ -136,15 +136,12 @@ public class LogbookController {
 
     @ModelAttribute("gravatar")
     public String gravatar() {
-
         //Models Gravatar
-        System.out.println(accountRespository.findByUsername(getAccountUsername()).getEmail());
         String gravatar = ("http://0.gravatar.com/avatar/"+md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
         return (gravatar);
     }
 
-    public String getAccountUsername()
-    {
+    public String getAccountUsername() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ((UserDetails) principal).getUsername();
     }

@@ -27,10 +27,8 @@
 
 <div layout:fragment="content">
     <div class="container main-content">
-        <h2><span th:text="${username}"></span>, here are the finished lessons for the instructor within the time period:</h2>
-        <h4>There are <span th:text="${salaryLessonTotal}"></span> Lessons with <span th:text="${uniqueCourseIdTotal}"></span> unique Course Ids.<br>
-            Type B: <span th:text="${courseTypeBLessonTotal}"></span> | Type BE: <span th:text="${courseTypeBELessonTotal}"></span> | Type A: <span th:text="${courseTypeALessonTotal}"></span></h4>
-        <br><hr>
+        <h2>Lessons for the instructor within the time period:</h2>
+        <hr>
         <h5>Search for instructor within time period:</h5>
         <form method="post" th:action="'/salary/admin'">
             <div class="form-row">
@@ -91,8 +89,9 @@
                 <button type="submit" class="btn btn-primary">Search</button>
             </div>
         </form>
-        <br>
-        <hr>
+        <br><hr>
+        <h4>Lessons: <span th:text="${salaryLessonTotal}"></span> | Unique Course IDs: <span th:text="${uniqueCourseIdTotal}"></span><br>
+            Type B: <span th:text="${courseTypeBLessonTotal}"></span> | Type BE: <span th:text="${courseTypeBELessonTotal}"></span> | Type A: <span th:text="${courseTypeALessonTotal}"></span></h4>
         <div class="centerpane">
             <table id="salaryLessonTable" class="table table-hover table-sm bordered">
                 <thead>
