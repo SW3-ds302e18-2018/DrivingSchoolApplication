@@ -62,7 +62,7 @@ public class ScheduledTasks {
                         String phoneNumber = usernameResultSet.getString("phone_number");
 
                         String message = "Hello " + studentUsername + ",\n You have a lesson at " + lessonLocation + " on the\n" + lessonDate;
-                        new Notification(message, "+45" + phoneNumber, email); // +45 is the region code for Denmark.
+                        new Notification(message, "ds302e18@gmail.com", email, "+45" + phoneNumber); // +45 is the region code for Denmark.
                     }
 
                     usernameResultSet.close();

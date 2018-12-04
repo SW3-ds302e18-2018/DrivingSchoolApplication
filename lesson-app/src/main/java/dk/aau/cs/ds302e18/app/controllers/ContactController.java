@@ -29,19 +29,18 @@ public class ContactController {
     public RedirectView acceptContactState(@RequestParam("firstName") String firstName, @RequestParam("email") String email,
                                            @RequestParam("message") String message) {
         String sendMessage = ("New Email from : " + firstName + " \n" + "Email :" + email + " \n" + "Message : " + message);
-        new Notification(sendMessage, email);
+        new Notification(sendMessage, "ds302e18@gmail.com", email);
         return new RedirectView("contact");
     }
 
     @ModelAttribute("gravatar")
     public String gravatar() {
         //Models Gravatar
-        String gravatar = ("http://0.gravatar.com/avatar/"+md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
-        return (gravatar);
+        return "http://0.gravatar.com/avatar/" + md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail());
     }
 
     private String getAccountUsername() {
-        UserDetails principal = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return principal.getUsername();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ((UserDetails) principal).getUsername();
     }
 }

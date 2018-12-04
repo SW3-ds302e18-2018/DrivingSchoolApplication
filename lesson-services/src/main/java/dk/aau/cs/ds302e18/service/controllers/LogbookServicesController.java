@@ -17,7 +17,6 @@ import java.util.Optional;
 @RestController
 @RequestMapping("/logbook")
 public class LogbookServicesController {
-
     private final LogbookRepository logbookRepository;
 
     public LogbookServicesController(LogbookRepository logbookRepository) {
@@ -56,7 +55,7 @@ public class LogbookServicesController {
         Optional<Logbook> optionalLogbook = this.logbookRepository.findById(id);
         if(optionalLogbook.isPresent()){
             this.logbookRepository.deleteById(id);
-            return new ResponseEntity<Void>(HttpStatus.OK);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
         throw new LogbookNotFoundException("Logbook: " + id + " not found.");
     }

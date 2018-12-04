@@ -32,7 +32,7 @@ public class StoreService
     }
 
     /**
-     * Returns an store object from the 8100 server that has just been added.
+     * Returns an store object from the 8200 server that has just been added.
      * @param storeModel
      * @return
      */

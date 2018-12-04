@@ -119,12 +119,11 @@ public class AdminController {
     @ModelAttribute("gravatar")
     public String gravatar() {
         //Models Gravatar
-        String gravatar = ("http://0.gravatar.com/avatar/" + md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
-        return (gravatar);
+        return "http://0.gravatar.com/avatar/" + md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail());
     }
 
     private String getAccountUsername() {
-        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return principal.getUsername();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ((UserDetails) principal).getUsername();
     }
 }

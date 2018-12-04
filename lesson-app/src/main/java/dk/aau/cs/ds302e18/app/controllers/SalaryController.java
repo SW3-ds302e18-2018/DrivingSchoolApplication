@@ -317,8 +317,7 @@ public class SalaryController {
     @ModelAttribute("gravatar")
     public String gravatar() {
         //Models Gravatar
-        String gravatar = ("http://0.gravatar.com/avatar/" + md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
-        return (gravatar);
+        return "http://0.gravatar.com/avatar/" + md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail());
     }
 
     private String getAccountUsername() {

@@ -110,7 +110,7 @@ public class CalendarController {
     }
 
     private String getAccountUsername() {
-        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return principal.getUsername();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ((UserDetails) principal).getUsername();
     }
 }

@@ -55,7 +55,7 @@ public class LessonController {
     @PreAuthorize("hasAnyRole('ROLE_STUDENT', 'ROLE_ADMIN', 'ROLE_INSTRUCTOR')")
     public String getLessons(Model model) {
         /* Creates an list of lessons from the return value of getAllLessons in LessonService(which is an function that gets lessons
-        from the 8100 server and makes them into lesson objects and returns them as an list) */
+        from the 8200 server and makes them into lesson objects and returns them as an list) */
         List<Lesson> lessons = this.lessonService.getAllLessons();
 
         List<Lesson> studentLessons = new ArrayList<>();
@@ -103,7 +103,7 @@ public class LessonController {
     @PostMapping(value = "/lessons")
     @PreAuthorize("hasAnyRole('ROLE_INSTRUCTOR', 'ROLE_ADMIN')")
     public ModelAndView addLesson(HttpServletRequest request, Model model, @ModelAttribute LessonModel lessonModel) {
-        /* The newly added lesson object is retrieved from the 8100 server.  */
+        /* The newly added lesson object is retrieved from the 8200 server.  */
         Lesson lesson = this.lessonService.addLesson(lessonModel);
 
         if (lesson.getStudentList().isEmpty() | lesson.getLessonInstructor().isEmpty() | lesson.getLessonLocation().isEmpty()) {
@@ -201,7 +201,6 @@ public class LessonController {
             for (String studentUsernameInLesson : studentUsernamesInCourseAsStringArray) {
                 if (studentUsernameInLesson.equals((studentAccount.getUsername()))) {
                     studentAccountsBelongingToLesson.add(studentAccount);
-                    System.out.println(studentAccount.getUsername());
                 }
             }
 
@@ -221,12 +220,11 @@ public class LessonController {
     @ModelAttribute("gravatar")
     public String gravatar() {
         //Models Gravatar
-        String gravatar = ("http://0.gravatar.com/avatar/" + md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
-        return (gravatar);
+        return "http://0.gravatar.com/avatar/" + md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail());
     }
 
     private String getAccountUsername() {
-        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return principal.getUsername();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ((UserDetails) principal).getUsername();
     }
 }

@@ -285,7 +285,6 @@ public class CourseController {
         List<Lesson> lessons = lessonService.getAllLessons();
         for (Lesson lesson : lessons) {
             /* If the student that is being added to the course is in a lesson associated with that courseID, update it. */
-            System.out.println(lesson.getCourseId() == courseID);
             if (lesson.getCourseId() == courseID) {
                 /* Sets the LessonModel with the values of the current lesson before it has been changed. */
                 LessonModel updatedLesson = lesson.translateLessonToModel();
@@ -368,12 +367,11 @@ public class CourseController {
     @ModelAttribute("gravatar")
     public String gravatar() {
         //Models Gravatar
-        String gravatar = ("http://0.gravatar.com/avatar/" + md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
-        return (gravatar);
+        return "http://0.gravatar.com/avatar/" + md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail());
     }
 
     private String getAccountUsername() {
-        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return principal.getUsername();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ((UserDetails) principal).getUsername();
     }
 }

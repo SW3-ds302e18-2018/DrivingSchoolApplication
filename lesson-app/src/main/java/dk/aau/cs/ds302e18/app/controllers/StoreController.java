@@ -20,7 +20,6 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
@@ -78,14 +77,16 @@ public class StoreController {
         List<Course> BEType = new ArrayList<>();
         List<Course> AType = new ArrayList<>();
 
-        Date today = new Date();
-        System.out.println(today.getTime());
-
         for (Course course : courses) {
-            System.out.println();
-            if ((course.getCourseType() == CourseType.TYPE_B_CAR)) BType.add(course);
-            if ((course.getCourseType() == CourseType.TYPE_BE_CAR_TRAILER)) BEType.add(course);
-            if ((course.getCourseType() == CourseType.TYPE_A_BIKE)) AType.add(course);
+            if ((course.getCourseType() == CourseType.TYPE_B_CAR)) {
+                BType.add(course);
+            }
+            if ((course.getCourseType() == CourseType.TYPE_BE_CAR_TRAILER)) {
+                BEType.add(course);
+            }
+            if ((course.getCourseType() == CourseType.TYPE_A_BIKE)) {
+                AType.add(course);
+            }
         }
 
         model.addAttribute("b_car_list", BType);
@@ -120,7 +121,7 @@ public class StoreController {
     @PostMapping(value = "/storeadmin")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ModelAndView addStore(HttpServletRequest request, Model model, @ModelAttribute StoreModel storeModel) {
-        /* The newly added store object is retrieved from the 8100 server.  */
+        /* The newly added store object is retrieved from the 8200 server.  */
         Store store = this.storeService.addStoreRequest(storeModel);
         model.addAttribute("store", store);
         request.setAttribute(View.RESPONSE_STATUS_ATTRIBUTE, HttpStatus.TEMPORARY_REDIRECT);
@@ -220,7 +221,7 @@ public class StoreController {
                 "please contact us as soon as possible, and at least 24 hours before the first lesson..\n" +
                 "Kind regards .\n" +
                 "Driving School A/S "
-                , studentEmail, true);
+                , "ds302e18@gmail.com", studentEmail);
       
         /*
         Creates a logbook for the student
@@ -273,7 +274,7 @@ public class StoreController {
                "You have been sadly declined of your request because you have not met the requirements.\n" +
                 "Kind regards .\n" +
                         "Driving School A/S "
-                , studentEmail, true);
+                , "ds302e18@gmail.com", studentEmail);
 
         model.addAttribute("store", store);
         model.addAttribute("storeModel", new StoreModel());
@@ -301,8 +302,7 @@ public class StoreController {
         // Creating the store mode, to be sent to the rest server
         Store store = this.storeService.addStoreRequest(storeModel);
         String studentEmail = accountRespository.findByUsername(getAccountUsername()).getEmail();
-        System.out.println("APPLY : " + studentEmail);
-        new Notification("Hello .\n Kind regards .\n Driving School A/S ", studentEmail, true);
+        new Notification("Hello .\n Kind regards .\n Driving School A/S ", "ds302e18@gmail.com", studentEmail);
 
         model.addAttribute("store", store);
         request.setAttribute(View.RESPONSE_STATUS_ATTRIBUTE, HttpStatus.TEMPORARY_REDIRECT);
@@ -314,13 +314,12 @@ public class StoreController {
     @ModelAttribute("gravatar")
     public String gravatar() {
         //Models Gravatar
-        String gravatar = ("http://0.gravatar.com/avatar/" + md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
-        return (gravatar);
+        return "http://0.gravatar.com/avatar/" + md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail());
     }
 
     private String getAccountUsername() {
-        UserDetails principal = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return principal.getUsername();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ((UserDetails) principal).getUsername();
     }
 
 }

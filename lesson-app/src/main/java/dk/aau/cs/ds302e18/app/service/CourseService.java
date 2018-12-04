@@ -11,7 +11,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
-/* Class responsible for reading lesson related data from the 8100 server. */
+/* Class responsible for reading lesson related data from the 8200 server. */
 @Service
 public class CourseService
 {
@@ -23,10 +23,9 @@ public class CourseService
 
     private final RestTemplate restTemplate = new RestTemplate();
 
-    /* Retrieves an list of store from the 8100 server and returns it as list of lessons in the format specified in
+    /* Retrieves an list of store from the 8200 server and returns it as list of lessons in the format specified in
        the Lesson class. */
-    public List<Course> getAllCourseRequests()
-    {
+    public List<Course> getAllCourseRequests() {
         String url = courseServiceUrl + REQUESTS;
         HttpEntity<String> request = new HttpEntity<>(null, null);
         return this.restTemplate.exchange(url, HttpMethod.GET, request, new ParameterizedTypeReference<List<Course>>() { }).getBody();
@@ -38,8 +37,6 @@ public class CourseService
         HttpEntity<CourseModel> request = new HttpEntity<>(courseModel, null);
         return this.restTemplate.exchange(url, HttpMethod.POST, request, Course.class).getBody();
     }
-
-
 
     public Course getCourse(long id) {
         String url = courseServiceUrl + REQUESTS + SLASH + id;
@@ -59,9 +56,7 @@ public class CourseService
         restTemplate.exchange(url, HttpMethod.DELETE, request, Course.class).getBody();
     }
 
-
     public Course updateCourse(long id, CourseModel storeModel) {
-        System.out.println(storeModel);
         String url = courseServiceUrl + REQUESTS + SLASH + id;
         HttpEntity<CourseModel> request = new HttpEntity<>(storeModel, null);
         return this.restTemplate.exchange(url, HttpMethod.PUT, request, Course.class).getBody();

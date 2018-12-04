@@ -4,8 +4,6 @@ import dk.aau.cs.ds302e18.service.models.Store;
 import dk.aau.cs.ds302e18.service.models.StoreModel;
 import dk.aau.cs.ds302e18.service.models.StoreNotFoundException;
 import dk.aau.cs.ds302e18.service.models.StoreRepository;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -18,39 +16,33 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/storeadmin")
-public class StoreServicesController
-{
-    private static final Logger LOGGER = LoggerFactory.getLogger(StoreServicesController.class);
-
+public class StoreServicesController {
     private final StoreRepository storeRepository;
 
-    public StoreServicesController(StoreRepository storeRepository)
-    {
+    public StoreServicesController(StoreRepository storeRepository) {
         super();
         this.storeRepository = storeRepository;
     }
 
     @GetMapping
-    public List<Store> getAllStoreRequests()
-    {
-        System.out.println(this.storeRepository.findAll());
+    public List<Store> getAllStoreRequests() {
         return new ArrayList<>(this.storeRepository.findAll());
     }
+
     /* Get = responsible for retrieving information only */
     @GetMapping("/{id}")
-    public Store getStore(@PathVariable Long id){
+    public Store getStore(@PathVariable Long id) {
         Optional<Store> store = this.storeRepository.findById(id);
-        if(store.isPresent()){
+        if (store.isPresent()) {
             return store.get();
         }
         throw new StoreNotFoundException("Store not found with id: " + id);
     }
 
-
     /* Post = responsible for posting new information directly after it has been created to the website, and create fitting
     links to the new information. */
     @PostMapping
-    public ResponseEntity<Store> addStore(@RequestBody StoreModel model){
+    public ResponseEntity<Store> addStore(@RequestBody StoreModel model) {
         /* Translates the input entered in the add store menu into input that can be entered in the database. */
         Store store = this.storeRepository.save(model.translateModelToStore());
         /* The new store will be placed in the current browser /id , with an id that matches the entered storeadmin ID. */
@@ -59,13 +51,12 @@ public class StoreServicesController
         return ResponseEntity.created(location).body(store);
     }
 
-
     /* Put = responsible for updating existing database entries*/
     @PutMapping("/{id}")
-    public Store updateStore(@PathVariable Long id, @RequestBody StoreModel model){
+    public Store updateStore(@PathVariable Long id, @RequestBody StoreModel model) {
         /* Throw an error if the selected store do not exist. */
         Optional<Store> existing = this.storeRepository.findById(id);
-        if(!existing.isPresent()){
+        if (!existing.isPresent()) {
             throw new StoreNotFoundException("Store not found with id: " + id);
         }
         /* Translates input from the interface into an store object */
@@ -75,15 +66,14 @@ public class StoreServicesController
         return this.storeRepository.save(store);
     }
 
-    /* NOT IMPLEMENTED: Delete = responsible for deleting database entries. */
+    /* Delete = responsible for deleting database entries. */
     @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.RESET_CONTENT)
-    public void deleteStore(@PathVariable Long id){
+    public void deleteStore(@PathVariable Long id) {
         Optional<Store> existing = this.storeRepository.findById(id);
-        if(!existing.isPresent()){
+        if (!existing.isPresent()) {
             throw new StoreNotFoundException("Store not found with id: " + id);
         }
         this.storeRepository.deleteById(id);
     }
-
 }
