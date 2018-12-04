@@ -17,17 +17,6 @@ public class Course {
     private int numberStudents;
     private String weekdays;
 
-
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm")
-    private Date startingPoint;
-    private ArrayList<Integer> weekdaysArray;
-    private int numberLessons;
-    private int numberLessonsADay;
-    private ArrayList<String> studentList;
-    private String instructorName;
-    private LessonType lessonType;
-    private List<String> StudentNameList;
-    private String studentFullNames;
     private String instructorFullName;
 
     public String getInstructorFullName() {
@@ -70,46 +59,6 @@ public class Course {
         this.courseStartDate = courseStartDate;
     }
 
-    public Date getStartingPoint() {
-        return startingPoint;
-    }
-
-    public void setStartingPoint(Date startingPoint) {
-        this.startingPoint = startingPoint;
-    }
-
-    public ArrayList<Integer> getWeekdaysArray() {
-        return weekdaysArray;
-    }
-
-    public void setWeekdaysArray(ArrayList<Integer> weekdaysArray) {
-        this.weekdaysArray = weekdaysArray;
-    }
-
-    public int getNumberLessons() {
-        return numberLessons;
-    }
-
-    public void setNumberLessons(int numberLessons) {
-        this.numberLessons = numberLessons;
-    }
-
-    public int getNumberLessonsADay() {
-        return numberLessonsADay;
-    }
-
-    public void setNumberLessonsADay(int numberLessonsADay) {
-        this.numberLessonsADay = numberLessonsADay;
-    }
-
-    public ArrayList<String> getStudentList() {
-        return studentList;
-    }
-
-    public void setStudentList(ArrayList<String> studentList) {
-        this.studentList = studentList;
-    }
-
     public String getCourseLocation() {
         return courseLocation;
     }
@@ -118,52 +67,12 @@ public class Course {
         this.courseLocation = courseLocation;
     }
 
-    public String getInstructorName() {
-        return instructorName;
-    }
-
-    public void setInstructorName(String instructorName) {
-        this.instructorName = instructorName;
-    }
-
-    public LessonType getLessonType() {
-        return lessonType;
-    }
-
-    public void setLessonType(LessonType lessonType) {
-        this.lessonType = lessonType;
-    }
-
-    public List<String> getStudentNameList() {
-        return StudentNameList;
-    }
-
-    public void setStudentNameList(List<String> studentNameList) {
-        StudentNameList = studentNameList;
-    }
-
-    public String getStudentNamesString() {
-        return studentFullNames;
-    }
-
-    public void setStudentNamesString(String studentNamesString) {
-        this.studentFullNames = studentNamesString;
-    }
-
     public CourseType getCourseType() {
         return courseType;
     }
 
     public void setCourseType(CourseType courseType) {
         this.courseType = courseType;
-    }
-
-    public String getStudentFullNames() {
-        return studentFullNames;
-    }
-
-    public void setStudentFullNames(String studentFullNames) {
-        this.studentFullNames = studentFullNames;
     }
 
     public int getNumberStudents() {
