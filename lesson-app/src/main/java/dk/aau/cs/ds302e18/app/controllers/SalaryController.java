@@ -1,14 +1,14 @@
 package dk.aau.cs.ds302e18.app.controllers;
 
 import dk.aau.cs.ds302e18.app.SortLessonsByCourseId;
-import dk.aau.cs.ds302e18.app.auth.Account;
-import dk.aau.cs.ds302e18.app.auth.AccountRespository;
+import dk.aau.cs.ds302e18.app.domain.Account;
 import dk.aau.cs.ds302e18.app.auth.AuthGroup;
 import dk.aau.cs.ds302e18.app.auth.AuthGroupRepository;
 import dk.aau.cs.ds302e18.app.domain.Course;
 import dk.aau.cs.ds302e18.app.domain.CourseType;
 import dk.aau.cs.ds302e18.app.domain.Lesson;
 import dk.aau.cs.ds302e18.app.domain.LessonState;
+import dk.aau.cs.ds302e18.app.service.AccountService;
 import dk.aau.cs.ds302e18.app.service.CourseService;
 import dk.aau.cs.ds302e18.app.service.LessonService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,14 +30,14 @@ import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
 public class SalaryController {
     private final LessonService lessonService;
     private final CourseService courseService;
-    private final AccountRespository accountRespository;
+    private final AccountService accountService;
     private final AuthGroupRepository authGroupRepository;
 
-    public SalaryController(LessonService lessonService, CourseService courseService, AccountRespository accountRespository, AuthGroupRepository authGroupRepository) {
+    public SalaryController(LessonService lessonService, CourseService courseService, AccountService accountService, AuthGroupRepository authGroupRepository) {
         super();
         this.lessonService = lessonService;
         this.courseService = courseService;
-        this.accountRespository = accountRespository;
+        this.accountService = accountService;
         this.authGroupRepository = authGroupRepository;
     }
 
@@ -304,7 +304,7 @@ public class SalaryController {
     private List<Account> findAllInstructors() {
         //Finds all accounts and compares their auth group to find the ones who are instructors
         List<AuthGroup> authGroups = this.authGroupRepository.findAll();
-        List<Account> accountList = this.accountRespository.findAll();
+        List<Account> accountList = this.accountService.getAllAccounts();
         List<Account> instructorList = new ArrayList<>();
         for (int i = 0; i < accountList.size(); i++) {
             if (authGroups.get(i).getAuthGroup().equals("INSTRUCTOR")) {
@@ -317,7 +317,7 @@ public class SalaryController {
     @ModelAttribute("gravatar")
     public String gravatar() {
         //Models Gravatar
-        String gravatar = ("http://0.gravatar.com/avatar/" + md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
+        String gravatar = ("http://0.gravatar.com/avatar/" + md5Hex(accountService.getAccount(getAccountUsername()).getEmail()));
         return (gravatar);
     }
 

@@ -1,5 +1,6 @@
 package dk.aau.cs.ds302e18.app.auth;
 
+import dk.aau.cs.ds302e18.app.domain.Account;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

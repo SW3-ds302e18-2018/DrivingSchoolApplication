@@ -1,6 +1,8 @@
 package dk.aau.cs.ds302e18.app.controllers;
 
 import dk.aau.cs.ds302e18.app.auth.*;
+import dk.aau.cs.ds302e18.app.domain.Account;
+import dk.aau.cs.ds302e18.app.service.AccountService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,13 +16,13 @@ import org.springframework.web.servlet.view.RedirectView;
  */
 @Controller
 public class AuthController {
-    private final AccountRespository accountRespository;
+    private final AccountService accountService;
     private final AuthGroupRepository authGroupRepository;
     private final UserRepository userRepository;
 
-    public AuthController(AccountRespository accountRespository, AuthGroupRepository authGroupRepository,
-                             UserRepository userRepository) {
-        this.accountRespository = accountRespository;
+    public AuthController(AccountService accountService, AuthGroupRepository authGroupRepository,
+                          UserRepository userRepository) {
+        this.accountService = accountService;
         this.authGroupRepository = authGroupRepository;
         this.userRepository = userRepository;
     }
@@ -71,7 +73,7 @@ public class AuthController {
         authGroup.setUsername(username);
         authGroup.setAuthGroup("STUDENT");
 
-        this.accountRespository.save(account);
+        this.accountService.addAccount(account.translateAccountToModel());
         this.authGroupRepository.save(authGroup);
         this.userRepository.save(user);
 
