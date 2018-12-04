@@ -5,6 +5,7 @@ public class LogbookModel {
     private long courseID;
     private String student;
     private boolean isActive;
+    private String logbookType;
 
     public long getCourseID() {
         return courseID;
@@ -30,11 +31,20 @@ public class LogbookModel {
         isActive = active;
     }
 
+    public String getLogbookType() {
+        return logbookType;
+    }
+
+    public void setLogbookType(String logbookType) {
+        this.logbookType = logbookType;
+    }
+
     public Logbook translateModelToLogbook(){
         Logbook logbook = new Logbook();
         logbook.setCourseID(this.courseID);
         logbook.setStudent(this.student);
         logbook.setActive(this.isActive);
+        logbook.setLogbookType(this.logbookType);
         return logbook;
     }
 }

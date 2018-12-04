@@ -17,9 +17,7 @@ import java.util.List;
 import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
 
 @Controller
-public class AdminController
-{
-
+public class AdminController {
     private final AccountRespository accountRespository;
     private final AuthGroupRepository authGroupRepository;
     private final UserRepository userRepository;
@@ -33,45 +31,33 @@ public class AdminController
 
     @GetMapping(value = "/admin")
     @PreAuthorize("hasAnyRole('ROLE_INSTRUCTOR', 'ROLE_ADMIN')")
-    public String getAdminPage(Model model)
-    {
+    public String getAdminPage(Model model) {
         List<AccountViewModel> accountViewModelList = new ArrayList<>();
 
         List<User> userArrayList = this.userRepository.findAll();
-        System.out.println("Use REPO" + userArrayList.size());
         List<Account> accounts = this.accountRespository.findAll();
-        System.out.println("ACCOUNT REPO" + accounts.size());
         List<AuthGroup> authGroups = this.authGroupRepository.findAll();
-        System.out.println("AUTH GROUP"+  authGroups.size());
 
-        System.out.println(userArrayList.size());
-
-        for (int i = 0; i < userArrayList.size(); i++)
-        {
+        for (int i = 0; i < userArrayList.size(); i++) {
             AccountViewModel accountViewModel = new AccountViewModel();
             accountViewModel.setUsername(userArrayList.get(i).getUsername());
             accountViewModel.setFirstName(accounts.get(i).getFirstName());
             accountViewModel.setLastName(accounts.get(i).getLastName());
             accountViewModel.setAuthGroup(authGroups.get(i).getAuthGroup());
             accountViewModelList.add(accountViewModel);
-            System.out.println(accountViewModel.toString());
         }
 
         model.addAttribute("GetAllAccounts", accountViewModelList);
         return "admin";
     }
 
-
     @GetMapping(value = "/admin/{username}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String getAdminPageForUser(Model model, @PathVariable String username)
-    {
+    public String getAdminPageForUser(Model model, @PathVariable String username) {
         model.addAttribute("user", accountRespository.findByUsername(username));
         model.addAttribute("userName", username);
-        System.out.println(username);
         return "admin-edituser";
     }
-
 
     @RequestMapping(value = "/adminChangeDetails", method = RequestMethod.POST)
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -83,8 +69,7 @@ public class AdminController
                                                   @RequestParam("Birthday") String birthday,
                                                   @RequestParam("Address") String address,
                                                   @RequestParam("City") String city,
-                                                  @RequestParam("Zip") int zip)
-    {
+                                                  @RequestParam("Zip") int zip) {
         Account account = new Account();
         account.setUsername(username);
         account.setId(accountRespository.findByUsername(username).getId());
@@ -104,9 +89,7 @@ public class AdminController
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public RedirectView resetAccountPassword(
             @RequestParam("Username") String username,
-            @RequestParam("Password") String password
-    )
-    {
+            @RequestParam("Password") String password) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(11);
 
         String newPass = passwordEncoder.encode(password);
@@ -124,11 +107,7 @@ public class AdminController
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public RedirectView changeRole(
             @RequestParam("Username") String username,
-            @RequestParam("Role") String role
-    )
-    {
-        System.out.println(username+role);
-
+            @RequestParam("Role") String role) {
         AuthGroup authGroup = new AuthGroup();
         authGroup.setId(userRepository.findByUsername(username).getId());
         authGroup.setAuthGroup(role);
@@ -139,18 +118,13 @@ public class AdminController
 
     @ModelAttribute("gravatar")
     public String gravatar() {
-
         //Models Gravatar
-        System.out.println(accountRespository.findByUsername(getAccountUsername()).getEmail());
-        String gravatar = ("http://0.gravatar.com/avatar/"+md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
+        String gravatar = ("http://0.gravatar.com/avatar/" + md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
         return (gravatar);
     }
 
-    public String getAccountUsername()
-    {
-        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = ((UserDetails) principal).getUsername();
-        return username;
+    private String getAccountUsername() {
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return principal.getUsername();
     }
-
 }

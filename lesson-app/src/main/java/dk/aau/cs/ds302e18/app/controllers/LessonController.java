@@ -5,10 +5,10 @@ import dk.aau.cs.ds302e18.app.auth.Account;
 import dk.aau.cs.ds302e18.app.auth.AccountRespository;
 import dk.aau.cs.ds302e18.app.auth.AuthGroup;
 import dk.aau.cs.ds302e18.app.auth.AuthGroupRepository;
-import dk.aau.cs.ds302e18.app.domain.*;
+import dk.aau.cs.ds302e18.app.domain.Course;
 import dk.aau.cs.ds302e18.app.domain.Lesson;
 import dk.aau.cs.ds302e18.app.domain.LessonModel;
-import dk.aau.cs.ds302e18.app.domain.SignatureCanvas;
+import dk.aau.cs.ds302e18.app.domain.LessonType;
 import dk.aau.cs.ds302e18.app.service.CourseService;
 import dk.aau.cs.ds302e18.app.service.LessonService;
 import org.springframework.http.HttpStatus;
@@ -22,7 +22,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.View;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -30,8 +29,7 @@ import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
 
 @Controller
 @RequestMapping("/")
-public class LessonController
-{
+public class LessonController {
     /* Mapping is what allows the java objects to be included and used by the html files.
        An object is available to the html file after it has been added as an attribute with the addAttribute method.
        What is returned is the html file it interacts with.
@@ -55,8 +53,7 @@ public class LessonController
 
     @GetMapping(value = "/lessons")
     @PreAuthorize("hasAnyRole('ROLE_STUDENT', 'ROLE_ADMIN', 'ROLE_INSTRUCTOR')")
-    public String getLessons(Model model)
-    {
+    public String getLessons(Model model) {
         /* Creates an list of lessons from the return value of getAllLessons in LessonService(which is an function that gets lessons
         from the 8100 server and makes them into lesson objects and returns them as an list) */
         List<Lesson> lessons = this.lessonService.getAllLessons();
@@ -68,9 +65,7 @@ public class LessonController
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String username = ((UserDetails) principal).getUsername();
 
-
-        for (Lesson lesson : lessons)
-        {
+        for (Lesson lesson : lessons) {
             String[] studentListArray = lesson.getStudentList().split(",");
             for (String studentUsername : studentListArray) {
                 if (studentUsername.equals(username)) {
@@ -86,8 +81,7 @@ public class LessonController
 
     @GetMapping(value = "/lessons/add")
     @PreAuthorize("hasAnyRole('ROLE_INSTRUCTOR', 'ROLE_ADMIN')")
-    public String getAddLessonForm(Model model)
-    {
+    public String getAddLessonForm(Model model) {
         List<Account> studentAccounts = findAccountsOfType("STUDENT");
         model.addAttribute("studentAccountlist", studentAccounts);
 
@@ -97,7 +91,6 @@ public class LessonController
 
         instructorList.addAll(instructors);
         instructorList.addAll(admins);
-
         model.addAttribute("instructorAccountList", instructorList);
 
         List<Course> courses = this.courseService.getAllCourseRequests();
@@ -109,18 +102,14 @@ public class LessonController
     /* Posts a newly added lesson in the lessons list on the website */
     @PostMapping(value = "/lessons")
     @PreAuthorize("hasAnyRole('ROLE_INSTRUCTOR', 'ROLE_ADMIN')")
-    public ModelAndView addLesson(HttpServletRequest request, Model model, @ModelAttribute LessonModel lessonModel)
-    {
+    public ModelAndView addLesson(HttpServletRequest request, Model model, @ModelAttribute LessonModel lessonModel) {
         /* The newly added lesson object is retrieved from the 8100 server.  */
         Lesson lesson = this.lessonService.addLesson(lessonModel);
 
-        if (lesson.getStudentList().isEmpty() | lesson.getLessonInstructor().isEmpty() | lesson.getLessonLocation().isEmpty())
-        {
-            if (lesson.getLessonType() != LessonType.THEORY_LESSON || lesson.getLessonType() != LessonType.PRACTICAL_LESSON)
-            {
+        if (lesson.getStudentList().isEmpty() | lesson.getLessonInstructor().isEmpty() | lesson.getLessonLocation().isEmpty()) {
+            if (lesson.getLessonType() != LessonType.THEORY_LESSON || lesson.getLessonType() != LessonType.PRACTICAL_LESSON) {
                 throw new RuntimeException();
             }
-
             model.addAttribute("lesson", lesson);
 
             request.setAttribute(View.RESPONSE_STATUS_ATTRIBUTE, HttpStatus.TEMPORARY_REDIRECT);
@@ -130,8 +119,7 @@ public class LessonController
 
     @GetMapping(value = "/lessons/{id}")
     @PreAuthorize("hasAnyRole('ROLE_INSTRUCTOR', 'ROLE_ADMIN')")
-    public String getLesson(Model model, @PathVariable long id)
-    {
+    public String getLesson(Model model, @PathVariable long id) {
         Lesson lesson = this.lessonService.getLesson(id);
 
         List<Account> studentAccounts = findAccountsOfType("STUDENT");
@@ -145,7 +133,6 @@ public class LessonController
         instructorList.addAll(admins);
 
         model.addAttribute("instructorAccountList", instructorList);
-
         model.addAttribute("lesson", lesson);
 
         List<Account> studentsBelongingToLesson = findStudentsBelongingToLesson(lesson);
@@ -155,11 +142,10 @@ public class LessonController
         courses.sort(new SortByCourseID());
         model.addAttribute("courseList", courses);
 
-        String lessonYear = String.valueOf(Math.addExact(1900,lesson.getLessonDate().getYear()));
-        String calendar = ("" + lessonYear+"-"+lesson.getLessonDate().getMonth()+
-                "-"+lesson.getLessonDate().getDate()+" "+lesson.getLessonDate().getHours()+
-                ":"+lesson.getLessonDate().getMinutes());
-
+        String lessonYear = String.valueOf(Math.addExact(1900, lesson.getLessonDate().getYear()));
+        String calendar = ("" + lessonYear + "-" + lesson.getLessonDate().getMonth() +
+                "-" + lesson.getLessonDate().getDate() + " " + lesson.getLessonDate().getHours() +
+                ":" + lesson.getLessonDate().getMinutes());
         model.addAttribute("calendarDate", calendar);
 
         return "lesson-view";
@@ -167,9 +153,8 @@ public class LessonController
 
     @PostMapping(value = "/lessons/{id}")
     @PreAuthorize("hasAnyRole('ROLE_INSTRUCTOR', 'ROLE_ADMIN')")
-    public String updateLesson(Model model, @PathVariable long id, @ModelAttribute LessonModel lessonModel)
-    {
-        /* Returns an lesson that is read from the 8100 server through updateCourse. */
+    public String updateLesson(Model model, @PathVariable long id, @ModelAttribute LessonModel lessonModel) {
+        /* Returns an lesson that is read from the 8200 server through updateCourse. */
         Lesson lesson = this.lessonService.updateLesson(id, lessonModel);
         model.addAttribute("lesson", lesson);
         model.addAttribute("lessonModel", new LessonModel());
@@ -178,15 +163,13 @@ public class LessonController
     }
 
     @GetMapping(value = "/gdpr")
-    public String getGdprPage()
-    {
+    public String getGdprPage() {
         return "gdpr";
     }
 
     @GetMapping(value = "/deletelesson/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ModelAndView deleteLesson(Model model, @PathVariable long id)
-    {
+    public ModelAndView deleteLesson(Model model, @PathVariable long id) {
         Lesson lesson = this.lessonService.getLesson(id);
         model.addAttribute("dlesson", lesson);
         this.lessonService.deleteLesson(id);
@@ -195,36 +178,19 @@ public class LessonController
 
 
     private List<Account> findAccountsOfType(String accountType) {
-
         List<AuthGroup> authGroups = this.authGroupRepository.findAll();
         List<Account> accountList = this.accountRespository.findAll();
-
         List<Account> accountsOfSelectedType = new ArrayList<>();
 
         /* When an account is created it is at the same time added to authGroup. Elements in a result-set are per default
            fetched with the order they were entered in the database, so account[0] will be the same as the
            authGroup[0]. This means that we do not have to manually check which authGroups matches which accounts. */
         for (int i = 0; i < accountList.size(); i++) {
-            if (authGroups.get(i).getAuthGroup().equals(accountType))
+            if (authGroups.get(i).getAuthGroup().equals(accountType)) {
                 accountsOfSelectedType.add(accountList.get(i));
+            }
         }
-
         return accountsOfSelectedType;
-    }
-
-    @ModelAttribute("gravatar")
-    public String gravatar() {
-
-        //Models Gravatar
-        System.out.println(accountRespository.findByUsername(getAccountUsername()).getEmail());
-        String gravatar = ("http://0.gravatar.com/avatar/"+md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
-        return (gravatar);
-    }
-
-    private String getAccountUsername()
-    {
-        UserDetails principal = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return principal.getUsername();
     }
 
     private List<Account> findStudentsBelongingToLesson(Lesson lesson) {
@@ -252,5 +218,15 @@ public class LessonController
         return studentList;
     }
 
+    @ModelAttribute("gravatar")
+    public String gravatar() {
+        //Models Gravatar
+        String gravatar = ("http://0.gravatar.com/avatar/" + md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
+        return (gravatar);
+    }
 
+    private String getAccountUsername() {
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return principal.getUsername();
+    }
 }

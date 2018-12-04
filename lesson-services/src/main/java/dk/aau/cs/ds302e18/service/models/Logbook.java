@@ -15,6 +15,8 @@ public class Logbook {
     private String student;
     @Column(name="LOGBOOK_ISACTIVE")
     private boolean isActive;
+    @Column(name="LOGBOOK_TYPE")
+    private String logbookType;
 
     public Logbook() {
         super();
@@ -50,5 +52,13 @@ public class Logbook {
 
     public void setActive(boolean active) {
         isActive = active;
+    }
+
+    public String getLogbookType() {
+        return logbookType;
+    }
+
+    public void setLogbookType(String logbookType) {
+        this.logbookType = logbookType;
     }
 }

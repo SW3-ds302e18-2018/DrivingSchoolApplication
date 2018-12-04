@@ -1,21 +1,19 @@
 package dk.aau.cs.ds302e18.app.controllers;
 
 import dk.aau.cs.ds302e18.app.auth.*;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.view.RedirectView;
 
 /**
  * Controller responsible for handling actions towards the account
  */
 @Controller
-public class AuthController
-{
-
+public class AuthController {
     private final AccountRespository accountRespository;
     private final AuthGroupRepository authGroupRepository;
     private final UserRepository userRepository;
@@ -28,14 +26,12 @@ public class AuthController
     }
 
     @GetMapping(value = "/logout-success")
-    public String getLogoutPage(Model model)
-    {
+    public String getLogoutPage() {
         return "logout";
     }
 
     @GetMapping(value = "/register")
-    public String getRegisterPage()
-    {
+    public String getRegisterPage() {
         return "register-account";
     }
 
@@ -49,11 +45,9 @@ public class AuthController
                                         @RequestParam("Birthday") String birthday,
                                         @RequestParam("Address") String address,
                                         @RequestParam("City") String city,
-                                        @RequestParam("Zip") int zip)
-    {
-        System.out.println(username+password+email+firstName+lastName+phoneNumber+birthday+address+city+zip);
-
+                                        @RequestParam("Zip") int zip) {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(11);
+
         String newPass = passwordEncoder.encode(password);
 
         User user = new User();
@@ -85,17 +79,7 @@ public class AuthController
     }
 
     @GetMapping(value = "/login")
-    public String getLoginPage(Model model)
-    {
+    public String getLoginPage() {
         return "login";
     }
-
-
-    public String getAccountUsername()
-    {
-        UserDetails principal = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return principal.getUsername();
-    }
-
-
 }

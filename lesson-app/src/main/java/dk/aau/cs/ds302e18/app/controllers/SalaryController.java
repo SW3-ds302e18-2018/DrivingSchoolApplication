@@ -86,7 +86,6 @@ public class SalaryController {
         model.addAttribute("courseTypeALessonTotal", courseTypeALessonTotal);
         model.addAttribute("salaryLessonList", salaryLessonList);
         model.addAttribute("salaryLessonTotal", salaryLessonList.size());
-        model.addAttribute("username", username);
         return "salary-instructor";
     }
 
@@ -135,7 +134,6 @@ public class SalaryController {
         model.addAttribute("courseTypeALessonTotal", courseTypeALessonTotal);
         model.addAttribute("salaryLessonList", salaryLessonList);
         model.addAttribute("salaryLessonTotal", salaryLessonList.size());
-        model.addAttribute("username", username);
         return "salary-instructor";
     }
 
@@ -181,9 +179,6 @@ public class SalaryController {
         //Finds unique course ids from the salary lesson list
         uniqueCourseIdTotal = findUniqueCourseIds(salaryLessonList);
 
-        //Gets username from private function
-        String username = getAccountUsername();
-
         //Models variables from java for usage in html
         model.addAttribute("instructorList", instructorList);
         model.addAttribute("uniqueCourseIdTotal", uniqueCourseIdTotal);
@@ -192,7 +187,6 @@ public class SalaryController {
         model.addAttribute("courseTypeALessonTotal", courseTypeALessonTotal);
         model.addAttribute("salaryLessonList", salaryLessonList);
         model.addAttribute("salaryLessonTotal", salaryLessonList.size());
-        model.addAttribute("username", username);
         return "salary-admin";
     }
 
@@ -235,9 +229,6 @@ public class SalaryController {
         //Finds unique course ids from the salary lesson list
         uniqueCourseIdTotal = findUniqueCourseIds(salaryLessonList);
 
-        //Gets username from private function
-        String username = getAccountUsername();
-
         //Models variables from java for usage in html
         model.addAttribute("instructorList", instructorList);
         model.addAttribute("uniqueCourseIdTotal", uniqueCourseIdTotal);
@@ -246,7 +237,6 @@ public class SalaryController {
         model.addAttribute("courseTypeALessonTotal", courseTypeALessonTotal);
         model.addAttribute("salaryLessonList", salaryLessonList);
         model.addAttribute("salaryLessonTotal", salaryLessonList.size());
-        model.addAttribute("username", username);
         return "salary-admin";
     }
 
@@ -327,15 +317,12 @@ public class SalaryController {
     @ModelAttribute("gravatar")
     public String gravatar() {
         //Models Gravatar
-        System.out.println(accountRespository.findByUsername(getAccountUsername()).getEmail());
         String gravatar = ("http://0.gravatar.com/avatar/" + md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
         return (gravatar);
     }
 
-    public String getAccountUsername() {
-        //Fetches the username from the session
+    private String getAccountUsername() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        String username = ((UserDetails) principal).getUsername();
-        return username;
+        return ((UserDetails) principal).getUsername();
     }
 }

@@ -71,10 +71,11 @@ public class CourseController {
 
         /* The username selected are separated as an string array so the arrays size can be counted. */
         ArrayList<String> studentUsernamesList = saveStringsSeparatedByCommaAsArray(courseModel.getStudentUsernames());
-        if(studentUsernamesList.get(0).equals("temporal value"))
+        if (studentUsernamesList.get(0).equals("temporal value")) {
             courseModel.setNumberStudents(0);
-        else
+        } else {
             courseModel.setNumberStudents(studentUsernamesList.size());
+        }
         courseService.addCourse(courseModel);
 
         courseModel.setStudentUsernames("");
@@ -82,7 +83,6 @@ public class CourseController {
         courseModel.setWeekdays("");
         Course latestCourse = courseService.getLastCourseOrderedByID();
         courseService.updateCourse(latestCourse.getCourseTableID(), courseModel);
-
 
         return new ModelAndView("redirect:/course/");
     }
@@ -105,7 +105,6 @@ public class CourseController {
 
         Course course = courseService.getCourse(id);
 
-
         /* For every lesson date, a lesson will be created */
         for (int j = 0; j < lessonDates.size(); j++) {
             Date lessonDate = lessonDates.get(j);
@@ -125,7 +124,6 @@ public class CourseController {
                 firstCreatedLessonDate = new Date(lessonDate.getTime());
             }
         }
-
 
         CourseModel updatedCourse = course.translateCourseToModel();
         /* Updates the created latest created course start_date with the date of the first lesson created and weekdays with the string converted from the weekdaysArray. */
@@ -165,8 +163,9 @@ public class CourseController {
 
         ArrayList<Lesson> lessonsMatchingCourse = new ArrayList<>();
         for (Lesson lesson : lessons) {
-            if (lesson.getCourseId() == id)
+            if (lesson.getCourseId() == id) {
                 lessonsMatchingCourse.add(lesson);
+            }
         }
 
         /* Finds all user accounts and adds those that belongs to the course in a separate arrayList */
@@ -179,59 +178,6 @@ public class CourseController {
         model.addAttribute("studentAccountsBelongingToCourse", studentsBelongingToCourse);
 
         return "course-view";
-    }
-
-    /* Function that converts an string of ints from 0-6 to weekdays in words with regards to the Date java class.
-       Also adds a space and "," between each word. */
-    private String convertWeekdaysIntStringToWeekdaysInWords(String weekdaysAsIntegers){
-        ArrayList<String> weekdaysAsIntegersArray = saveStringsSeparatedByCommaAsArray(weekdaysAsIntegers);
-        String weekDaysInWords = "";
-        for(int i = 0; i<weekdaysAsIntegersArray.size(); i++){
-            switch (weekdaysAsIntegersArray.get(i)){
-                case "0":
-                    weekDaysInWords += "Sunday";
-                    break;
-                case "1":
-                    weekDaysInWords += "Monday";
-                    break;
-                case "2":
-                    weekDaysInWords += "Tuesday";
-                    break;
-                case "3":
-                    weekDaysInWords += "Wednesday";
-                    break;
-                case "4":
-                    weekDaysInWords += "Thursday";
-                    break;
-                case "5":
-                    weekDaysInWords += "Friday";
-                    break;
-                case "6":
-                    weekDaysInWords += "Saturday";
-                    break;
-            }
-            /* Refrains from adding an "," at the end for appearances sake */
-            if(i!=weekdaysAsIntegersArray.size()-1){
-                weekDaysInWords += ", ";
-            }
-        }
-        return weekDaysInWords;
-    }
-
-    /* Finds student accounts. Saves the student usernames in the course as an string array. Checks if any of the
-       student usernames equals any of the student accounts, and adds them to an the array studentsAccountsBelongToCourse. */
-    private List<Account> findStudentsBelongingToCourse(Course course) {
-        List<Account> studentAccounts = findAccountsOfType("STUDENT");
-        List<String> studentUsernamesInCourseAsStringArray = saveStringsSeparatedByCommaAsArray(course.getStudentUsernames());
-        List<Account> studentAccountsBelongingToCourse = new ArrayList<>();
-        for (Account studentAccount : studentAccounts) {
-            for (String studentUsernameInCourse : studentUsernamesInCourseAsStringArray) {
-                if (studentUsernameInCourse.equals((studentAccount.getUsername())))
-                    studentAccountsBelongingToCourse.add(studentAccount);
-            }
-
-        }
-        return studentAccountsBelongingToCourse;
     }
 
     @RequestMapping(value = "/course/addStudent/{id}", method = RequestMethod.POST)
@@ -250,7 +196,6 @@ public class CourseController {
         updatedCourse.setNumberStudents(updatedCourse.getNumberStudents() + 1);
 
         courseService.updateCourse(id, updatedCourse);
-
 
         /* Updates every lesson with the student in it. */
         updateUsernamesAssociatedWithCourse(id, studentUsernames);
@@ -278,6 +223,59 @@ public class CourseController {
         return new ModelAndView("redirect:/course/" + id);
     }
 
+    /* Function that converts an string of ints from 0-6 to weekdays in words with regards to the Date java class.
+    Also adds a space and "," between each word. */
+    private String convertWeekdaysIntStringToWeekdaysInWords(String weekdaysAsIntegers) {
+        ArrayList<String> weekdaysAsIntegersArray = saveStringsSeparatedByCommaAsArray(weekdaysAsIntegers);
+        String weekDaysInWords = "";
+        for (int i = 0; i < weekdaysAsIntegersArray.size(); i++) {
+            switch (weekdaysAsIntegersArray.get(i)) {
+                case "0":
+                    weekDaysInWords += "Sunday";
+                    break;
+                case "1":
+                    weekDaysInWords += "Monday";
+                    break;
+                case "2":
+                    weekDaysInWords += "Tuesday";
+                    break;
+                case "3":
+                    weekDaysInWords += "Wednesday";
+                    break;
+                case "4":
+                    weekDaysInWords += "Thursday";
+                    break;
+                case "5":
+                    weekDaysInWords += "Friday";
+                    break;
+                case "6":
+                    weekDaysInWords += "Saturday";
+                    break;
+            }
+            /* Refrains from adding an "," at the end for appearances sake */
+            if (i != weekdaysAsIntegersArray.size() - 1) {
+                weekDaysInWords += ", ";
+            }
+        }
+        return weekDaysInWords;
+    }
+
+    /* Finds student accounts. Saves the student usernames in the course as an string array. Checks if any of the
+       student usernames equals any of the student accounts, and adds them to an the array studentsAccountsBelongToCourse. */
+    private List<Account> findStudentsBelongingToCourse(Course course) {
+        List<Account> studentAccounts = findAccountsOfType("STUDENT");
+        List<String> studentUsernamesInCourseAsStringArray = saveStringsSeparatedByCommaAsArray(course.getStudentUsernames());
+        List<Account> studentAccountsBelongingToCourse = new ArrayList<>();
+        for (Account studentAccount : studentAccounts) {
+            for (String studentUsernameInCourse : studentUsernamesInCourseAsStringArray) {
+                if (studentUsernameInCourse.equals((studentAccount.getUsername()))) {
+                    studentAccountsBelongingToCourse.add(studentAccount);
+                }
+            }
+        }
+        return studentAccountsBelongingToCourse;
+    }
+
     /* Replaces studentUsernames in every lesson with the studentToUpdate username in it and the courseID specified, with the updatedUsernamesString */
     private void updateUsernamesAssociatedWithCourse(long courseID, String updatedUsernamesString) {
         List<Lesson> lessons = lessonService.getAllLessons();
@@ -291,14 +289,13 @@ public class CourseController {
                 updatedLesson.setStudentList(updatedUsernamesString);
                 lessonService.updateLesson(lesson.getId(), updatedLesson);
             }
-
         }
     }
 
     private ArrayList<Date> createLessonDates(Date startDate, ArrayList<Integer> weekdaysArrays, int numberLessonsToDistribute,
-                                             int numberLessonsADay) {
+                                              int numberLessonsADay) {
         ArrayList<Date> lessonDates = new ArrayList<>();
-        Date currentDayDate = startDate;
+        Date currentDayDate;
         int dayCount = 0;
         /* A lesson should minimum be 45 minutes according to law, and the two interviewed driving schools had a 45
            minute lesson duration. */
@@ -348,35 +345,31 @@ public class CourseController {
         }
     }
 
-    @ModelAttribute("gravatar")
-    public String gravatar() {
-
-        //Models Gravatar
-        String gravatar = ("http://0.gravatar.com/avatar/" + md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
-        return (gravatar);
-    }
-
-    private String getAccountUsername()
-    {
-        UserDetails principal = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return principal.getUsername();
-    }
-
     private List<Account> findAccountsOfType(String accountType) {
-
         List<AuthGroup> authGroups = this.authGroupRepository.findAll();
         List<Account> accountList = this.accountRespository.findAll();
-
         List<Account> accountsOfSelectedType = new ArrayList<>();
 
         /* When an account is created it is at the same time added to authGroup. Elements in a result-set are per default
            fetched with the order they were entered in the database, so account[0] will be the same as the
            authGroup[0]. This means that we do not have to manually check which authGroups matches which accounts. */
         for (int i = 0; i < accountList.size(); i++) {
-            if (authGroups.get(i).getAuthGroup().equals(accountType))
+            if (authGroups.get(i).getAuthGroup().equals(accountType)) {
                 accountsOfSelectedType.add(accountList.get(i));
+            }
         }
-
         return accountsOfSelectedType;
+    }
+
+    @ModelAttribute("gravatar")
+    public String gravatar() {
+        //Models Gravatar
+        String gravatar = ("http://0.gravatar.com/avatar/" + md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
+        return (gravatar);
+    }
+
+    private String getAccountUsername() {
+        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return principal.getUsername();
     }
 }

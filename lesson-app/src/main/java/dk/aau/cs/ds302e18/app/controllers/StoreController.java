@@ -100,12 +100,11 @@ public class StoreController {
     /**
      * Get for the page.
      *
-     * @param model
      * @return
      */
     @GetMapping(value = "/storeadmin/add")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String getAddStoreForm(Model model) {
+    public String getAddStoreForm() {
         return "store-view";
     }
 
@@ -154,7 +153,7 @@ public class StoreController {
     @PostMapping(value = "/storeadmin/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public String updateRequest(Model model, @PathVariable long id, @ModelAttribute StoreModel storeModel) {
-        /* Returns an lesson that is read from the 8100 server through updateLesson. */
+        /* Returns an lesson that is read from the 8200 server through updateLesson. */
         Store store = this.storeService.acceptStoreRequest(id, storeModel);
         model.addAttribute("store", store);
         model.addAttribute("storeModel", new StoreModel());
@@ -230,6 +229,7 @@ public class StoreController {
         logbookModel.setActive(true);
         logbookModel.setCourseID(courseId);
         logbookModel.setStudent(studentUsername);
+        logbookModel.setLogbookType(course.getCourseType().toString());
 
         logbookService.addLogbook(logbookModel);
 
@@ -313,15 +313,12 @@ public class StoreController {
 
     @ModelAttribute("gravatar")
     public String gravatar() {
-
         //Models Gravatar
-        System.out.println(accountRespository.findByUsername(getAccountUsername()).getEmail());
         String gravatar = ("http://0.gravatar.com/avatar/" + md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
         return (gravatar);
     }
 
-    private String getAccountUsername()
-    {
+    private String getAccountUsername() {
         UserDetails principal = (UserDetails)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return principal.getUsername();
     }

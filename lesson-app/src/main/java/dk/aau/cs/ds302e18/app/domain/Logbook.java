@@ -5,6 +5,7 @@ public class Logbook {
     private long courseID;
     private String student;
     private boolean isActive;
+    private String logbookType;
 
     public Logbook() {
         super();
@@ -40,5 +41,13 @@ public class Logbook {
 
     public void setActive(boolean active) {
         isActive = active;
+    }
+
+    public String getLogbookType() {
+        return logbookType;
+    }
+
+    public void setLogbookType(String logbookType) {
+        this.logbookType = logbookType;
     }
 }
