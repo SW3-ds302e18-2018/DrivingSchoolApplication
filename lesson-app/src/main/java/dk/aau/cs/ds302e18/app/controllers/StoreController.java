@@ -78,11 +78,7 @@ public class StoreController {
         List<Course> BEType = new ArrayList<>();
         List<Course> AType = new ArrayList<>();
 
-        Date today = new Date();
-        System.out.println(today.getTime());
-
         for (Course course : courses) {
-            System.out.println();
             if ((course.getCourseType() == CourseType.TYPE_B_CAR)) BType.add(course);
             if ((course.getCourseType() == CourseType.TYPE_BE_CAR_TRAILER)) BEType.add(course);
             if ((course.getCourseType() == CourseType.TYPE_A_BIKE)) AType.add(course);
@@ -309,6 +305,18 @@ public class StoreController {
 
         // Returning index after you've applied
         return "index";
+    }
+
+    @RequestMapping(value = "/applyExtraLesson", method = RequestMethod.POST)
+    public RedirectView requestExtraLesson(@RequestParam("day") String date,
+                                     @RequestParam("month") String month,
+                                     @RequestParam("year") String year,
+                                     @RequestParam("customRange2") String lessons,
+                                     @ModelAttribute StoreModel storeModel) {
+        String message = ("User : " + getAccountUsername() + " would like to request " + lessons + " on the following date : "
+        + date + " / " + month + " - " + year + ".");
+        new Notification(message, "peter@servon.eu", true);
+        return new RedirectView("index");
     }
 
     @ModelAttribute("gravatar")
