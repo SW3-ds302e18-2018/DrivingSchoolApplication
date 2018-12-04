@@ -214,9 +214,12 @@ public class StoreController {
         String studentEmail = acceptedStudent.getEmail();
         String studentFirstname = acceptedStudent.getFirstName();
 
+        Account instructor = accountRespository.findByUsername(course.getInstructorUsername());
+        String instructorFullName = instructor.getFirstName() + " " + instructor.getLastName();
+
         new Notification("Hello "+studentFirstname+ ".\n" +
                 "The course will start the "+course.getCourseStartDate()+" at "+course.getCourseLocation()+".\n Your instructor" +
-                "will be "+course.getInstructorFullName()+". If you are unable to attend this course, " +
+                "will be "+instructorFullName+". If you are unable to attend this course, " +
                 "please contact us as soon as possible, and at least 24 hours before the first lesson..\n" +
                 "Kind regards .\n" +
                 "Driving School A/S "
