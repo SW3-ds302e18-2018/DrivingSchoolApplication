@@ -212,7 +212,7 @@
                         <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
                             <input th:id="startingPoint" th:name="startingPoint" type="text"
                                    class="form-control datetimepicker-input"
-                                   data-target="#datetimepicker1" th:value="${course != null} ? ${course.startingPoint}"/>
+                                   data-target="#datetimepicker1"/>
                             <div class="input-group-append" data-target="#datetimepicker1" data-toggle="datetimepicker">
                                 <div class="input-group-text"><i class="fa fa-calendar"></i></div>
                             </div>
@@ -258,7 +258,7 @@
                             <div class="col">
                                 <h4> Number of Lessons </h4>
                                 <input th:id="numberLessons" th:name="numberLessons" type="text" class="form-control"
-                                       placeholder="Number lessons" th:value="${course != null} ? ${course.numberLessons}"/>
+                                       placeholder="Number lessons"/>
                             </div>
                         </div>
                         <div class="form-row">
@@ -268,8 +268,7 @@
                                                                 title="Number of lessons in a day. A second lesson will be placed right afterwards the first and a third lesson right after the second and so on."></span>
                                 </h4>
                                 <input thid="numberLessonsADay" th:name="numberLessonsADay" type="text" class="form-control"
-                                       placeholder="Number Lessons a day"
-                                       th:value="${course != null} ? ${course.numberLessonsADay}"/>
+                                       placeholder="Number Lessons a day"/>
                             </div>
                         </div>
                         <div style="margin-top: 1%">
