@@ -56,14 +56,18 @@ public class AccountServiceController
     @PutMapping("/{username}")
     public Account updateAccount(@PathVariable String username, @RequestBody AccountModel model){
         /* Throw an error if the selected account do not exist. */
+
         Optional<Account> existing = Optional.ofNullable(this.accountRespository.findByUsername(username));
         if(!existing.isPresent()){
             throw new AccountNotFoundException("Account not found with username: " + username);
         }
+
+        Account temp = this.accountRespository.findByUsername(username);
         /* Translates input from the interface into an lesson object */
         Account account = model.translateModelToAccount();
         /* Uses the ID the lesson already had to save the lesson */
-        account.setUsername(username);
+        account.setId(temp.getId());
+
         return this.accountRespository.save(account);
     }
 

@@ -58,8 +58,8 @@ public class AccountController {
                                              @RequestParam("City") String city,
                                              @RequestParam("Zip") int zip,
                                              @RequestParam("NotificationInMinutes") int notificationInMinutes) {
-        System.out.println(notificationInMinutes);
         // Retrieve account from the repository
+
         Account account = accountService.getAccount(getAccountUsername());
         account.setFirstName(firstName);
         account.setLastName(lastName);
