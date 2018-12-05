@@ -1,4 +1,4 @@
-package dk.aau.cs.ds302e18.app.auth;
+package dk.aau.cs.ds302e18.service.models;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -8,5 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface AccountRespository extends JpaRepository<Account, Long>
 {
     Account findByUsername(String username);
-
+    Account deleteByUsername(String username);
 }

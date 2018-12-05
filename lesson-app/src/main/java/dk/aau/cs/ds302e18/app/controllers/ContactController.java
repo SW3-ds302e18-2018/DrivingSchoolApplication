@@ -1,6 +1,7 @@
 package dk.aau.cs.ds302e18.app.controllers;
 
 import dk.aau.cs.ds302e18.app.Notification;
+import dk.aau.cs.ds302e18.app.service.AccountService;
 import dk.aau.cs.ds302e18.app.auth.AccountRespository;
 import dk.aau.cs.ds302e18.app.domain.StoreModel;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -16,12 +17,12 @@ import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
 @Controller
 @RequestMapping
 public class ContactController {
+  
+    private final AccountService accountService;
 
-    private final AccountRespository accountRespository;
-
-    public ContactController(AccountRespository accountRespository) {
+    public ContactController(AccountService accountService) {
         super();
-        this.accountRespository = accountRespository;
+        this.accountService = accountService;
     }
 
     @GetMapping(value = "/contact")
@@ -41,9 +42,8 @@ public class ContactController {
     @ModelAttribute("gravatar")
     @PreAuthorize("isAuthenticated()")
     public String gravatar() {
-
-        //Model
-        String gravatar = ("http://0.gravatar.com/avatar/"+md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail()));
+        //Models Gravatar
+        String gravatar = ("http://0.gravatar.com/avatar/"+md5Hex(accountService.getAccount(getAccountUsername()).getEmail()));
         return (gravatar);
     }
 
