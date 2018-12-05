@@ -322,7 +322,7 @@ public class StoreController {
                                      @ModelAttribute StoreModel storeModel) {
         String message = ("User : " + getAccountUsername() + " would like to request " + lessons + " on the following date : "
         + date + " / " + month + " - " + year + ".");
-        new Notification(message, "peter@servon.eu", true);
+        new Notification(message, "ds302e18@cs.aau.dk", "ds302e18@cs.aau.dk");
         return new RedirectView("index");
     }
 

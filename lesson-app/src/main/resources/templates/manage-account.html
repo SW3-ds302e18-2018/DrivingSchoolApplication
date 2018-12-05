@@ -126,8 +126,21 @@
                                                     <input type="number" th:value="${user.getZipCode()}" id="Zip" class="form-control" name="Zip">
                                                 </div>
                                                 <div class="form-group">
-                                                    <label for="NotificationInMinutes">Notification reminder in minutes</label>
-                                                    <input type="number" min="0" max="120" th:value="${user.getNotificationInMinutes()}" id="NotificationInMinutes" class="form-control" name="NotificationInMinutes" required>
+                                                    <label for="NotificationInMinutes">Notification reminder before lesson</label>
+                                                    <select type="number" class="selectpicker" data-style="btn-info" id="NotificationInMinutes" name="NotificationInMinutes">
+                                                        <option value="5">5 minutes</option>
+                                                        <option value="10">10 minutes</option>
+                                                        <option value="15">15 minutes</option>
+                                                        <option value="30">30 minutes</option>
+                                                        <option value="60">1 hour</option>
+                                                        <option value="120">2 hours</option>
+                                                        <option value="180">3 hours</option>
+                                                        <option value="300">5 hours</option>
+                                                        <option value="600">10 hours</option>
+                                                        <option value="720">12 hours</option>
+                                                        <option value="1440">24 hours</option>
+                                                        <option value="2880">2 days</option>
+                                                    </select>
                                                 </div>
                                                 <button class="btn btn-primary" type="submit">Change Account Details</button>
                                             </form>

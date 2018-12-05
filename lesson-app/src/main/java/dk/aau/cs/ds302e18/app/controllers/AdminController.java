@@ -118,10 +118,12 @@ public class AdminController {
         return new RedirectView("admin");
     }
 
+
     @ModelAttribute("gravatar")
     public String gravatar() {
         //Models Gravatar
         String gravatar = ("http://0.gravatar.com/avatar/" + md5Hex(accountService.getAccount(getAccountUsername()).getEmail()));
+        return (gravatar);
     }
 
     private String getAccountUsername() {

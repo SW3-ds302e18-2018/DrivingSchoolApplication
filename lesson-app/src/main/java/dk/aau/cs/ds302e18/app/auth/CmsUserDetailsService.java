@@ -1,5 +1,7 @@
 package dk.aau.cs.ds302e18.app.auth;
 
+import dk.aau.cs.ds302e18.app.domain.Account;
+import dk.aau.cs.ds302e18.app.service.AccountService;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -15,9 +17,9 @@ import java.util.List;
 public class CmsUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
     private final AuthGroupRepository authGroupRepository;
-    private final AccountRespository accountRespository;
+    private final AccountService accountService;
     
-    public CmsUserDetailsService(UserRepository userRepository, AuthGroupRepository authGroupRepository, AccountRespository accountRespository){
+    public CmsUserDetailsService(UserRepository userRepository, AuthGroupRepository authGroupRepository, AccountService accountService){
         super();
         this.userRepository = userRepository;
         this.authGroupRepository = authGroupRepository;

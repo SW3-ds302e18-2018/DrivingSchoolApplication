@@ -119,7 +119,7 @@ public class SignatureController {
                 String[] studentListArray = lesson.getStudentList().split(",");
                 for (String username: studentListArray)
                 {
-                    Account tempAccount = accountRespository.findByUsername(username);
+                    Account tempAccount = accountService.getAccount(username);
                     List<AuthGroup> tempAuthGroup = authGroupRepository.findByUsername(username);
                     SignatureModel signatureModel = new SignatureModel();
                     signatureModel.setUsername(username);
@@ -194,8 +194,7 @@ public class SignatureController {
     @ModelAttribute("gravatar")
     public String gravatar() {
         //Models Gravatar
-        return "http://0.gravatar.com/avatar/" + md5Hex(accountRespository.findByUsername(getAccountUsername()).getEmail());
-        String gravatar = ("http://0.gravatar.com/avatar/"+md5Hex(accountService.getAccount(getAccountUsername()).getEmail()));
+        String gravatar = ("http://0.gravatar.com/avatar/" + md5Hex(accountService.getAccount(getAccountUsername()).getEmail()));
         return (gravatar);
     }
 

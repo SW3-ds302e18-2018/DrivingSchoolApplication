@@ -33,92 +33,115 @@ public class Account {
     @Column(name = "NOTIFICATION_REMINDER", nullable = false)
     private int notificationInMinutes;
 
-    public int getNotificationInMinutes() {
-        return notificationInMinutes;
-    }
 
-    public void setNotificationInMinutes(int notificationInMinutes) {
-        this.notificationInMinutes = notificationInMinutes;
-    }
-
-    public long getId() {
+    public long getId()
+    {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(long id)
+    {
         this.id = id;
     }
 
-    public String getUsername() {
+    public String getUsername()
+    {
         return username;
     }
 
-    public void setUsername(String username) {
+    public void setUsername(String username)
+    {
         this.username = username;
     }
 
-    public String getFirstName() {
+    public String getFirstName()
+    {
         return firstName;
     }
 
-    public void setFirstName(String firstName) {
+    public void setFirstName(String firstName)
+    {
         this.firstName = firstName;
     }
 
-    public String getLastName() {
+    public String getLastName()
+    {
         return lastName;
     }
 
-    public void setLastName(String lastName) {
+    public void setLastName(String lastName)
+    {
         this.lastName = lastName;
     }
 
-    public String getPhoneNumber() {
+    public String getPhoneNumber()
+    {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
+    public void setPhoneNumber(String phoneNumber)
+    {
         this.phoneNumber = phoneNumber;
     }
 
-    public String getEmail() {
+    public String getEmail()
+    {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(String email)
+    {
         this.email = email;
     }
 
-    public String getBirthday() {
+    public String getBirthday()
+    {
         return birthday;
     }
 
-    public void setBirthday(String birthday) {
+    public void setBirthday(String birthday)
+    {
         this.birthday = birthday;
     }
 
-    public String getAddress() {
+    public String getAddress()
+    {
         return address;
     }
 
-    public void setAddress(String address) {
+    public void setAddress(String address)
+    {
         this.address = address;
     }
 
-    public int getZipCode() {
+    public int getZipCode()
+    {
         return zipCode;
     }
 
-    public void setZipCode(int zipCode) {
+    public void setZipCode(int zipCode)
+    {
         this.zipCode = zipCode;
     }
 
-    public String getCity() {
+    public String getCity()
+    {
         return city;
     }
 
-    public void setCity(String city) {
+    public void setCity(String city)
+    {
         this.city = city;
+    }
+
+    public int getNotificationInMinutes()
+    {
+        return notificationInMinutes;
+    }
+
+    public void setNotificationInMinutes(int notificationInMinutes)
+    {
+        this.notificationInMinutes = notificationInMinutes;
     }
 
     @Override

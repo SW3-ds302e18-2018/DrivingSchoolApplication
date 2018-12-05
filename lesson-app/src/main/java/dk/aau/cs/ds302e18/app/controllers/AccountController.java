@@ -58,9 +58,9 @@ public class AccountController {
                                              @RequestParam("City") String city,
                                              @RequestParam("Zip") int zip,
                                              @RequestParam("NotificationInMinutes") int notificationInMinutes) {
+        System.out.println(notificationInMinutes);
         // Retrieve account from the repository
         Account account = accountService.getAccount(getAccountUsername());
-
         account.setFirstName(firstName);
         account.setLastName(lastName);
         account.setEmail(email);
@@ -70,7 +70,7 @@ public class AccountController {
         account.setCity(city);
         account.setZipCode(zip);
         account.setNotificationInMinutes(notificationInMinutes);
-        this.accountService.addAccount(account.translateAccountToModel());
+        this.accountService.updateAccount(account.getUsername(),account.translateAccountToModel());
         return new RedirectView("redirect:/account/edit");
     }
 
