@@ -97,7 +97,7 @@ public class AccountController {
     public RedirectView deleteAccount() {
         User user = this.userRepository.findByUsername(getAccountUsername());
         this.userRepository.deleteById(user.getId());
-        this.accountRespository.deleteById(user.getId());
+        this.accountService.deleteAccount(user.getUsername());
         this.authGroupRepository.deleteById(user.getId());
         return new RedirectView("redirect:/logout");
     }

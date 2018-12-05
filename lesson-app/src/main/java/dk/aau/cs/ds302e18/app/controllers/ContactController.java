@@ -2,7 +2,6 @@ package dk.aau.cs.ds302e18.app.controllers;
 
 import dk.aau.cs.ds302e18.app.Notification;
 import dk.aau.cs.ds302e18.app.service.AccountService;
-import dk.aau.cs.ds302e18.app.auth.AccountRespository;
 import dk.aau.cs.ds302e18.app.domain.StoreModel;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;

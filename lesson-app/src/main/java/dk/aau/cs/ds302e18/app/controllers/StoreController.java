@@ -210,7 +210,7 @@ public class StoreController {
         String studentEmail = acceptedStudent.getEmail();
         String studentFirstname = acceptedStudent.getFirstName();
 
-        Account instructor = accountRespository.findByUsername(course.getInstructorUsername());
+        Account instructor = accountService.getAccount(course.getInstructorUsername());
         String instructorFullName = instructor.getFirstName() + " " + instructor.getLastName();
 
         new Notification("Hello "+studentFirstname+ ".\n" +
