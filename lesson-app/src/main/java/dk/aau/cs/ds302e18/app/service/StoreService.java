@@ -13,8 +13,7 @@ import java.util.List;
 
 /* Class responsible for reading lesson related data from the 8200 server. */
 @Service
-public class StoreService
-{
+public class StoreService {
     private static final String REQUESTS = "/storeadmin";
     private static final String SLASH = "/";
     private final RestTemplate restTemplate = new RestTemplate();
@@ -23,16 +22,19 @@ public class StoreService
 
     /**
      * Retrieves an list of store from the 8200 server and returns it as list of lessons in the format specified in the Lesson class.
+     *
      * @return
      */
     public List<Store> getAllStoreRequests() {
         String url = storeServiceUrl + REQUESTS;
         HttpEntity<String> request = new HttpEntity<>(null, null);
-        return this.restTemplate.exchange(url, HttpMethod.GET, request, new ParameterizedTypeReference<List<Store>>() { }).getBody();
+        return this.restTemplate.exchange(url, HttpMethod.GET, request, new ParameterizedTypeReference<List<Store>>() {
+        }).getBody();
     }
 
     /**
      * Returns an store object from the 8200 server that has just been added.
+     *
      * @param storeModel
      * @return
      */
@@ -43,7 +45,6 @@ public class StoreService
     }
 
     /**
-     *
      * @param id
      * @return
      */
@@ -54,7 +55,6 @@ public class StoreService
     }
 
     /**
-     *
      * @param id
      * @param storeModel
      * @return

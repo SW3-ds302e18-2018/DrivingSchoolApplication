@@ -1,6 +1,6 @@
 package dk.aau.cs.ds302e18.app.controllers;
 
-import dk.aau.cs.ds302e18.app.SortByCourseID;
+import dk.aau.cs.ds302e18.app.SortCoursesByCourseID;
 import dk.aau.cs.ds302e18.app.auth.Account;
 import dk.aau.cs.ds302e18.app.auth.AccountRespository;
 import dk.aau.cs.ds302e18.app.auth.AuthGroup;
@@ -139,7 +139,7 @@ public class LessonController {
         model.addAttribute("studentsBelongingToLesson", studentsBelongingToLesson);
 
         List<Course> courses = this.courseService.getAllCourseRequests();
-        courses.sort(new SortByCourseID());
+        courses.sort(new SortCoursesByCourseID());
         model.addAttribute("courseList", courses);
 
         String lessonYear = String.valueOf(Math.addExact(1900, lesson.getLessonDate().getYear()));

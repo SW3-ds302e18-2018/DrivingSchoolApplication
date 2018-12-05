@@ -13,8 +13,7 @@ import java.util.List;
 
 /* Class responsible for reading lesson related data from the 8200 server. */
 @Service
-public class CourseService
-{
+public class CourseService {
     private static final String REQUESTS = "/course";
     private static final String SLASH = "/";
 
@@ -28,11 +27,11 @@ public class CourseService
     public List<Course> getAllCourseRequests() {
         String url = courseServiceUrl + REQUESTS;
         HttpEntity<String> request = new HttpEntity<>(null, null);
-        return this.restTemplate.exchange(url, HttpMethod.GET, request, new ParameterizedTypeReference<List<Course>>() { }).getBody();
+        return this.restTemplate.exchange(url, HttpMethod.GET, request, new ParameterizedTypeReference<List<Course>>() {
+        }).getBody();
     }
 
-    public Course addCourse(CourseModel courseModel)
-    {
+    public Course addCourse(CourseModel courseModel) {
         String url = courseServiceUrl + REQUESTS + SLASH + "addCourse";
         HttpEntity<CourseModel> request = new HttpEntity<>(courseModel, null);
         return this.restTemplate.exchange(url, HttpMethod.POST, request, Course.class).getBody();
@@ -50,7 +49,7 @@ public class CourseService
         return this.restTemplate.exchange(url, HttpMethod.GET, request, Course.class).getBody();
     }
 
-    public void deleteCourse(long id){
+    public void deleteCourse(long id) {
         String url = courseServiceUrl + REQUESTS + SLASH + "delete" + SLASH + id;
         HttpEntity<String> request = new HttpEntity<>(null, null);
         restTemplate.exchange(url, HttpMethod.DELETE, request, Course.class).getBody();

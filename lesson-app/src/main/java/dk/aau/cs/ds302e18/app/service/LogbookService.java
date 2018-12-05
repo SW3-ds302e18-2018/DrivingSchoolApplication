@@ -13,7 +13,6 @@ import java.util.List;
 
 @Service
 public class LogbookService {
-
     private static final String LOGBOOK = "/logbook";
     private static final String SLASH = "/";
     private final RestTemplate restTemplate = new RestTemplate();
@@ -23,7 +22,8 @@ public class LogbookService {
     public List<Logbook> getAllLogbooks() {
         String url = logbookServiceUrl + LOGBOOK;
         HttpEntity<String> request = new HttpEntity<>(null, null);
-        return this.restTemplate.exchange(url, HttpMethod.GET, request, new ParameterizedTypeReference<List<Logbook>>() { }).getBody();
+        return this.restTemplate.exchange(url, HttpMethod.GET, request, new ParameterizedTypeReference<List<Logbook>>() {
+        }).getBody();
     }
 
     public Logbook getLogbook(long id) {

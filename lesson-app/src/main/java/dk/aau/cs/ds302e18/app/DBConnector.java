@@ -2,7 +2,6 @@ package dk.aau.cs.ds302e18.app;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.Statement;
 import java.util.ResourceBundle;
 
 /* Responsible for creating a connection to the database. */

@@ -1,7 +1,7 @@
 package dk.aau.cs.ds302e18.app.controllers;
 
 
-import dk.aau.cs.ds302e18.app.SortByCourseID;
+import dk.aau.cs.ds302e18.app.SortCoursesByCourseID;
 import dk.aau.cs.ds302e18.app.auth.Account;
 import dk.aau.cs.ds302e18.app.auth.AccountRespository;
 import dk.aau.cs.ds302e18.app.auth.AuthGroup;
@@ -45,7 +45,7 @@ public class CourseController {
     public String getCourses(Model model) {
         List<Course> courses = this.courseService.getAllCourseRequests();
         setInstructorFullName(courses);
-        courses.sort(new SortByCourseID());
+        courses.sort(new SortCoursesByCourseID());
 
         model.addAttribute("instructorAccounts", findAccountsOfType("INSTRUCTOR"));
         model.addAttribute("studentAccounts", findAccountsOfType("STUDENT"));

@@ -22,7 +22,6 @@ public class ApplicationSecurityConfiguration extends WebSecurityConfigurerAdapt
     @Autowired
     private CmsUserDetailsService userDetailsService;
 
-
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -33,7 +32,7 @@ public class ApplicationSecurityConfiguration extends WebSecurityConfigurerAdapt
     }
 
     @Bean
-    public GrantedAuthoritiesMapper authoritiesMapper(){
+    public GrantedAuthoritiesMapper authoritiesMapper() {
         SimpleAuthorityMapper authorityMapper = new SimpleAuthorityMapper();
         authorityMapper.setConvertToUpperCase(true);
         authorityMapper.setDefaultAuthority("STUDENT");
@@ -70,5 +69,4 @@ public class ApplicationSecurityConfiguration extends WebSecurityConfigurerAdapt
                 .and()
                 .rememberMe().key("uniqueAndSecret");
     }
-
 }

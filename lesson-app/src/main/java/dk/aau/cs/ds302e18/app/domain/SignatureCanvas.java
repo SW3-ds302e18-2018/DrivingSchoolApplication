@@ -17,18 +17,25 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ResourceBundle;
 
+/**
+ * Handles the data transport between AmazonS3 bucket and the app for storing signature images.
+ */
 public class SignatureCanvas {
-
     private static String ACCESS_KEY;
     private static String SECRET_KEY;
 
-    static // Creating a static constructor for one time initialize authconfig.properties att.
-    {
+    static { // Creating a static constructor for one time initialize authconfig.properties att.
         ResourceBundle reader = ResourceBundle.getBundle("authconfig");
         ACCESS_KEY = reader.getString("aws.accesskey");
         SECRET_KEY = reader.getString("aws.secretkey");
     }
 
+    /**
+     * Uploads a signature image to the Amazon S3 bucket.
+     * @param bucketName
+     * @param imageName
+     * @param imageData
+     */
     public void upload(String bucketName, String imageName, String imageData) {
         AmazonS3 s3 = new AmazonS3Client(new BasicAWSCredentials(ACCESS_KEY, SECRET_KEY));
         Region region = Region.getRegion(Regions.EU_WEST_2);
@@ -41,6 +48,12 @@ public class SignatureCanvas {
         }
     }
 
+    /**
+     * Gets signature date from the Amazon S3 bucket.
+     * @param bucketName
+     * @param imageName
+     * @return
+     */
     public String getSignatureDate(String bucketName, String imageName) {
         AmazonS3 s3 = new AmazonS3Client(new BasicAWSCredentials(ACCESS_KEY, SECRET_KEY));
         Region region = Region.getRegion(Regions.EU_WEST_2);
@@ -59,6 +72,13 @@ public class SignatureCanvas {
         return lastModifyed;
     }
 
+    /**
+     * Creates a file based on a signature image.
+     * @param imageName
+     * @param imageData
+     * @return
+     * @throws IOException
+     */
     private static File createFile(String imageName, String imageData) throws IOException {
         byte[] imageBytes = DatatypeConverter.parseBase64Binary(imageData.substring(imageData.indexOf(",") + 1));
         BufferedImage bufferedImage = ImageIO.read(new ByteArrayInputStream(imageBytes));
