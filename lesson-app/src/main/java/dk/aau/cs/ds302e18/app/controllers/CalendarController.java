@@ -45,21 +45,30 @@ public class CalendarController {
         List<Lesson> lessons = this.lessonService.getAllLessons();
         ArrayList<CalendarViewModel> lessonArrayModels = new ArrayList<>();
         for (Lesson lesson : lessons) {
-            // Currently a glitch with usernames contained in other usernames, but will be fixed at later time
-            if (lesson.getStudentList().contains(userDetails.getUsername())) {
-                String lessonType = "";
-                String lessonColor = "";
-                if (lesson.getLessonType() == LessonType.THEORY_LESSON) {
-                    lessonType = "Theory lesson";
-                    lessonColor = "CYAN";
-                }
-                if (lesson.getLessonType() == LessonType.PRACTICAL_LESSON) {
-                    lessonType = "Practical lesson";
-                    lessonColor = "GREEN";
-                }
-                CalendarViewModel calendarViewModel = new CalendarViewModel(lesson.getCourseId(), lessonColor, lessonType, lesson.getLessonDate(), "Location : " + lesson.getLessonLocation());
 
-                lessonArrayModels.add(calendarViewModel);
+            String[] studentListArray = lesson.getStudentList().split(",");
+            for (String studentUsername : studentListArray) {
+                if (studentUsername.equals(userDetails.getUsername())) {
+                    String lessonType = "";
+                    String lessonColor = "";
+
+                    if (lesson.getLessonType() == LessonType.THEORY_LESSON) {
+                        lessonType = "Theory lesson";
+                        lessonColor = "CYAN";
+                    }
+                    if (lesson.getLessonType() == LessonType.PRACTICAL_LESSON) {
+                        lessonType = "Practical lesson";
+                        lessonColor = "GREEN";
+                    }
+                    CalendarViewModel calendarViewModel = new CalendarViewModel();
+                    calendarViewModel.setId(lesson.getCourseId());
+                    calendarViewModel.setColor(lessonColor);
+                    calendarViewModel.setTitle(lessonType);
+                    calendarViewModel.setStart(lesson.getLessonDate());
+                    calendarViewModel.setDescription("Location : " + lesson.getLessonLocation());
+
+                    lessonArrayModels.add(calendarViewModel);
+                }
             }
         }
         return lessonArrayModels;
@@ -110,7 +119,7 @@ public class CalendarController {
     }
 
     private String getAccountUsername() {
-        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return principal.getUsername();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ((UserDetails) principal).getUsername();
     }
 }

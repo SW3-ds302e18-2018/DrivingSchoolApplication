@@ -141,7 +141,7 @@ public class LogbookController {
         return (gravatar);
     }
 
-    public String getAccountUsername() {
+    private String getAccountUsername() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ((UserDetails) principal).getUsername();
     }

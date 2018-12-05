@@ -1,7 +1,6 @@
 package dk.aau.cs.ds302e18.app.domain;
 
 public class LogbookModel {
-
     private long courseID;
     private String student;
     private boolean isActive;
@@ -39,7 +38,7 @@ public class LogbookModel {
         this.logbookType = logbookType;
     }
 
-    public Logbook translateModelToLogbook(){
+    public Logbook translateModelToLogbook() {
         Logbook logbook = new Logbook();
         logbook.setCourseID(this.courseID);
         logbook.setStudent(this.student);

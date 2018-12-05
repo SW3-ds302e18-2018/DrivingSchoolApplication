@@ -12,15 +12,15 @@ import javax.persistence.Table;
  * A table to contain the account's role
  */
 @Entity
-@Table(name="AUTH_USER_GROUP")
+@Table(name = "AUTH_USER_GROUP")
 public class AuthGroup {
     @Id
-    @Column(name="AUTH_USER_GROUP_ID")
+    @Column(name = "AUTH_USER_GROUP_ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @Column(name="USERNAME")
+    @Column(name = "USERNAME")
     private String username;
-    @Column(name="AUTH_GROUP")
+    @Column(name = "AUTH_GROUP")
     private String authGroup;
 
     public long getId() {

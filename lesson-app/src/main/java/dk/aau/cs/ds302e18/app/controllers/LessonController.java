@@ -1,7 +1,6 @@
 package dk.aau.cs.ds302e18.app.controllers;
 
-import dk.aau.cs.ds302e18.app.SortByCourseID;
-import dk.aau.cs.ds302e18.app.domain.Account;
+import dk.aau.cs.ds302e18.app.SortCoursesByCourseID;
 import dk.aau.cs.ds302e18.app.auth.AuthGroup;
 import dk.aau.cs.ds302e18.app.auth.AuthGroupRepository;
 import dk.aau.cs.ds302e18.app.domain.Course;
@@ -55,7 +54,7 @@ public class LessonController {
     @PreAuthorize("hasAnyRole('ROLE_STUDENT', 'ROLE_ADMIN', 'ROLE_INSTRUCTOR')")
     public String getLessons(Model model) {
         /* Creates an list of lessons from the return value of getAllLessons in LessonService(which is an function that gets lessons
-        from the 8100 server and makes them into lesson objects and returns them as an list) */
+        from the 8200 server and makes them into lesson objects and returns them as an list) */
         List<Lesson> lessons = this.lessonService.getAllLessons();
 
         List<Lesson> studentLessons = new ArrayList<>();
@@ -103,7 +102,7 @@ public class LessonController {
     @PostMapping(value = "/lessons")
     @PreAuthorize("hasAnyRole('ROLE_INSTRUCTOR', 'ROLE_ADMIN')")
     public ModelAndView addLesson(HttpServletRequest request, Model model, @ModelAttribute LessonModel lessonModel) {
-        /* The newly added lesson object is retrieved from the 8100 server.  */
+        /* The newly added lesson object is retrieved from the 8200 server.  */
         Lesson lesson = this.lessonService.addLesson(lessonModel);
 
         if (lesson.getStudentList().isEmpty() | lesson.getLessonInstructor().isEmpty() | lesson.getLessonLocation().isEmpty()) {
@@ -139,7 +138,7 @@ public class LessonController {
         model.addAttribute("studentsBelongingToLesson", studentsBelongingToLesson);
 
         List<Course> courses = this.courseService.getAllCourseRequests();
-        courses.sort(new SortByCourseID());
+        courses.sort(new SortCoursesByCourseID());
         model.addAttribute("courseList", courses);
 
         String lessonYear = String.valueOf(Math.addExact(1900, lesson.getLessonDate().getYear()));
@@ -201,7 +200,6 @@ public class LessonController {
             for (String studentUsernameInLesson : studentUsernamesInCourseAsStringArray) {
                 if (studentUsernameInLesson.equals((studentAccount.getUsername()))) {
                     studentAccountsBelongingToLesson.add(studentAccount);
-                    System.out.println(studentAccount.getUsername());
                 }
             }
 
@@ -226,7 +224,7 @@ public class LessonController {
     }
 
     private String getAccountUsername() {
-        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return principal.getUsername();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ((UserDetails) principal).getUsername();
     }
 }

@@ -1,8 +1,8 @@
 package dk.aau.cs.ds302e18.app.controllers;
 
 
-import dk.aau.cs.ds302e18.app.SortByCourseID;
 import dk.aau.cs.ds302e18.app.domain.Account;
+import dk.aau.cs.ds302e18.app.SortCoursesByCourseID;
 import dk.aau.cs.ds302e18.app.auth.AuthGroup;
 import dk.aau.cs.ds302e18.app.auth.AuthGroupRepository;
 import dk.aau.cs.ds302e18.app.domain.*;
@@ -45,7 +45,7 @@ public class CourseController {
     public String getCourses(Model model) {
         List<Course> courses = this.courseService.getAllCourseRequests();
         setInstructorFullName(courses);
-        courses.sort(new SortByCourseID());
+        courses.sort(new SortCoursesByCourseID());
 
         model.addAttribute("instructorAccounts", findAccountsOfType("INSTRUCTOR"));
         model.addAttribute("studentAccounts", findAccountsOfType("STUDENT"));
@@ -285,7 +285,6 @@ public class CourseController {
         List<Lesson> lessons = lessonService.getAllLessons();
         for (Lesson lesson : lessons) {
             /* If the student that is being added to the course is in a lesson associated with that courseID, update it. */
-            System.out.println(lesson.getCourseId() == courseID);
             if (lesson.getCourseId() == courseID) {
                 /* Sets the LessonModel with the values of the current lesson before it has been changed. */
                 LessonModel updatedLesson = lesson.translateLessonToModel();
@@ -373,7 +372,7 @@ public class CourseController {
     }
 
     private String getAccountUsername() {
-        UserDetails principal = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        return principal.getUsername();
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return ((UserDetails) principal).getUsername();
     }
 }

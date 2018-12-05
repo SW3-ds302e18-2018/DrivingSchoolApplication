@@ -16,27 +16,25 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/course")
-public class CourseServicesController
-{
-
+public class CourseServicesController {
     private final CourseRepository courseRepository;
 
-    public CourseServicesController(CourseRepository courseRepository){
+    public CourseServicesController(CourseRepository courseRepository) {
         super();
         this.courseRepository = courseRepository;
     }
 
     /* Returns all the courses in the database in a list */
     @GetMapping
-    public List<Course> getAllCourses(){
+    public List<Course> getAllCourses() {
         return new ArrayList<>(this.courseRepository.findAll());
     }
 
     /* Get = responsible for retrieving information only */
     @GetMapping("/{id}")
-    public Course getCourse(@PathVariable Long id){
+    public Course getCourse(@PathVariable Long id) {
         Optional<Course> course = this.courseRepository.findById(id);
-        if(course.isPresent()){
+        if (course.isPresent()) {
             return course.get();
         }
         throw new CourseNotFoundException("Course not found with id: " + id);
@@ -44,9 +42,9 @@ public class CourseServicesController
 
     /* Get = responsible for retrieving information only */
     @GetMapping("/getLastCourse")
-    public Course getLastCourseOrderedByID(){
+    public Course getLastCourseOrderedByID() {
         Optional<Course> course = Optional.ofNullable(this.courseRepository.findFirstByOrderByCourseTableIDDesc());
-        if(course.isPresent()){
+        if (course.isPresent()) {
             return course.get();
         }
         throw new CourseNotFoundException("Course not find last the last course.");
@@ -55,22 +53,18 @@ public class CourseServicesController
     /* Post = responsible for posting new information directly after it has been created to the website, and create fitting
     links to the new information. */
     @PostMapping(value = "/addCourse")
-    public ResponseEntity<Course> addCourse(@RequestBody CourseModel courseModel){
-        System.out.println(courseModel.getWeekdays());
+    public ResponseEntity<Course> addCourse(@RequestBody CourseModel courseModel) {
         Course course = this.courseRepository.save(courseModel.translateModelToCourse());
         URI location = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(course.getCourseTableID()).toUri();
         return ResponseEntity.created(location).body(course);
     }
 
-
-
-
     /* Put = responsible for updating existing database entries*/
     @PutMapping("/{id}")
-    public Course updateCourse(@PathVariable Long id, @RequestBody CourseModel courseModel){
+    public Course updateCourse(@PathVariable Long id, @RequestBody CourseModel courseModel) {
         /* Throw an error if the selected course do not exist. */
         Optional<Course> existing = this.courseRepository.findById(id);
-        if(!existing.isPresent()){
+        if (!existing.isPresent()) {
             throw new CourseNotFoundException("Course not found with id: " + id);
         }
         /* Translates input from the interface into an course object */
@@ -80,23 +74,14 @@ public class CourseServicesController
         return this.courseRepository.save(course);
     }
 
-    /* NOT IMPLEMENTED: Delete = responsible for deleting database entries. */
+    /* Delete = responsible for deleting database entries. */
     @DeleteMapping("/delete/{id}")
     @ResponseStatus(HttpStatus.RESET_CONTENT)
-    public void deleteCourse(@PathVariable Long id){
+    public void deleteCourse(@PathVariable Long id) {
         Optional<Course> existing = this.courseRepository.findById(id);
-        if(!existing.isPresent()){
+        if (!existing.isPresent()) {
             throw new CourseNotFoundException("Course not found with id: " + id);
         }
         this.courseRepository.deleteById(id);
-    }
-
-    private ArrayList<String> saveUsernameStringAsList(String usernames) {
-        ArrayList<String> studentList = new ArrayList<>();
-        String[] parts = usernames.split(",");
-        for(String part: parts){
-            studentList.add(part);
-        }
-        return studentList;
     }
 }

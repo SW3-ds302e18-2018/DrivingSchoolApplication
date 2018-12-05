@@ -32,9 +32,8 @@ public class ContactController {
     @RequestMapping(value = "/contact", method = RequestMethod.POST)
     public RedirectView acceptContactState(@RequestParam("firstName") String firstName, @RequestParam("email") String email,
                                            @RequestParam("message") String message) {
-        String sendmessage = ("New Email from : " + firstName + " \n" + "Email :" + email + " \n" + "Message : " + message);
-        System.out.println( sendmessage + email);
-        new Notification(sendmessage, email);
+        String sendMessage = ("New Email from : " + firstName + " \n" + "Email :" + email + " \n" + "Message : " + message);
+        new Notification(sendMessage, "ds302e18@gmail.com", email);
         return new RedirectView("contact");
     }
 
@@ -46,9 +45,7 @@ public class ContactController {
         return (gravatar);
     }
 
-    @PreAuthorize("isAuthenticated()")
-    public String getAccountUsername()
-    {
+    private String getAccountUsername() {
         Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         return ((UserDetails) principal).getUsername();
     }

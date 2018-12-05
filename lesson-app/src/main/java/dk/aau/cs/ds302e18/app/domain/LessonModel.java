@@ -4,8 +4,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
-public class LessonModel
-{
+public class LessonModel {
     private LessonType lessonType;
     private String studentList;
     private String lessonInstructor;
@@ -15,73 +14,59 @@ public class LessonModel
     private LessonState lessonState;
     private long courseId;
 
-    public LessonType getLessonType()
-    {
+    public LessonType getLessonType() {
         return lessonType;
     }
 
-    public void setLessonType(LessonType lessonType)
-    {
+    public void setLessonType(LessonType lessonType) {
         this.lessonType = lessonType;
     }
 
-    public String getStudentList()
-    {
+    public String getStudentList() {
         return studentList;
     }
 
-    public void setStudentList(String studentList)
-    {
+    public void setStudentList(String studentList) {
         this.studentList = studentList;
     }
 
-    public String getLessonInstructor()
-    {
+    public String getLessonInstructor() {
         return lessonInstructor;
     }
 
-    public void setLessonInstructor(String lessonInstructor)
-    {
+    public void setLessonInstructor(String lessonInstructor) {
         this.lessonInstructor = lessonInstructor;
     }
 
-    public Date getLessonDate()
-    {
+    public Date getLessonDate() {
         return lessonDate;
     }
 
-    public void setLessonDate(Date lessonDate)
-    {
+    public void setLessonDate(Date lessonDate) {
         this.lessonDate = lessonDate;
     }
 
-    public String getLessonLocation()
-    {
+    public String getLessonLocation() {
         return lessonLocation;
     }
 
-    public void setLessonLocation(String lessonLocation)
-    {
+    public void setLessonLocation(String lessonLocation) {
         this.lessonLocation = lessonLocation;
     }
 
-    public LessonState getLessonState()
-    {
+    public LessonState getLessonState() {
         return lessonState;
     }
 
-    public void setLessonState(LessonState lessonState)
-    {
+    public void setLessonState(LessonState lessonState) {
         this.lessonState = lessonState;
     }
 
-    public long getCourseId()
-    {
+    public long getCourseId() {
         return courseId;
     }
 
-    public void setCourseId(long courseId)
-    {
+    public void setCourseId(long courseId) {
         this.courseId = courseId;
     }
 }

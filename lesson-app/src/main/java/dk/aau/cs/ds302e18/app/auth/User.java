@@ -7,57 +7,48 @@ import javax.persistence.*;
  * such as the username, password and whether the account is active
  */
 @Entity
-@Table(name="USER")
+@Table(name = "USER")
 public class User {
     @Id
-    @Column(name="USER_ID")
+    @Column(name = "USER_ID")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @Column(name="USERNAME", nullable = false, unique = true)
+    @Column(name = "USERNAME", nullable = false, unique = true)
     private String username;
-    @Column(name="PASSWORD")
+    @Column(name = "PASSWORD")
     private String password;
     @Column(name = "IS_ACTIVE", nullable = false)
     private boolean isActive;
 
-    public long getId()
-    {
+    public long getId() {
         return id;
     }
 
-    public void setId(long id)
-    {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public String getUsername()
-    {
+    public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username)
-    {
+    public void setUsername(String username) {
         this.username = username;
     }
 
-    public String getPassword()
-    {
+    public String getPassword() {
         return password;
     }
 
-    public void setPassword(String password)
-    {
+    public void setPassword(String password) {
         this.password = password;
     }
 
-    public boolean isActive()
-    {
+    public boolean isActive() {
         return isActive;
     }
 
-    public void setActive(boolean active)
-    {
+    public void setActive(boolean active) {
         isActive = active;
     }
-
 }

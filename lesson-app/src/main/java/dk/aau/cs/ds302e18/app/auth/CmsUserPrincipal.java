@@ -11,13 +11,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class CmsUserPrincipal implements UserDetails{
-
+public class CmsUserPrincipal implements UserDetails {
     private User user;
     private List<AuthGroup> authGroups;
     private Account account;
 
-    public CmsUserPrincipal(User user, List<AuthGroup> authGroups, Account account){
+    public CmsUserPrincipal(User user, List<AuthGroup> authGroups, Account account) {
         super();
         this.user = user;
         this.authGroups = authGroups;
@@ -27,15 +26,14 @@ public class CmsUserPrincipal implements UserDetails{
     /* Grants appropriate authorities to the users following the values in the database connected to from authGroups */
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if(null==authGroups){
+        if (null == authGroups) {
             return Collections.emptySet();
         }
         Set<SimpleGrantedAuthority> grantedAuthorities = new HashSet<>();
-        authGroups.forEach(group->{
-           grantedAuthorities.add(new SimpleGrantedAuthority(group.getAuthGroup()));
+        authGroups.forEach(group -> {
+            grantedAuthorities.add(new SimpleGrantedAuthority(group.getAuthGroup()));
         });
         return grantedAuthorities;
-
     }
 
     @Override
@@ -67,5 +65,4 @@ public class CmsUserPrincipal implements UserDetails{
     public boolean isEnabled() {
         return this.user.isActive();
     }
-
 }

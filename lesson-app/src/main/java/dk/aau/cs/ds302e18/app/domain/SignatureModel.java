@@ -1,7 +1,6 @@
 package dk.aau.cs.ds302e18.app.domain;
 
-public class SignatureModel
-{
+public class SignatureModel {
     private String username;
     private String signatureUrl;
     private String firstName;
@@ -9,63 +8,51 @@ public class SignatureModel
     private String position;
     private String signatureDate;
 
-    public String getUsername()
-    {
+    public String getUsername() {
         return username;
     }
 
-    public void setUsername(String username)
-    {
+    public void setUsername(String username) {
         this.username = username;
     }
 
-    public String getSignatureUrl()
-    {
+    public String getSignatureUrl() {
         return signatureUrl;
     }
 
-    public void setSignatureUrl(String signatureUrl)
-    {
+    public void setSignatureUrl(String signatureUrl) {
         this.signatureUrl = signatureUrl;
     }
 
-    public String getFirstName()
-    {
+    public String getFirstName() {
         return firstName;
     }
 
-    public void setFirstName(String firstName)
-    {
+    public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
-    public String getLastName()
-    {
+    public String getLastName() {
         return lastName;
     }
 
-    public void setLastName(String lastName)
-    {
+    public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
-    public String getPosition()
-    {
+    public String getPosition() {
         return position;
     }
 
-    public void setPosition(String position)
-    {
+    public void setPosition(String position) {
         this.position = position;
     }
 
-    public String getSignatureDate()
-    {
+    public String getSignatureDate() {
         return signatureDate;
     }
 
-    public void setSignatureDate(String signatureDate)
-    {
+    public void setSignatureDate(String signatureDate) {
         this.signatureDate = signatureDate;
     }
 }
