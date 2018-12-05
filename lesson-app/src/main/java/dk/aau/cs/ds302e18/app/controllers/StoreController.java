@@ -200,11 +200,23 @@ public class StoreController {
         courseModel.setInstructorUsername(course.getInstructorUsername());
         courseModel.setCourseType(course.getCourseType());
         courseModel.setCourseStartDate(course.getCourseStartDate());
+        courseModel.setCourseLocation(course.getCourseLocation());
+        courseModel.setCourseStartDate(course.getCourseStartDate());
+        courseModel.setWeekdays(course.getWeekdays());
+        courseModel.setNumberStudents(course.getNumberStudents()+1);
 
-        String studentUsernames = course.getStudentUsernames();
+        String prevStudents = course.getStudentUsernames();
         /* Adds the new student */
-        studentUsernames += "," + studentUsername;
-        courseModel.setStudentUsernames(studentUsernames);
+
+
+        if (course.getStudentUsernames().isEmpty())
+        {
+            courseModel.setStudentUsernames(studentUsername);
+        }
+        else {
+        prevStudents += "," + studentUsername;
+        courseModel.setStudentUsernames(prevStudents);
+        }
         courseService.updateCourse(courseId, courseModel);
       
           /*
@@ -320,7 +332,7 @@ public class StoreController {
                                      @RequestParam("year") String year,
                                      @RequestParam("customRange2") String lessons,
                                      @ModelAttribute StoreModel storeModel) {
-        String message = ("User : " + getAccountUsername() + " would like to request " + lessons + " on the following date : "
+        String message = ("User : " + getAccountUsername() + " would like to request " + lessons + " lessons on the following date : "
         + date + " / " + month + " - " + year + ".");
         new Notification(message, "ds302e18@cs.aau.dk", "ds302e18@cs.aau.dk");
         return new RedirectView("index");
