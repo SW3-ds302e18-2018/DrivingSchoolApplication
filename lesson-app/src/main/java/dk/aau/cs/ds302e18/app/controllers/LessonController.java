@@ -151,6 +151,10 @@ public class LessonController {
     @PreAuthorize("hasAnyRole('ROLE_INSTRUCTOR', 'ROLE_ADMIN')")
     public String updateLesson(Model model, @PathVariable long id, @ModelAttribute LessonModel lessonModel) {
         /* Returns an lesson that is read from the 8200 server through updateCourse. */
+        Lesson tempLesson = this.lessonService.getLesson(id);
+        String tempStudent = lessonModel.getStudentList();
+        lessonModel.setStudentList(tempLesson.getStudentList() +"," + tempStudent);
+        System.out.println(lessonModel.getStudentList());
         Lesson lesson = this.lessonService.updateLesson(id, lessonModel);
         model.addAttribute("lesson", lesson);
         model.addAttribute("lessonModel", new LessonModel());

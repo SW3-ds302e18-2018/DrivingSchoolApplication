@@ -2,6 +2,7 @@ package dk.aau.cs.ds302e18.app.controllers;
 
 import dk.aau.cs.ds302e18.app.auth.*;
 import dk.aau.cs.ds302e18.app.domain.Account;
+import dk.aau.cs.ds302e18.app.domain.AccountModel;
 import dk.aau.cs.ds302e18.app.domain.AccountViewModel;
 import dk.aau.cs.ds302e18.app.service.AccountService;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -74,7 +75,6 @@ public class AdminController {
                                                   @RequestParam("Zip") int zip) {
         Account account = new Account();
         account.setUsername(username);
-        account.setId(accountService.getAccount(username).getId());
         account.setFirstName(firstName);
         account.setLastName(lastName);
         account.setEmail(email);
@@ -83,7 +83,8 @@ public class AdminController {
         account.setAddress(address);
         account.setCity(city);
         account.setZipCode(zip);
-        this.accountService.addAccount(account.translateAccountToModel());
+        AccountModel accountModel = account.translateAccountToModel();
+        this.accountService.updateAccount(username, accountModel);
         return new RedirectView("admin");
     }
 
