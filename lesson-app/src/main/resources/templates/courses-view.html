@@ -107,19 +107,6 @@
                                     th:value="${instructorAccount.username}"></option>
                         </select>
                     </div>
-                    <h4 style="margin-left: 1.5%">Students <span class="glyphicon glyphicon-question-sign"
-                                                               data-toggle="tooltip"
-                                                               data-placement="top"
-                                                               title="Students that will be participating in the course. Click on several students to select more than one."></span>
-                    </h4>
-                    <div class="container">
-                        <select class="selectpicker" data-style="btn-info" data-live-search="true" multiple
-                                th:name="studentUsernames">
-                            <option th:each="studentAccount : ${studentAccounts}"
-                                    th:text="${studentAccount.firstName + ' ' + studentAccount.lastName}"
-                                    th:value="${studentAccount.username}"></option>
-                        </select>
-                    </div>
                     <div class="col">
                         <h4>Course Type</h4>
                         <select class="selectpicker" data-style="btn-info" id="courseType" name="courseType">
