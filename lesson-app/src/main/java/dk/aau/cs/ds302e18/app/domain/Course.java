@@ -105,12 +105,13 @@ public class Course {
 
     public Course translateModelToCourse(){
         Course course = new Course();
-        course.setCourseStartDate(this.courseStartDate);
         course.setStudentUsernames(this.studentUsernames);
-        course.setCourseTableID(this.courseTableID);
+        course.setInstructorUsername(this.instructorUsername);
         course.setCourseType(this.courseType);
+        course.setCourseStartDate(this.courseStartDate);
         course.setCourseLocation(this.courseLocation);
         course.setNumberStudents(this.numberStudents);
+        course.setWeekdays(this.weekdays);
         return course;
     }
 

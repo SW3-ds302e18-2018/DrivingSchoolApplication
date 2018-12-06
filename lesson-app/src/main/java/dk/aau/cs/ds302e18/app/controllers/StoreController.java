@@ -191,44 +191,33 @@ public class StoreController {
         // Creating the storemodel with the set values above, and updaing it.
         Store store = this.storeService.acceptStoreRequest(appId, storeModel);
 
-        /*
-        Adds the student to the course
-         */
 
+
+        /* Finds the course the student requested to join. */
         Course course = courseService.getCourse(courseId);
 
-        courseModel.setInstructorUsername(course.getInstructorUsername());
-        courseModel.setCourseType(course.getCourseType());
-        courseModel.setCourseStartDate(course.getCourseStartDate());
-        courseModel.setCourseLocation(course.getCourseLocation());
-        courseModel.setCourseStartDate(course.getCourseStartDate());
-        courseModel.setWeekdays(course.getWeekdays());
-        courseModel.setNumberStudents(course.getNumberStudents()+1);
+        /* Creates an courseObject with that course´s values. */
+        CourseModel updatedCourse = course.translateCourseToModel();
 
-        String prevStudents = course.getStudentUsernames();
-        /* Adds the new student */
+        /* Adds the student. */
+        String prevStudents = updatedCourse.getStudentUsernames();
+        prevStudents += studentUsername + ",";
+        updatedCourse.setStudentUsernames(prevStudents);
 
+        /* Increments the number of students by one. */
+        updatedCourse.setNumberStudents(course.getNumberStudents()+1);
 
-        if (course.getStudentUsernames().isEmpty())
-        {
-            courseModel.setStudentUsernames(studentUsername);
-        }
-        else {
-        prevStudents += "," + studentUsername;
-        courseModel.setStudentUsernames(prevStudents);
-        }
-        courseService.updateCourse(courseId, courseModel);
+        /* Updates the course. */
+        courseService.updateCourse(courseId, updatedCourse);
       
-          /*
-        Send an notification to the student
-         */
-
+        /* Send an notification to the student */
         Account acceptedStudent = accountService.getAccount(studentUsername);
         String studentEmail = acceptedStudent.getEmail();
         String studentFirstname = acceptedStudent.getFirstName();
 
         Account instructor = accountService.getAccount(course.getInstructorUsername());
         String instructorFullName = instructor.getFirstName() + " " + instructor.getLastName();
+
 
         new Notification("Hello "+studentFirstname+ ".\n" +
                 "The course will start the "+course.getCourseStartDate()+" at "+course.getCourseLocation()+".\n Your instructor" +
@@ -237,6 +226,7 @@ public class StoreController {
                 "Kind regards .\n" +
                 "Driving School A/S "
                 , "ds302e18@gmail.com", studentEmail);
+        
       
         /*
         Creates a logbook for the student

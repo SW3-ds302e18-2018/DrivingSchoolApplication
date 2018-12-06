@@ -58,34 +58,27 @@ public class CourseController {
     @PostMapping(value = "/course/addCourse")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ModelAndView addCourse(@ModelAttribute CourseModel courseModel) {
-        /* Prevents that NULL is added as the value, which spring cannot handle when making an insert statement with empty values.
-           After the course has been saved, the course is updated to empty values. */
-        if (courseModel.getStudentUsernames() == null) {
-            courseModel.setStudentUsernames("temporal value");
-        }
+        /* Students and start date is not set when a course is being created, but when the first student or initial
+           theory lesson is added.
+           Therefore the values are set to temporary dummy data to prevents that NULL is inserted, which spring jpa repository
+           cannot handle when making an insert statement.
+           After the course has been saved, the course is then updated to empty values. */
+        courseModel.setStudentUsernames("temporal value");
+        courseModel.setNumberStudents(0);
+
         Date temporaryDate = new Date();
-        if (courseModel.getCourseStartDate() == null) {
-            courseModel.setCourseStartDate(temporaryDate);
-        }
-        /* Weekdays is not set when adding a course, so it also needs to be an empty value. */
+        courseModel.setCourseStartDate(temporaryDate);
+
         courseModel.setWeekdays("temporal value");
 
-        /* The username selected are separated as an string array so the arrays size can be counted. */
-        ArrayList<String> studentUsernamesList = saveStringsSeparatedByCommaAsArray(courseModel.getStudentUsernames());
-        if (studentUsernamesList.get(0).equals("temporal value")) {
-            courseModel.setNumberStudents(0);
-        } else {
-            courseModel.setNumberStudents(studentUsernamesList.size());
-        }
         courseService.addCourse(courseModel);
 
-        /* If studentUsernames or date was empty update them to become empty. */
-        if(courseModel.getStudentUsernames().equals("temporal value"))
-            courseModel.setStudentUsernames("");
-        if(courseModel.getCourseStartDate() == temporaryDate)
-            courseModel.setCourseStartDate(null);
-
+        courseModel.setStudentUsernames("");
+        courseModel.setCourseStartDate(null);
         courseModel.setWeekdays("");
+
+        /* updateCourse requires an ID of the course that should be updated, which is found by finding the last
+        *  course created. */
         Course latestCourse = courseService.getLastCourseOrderedByID();
         courseService.updateCourse(latestCourse.getCourseTableID(), courseModel);
 
