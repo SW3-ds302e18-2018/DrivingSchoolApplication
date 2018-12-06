@@ -153,8 +153,16 @@ public class LessonController {
         /* Returns an lesson that is read from the 8200 server through updateCourse. */
         Lesson tempLesson = this.lessonService.getLesson(id);
         String tempStudent = lessonModel.getStudentList();
-        lessonModel.setStudentList(tempLesson.getStudentList() +"," + tempStudent);
-        System.out.println(lessonModel.getStudentList());
+        if (tempStudent != null)
+        {
+            if (tempLesson.getStudentList().contains(",")) lessonModel.setStudentList(tempLesson.getStudentList() +"," + tempStudent);
+            else {
+                lessonModel.setStudentList(tempStudent+",");
+            }
+        }
+        else {
+            lessonModel.setStudentList(tempLesson.getStudentList());
+        }
         Lesson lesson = this.lessonService.updateLesson(id, lessonModel);
         model.addAttribute("lesson", lesson);
         model.addAttribute("lessonModel", new LessonModel());
