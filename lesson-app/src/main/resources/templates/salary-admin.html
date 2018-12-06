@@ -34,7 +34,7 @@
             <div class="form-row">
                 <h6>Select instructor: &nbsp;</h6>
                 <select th:name="adminSalarySelect" th:id="adminSalarySelect">
-                    <option th:each="instructor : ${instructorList}" th:text="${instructor.getFirstName()} + ' ' + ${instructor.getLastName()}" th:value="${instructor.getUsername()}"></option>
+                    <option th:each="instructor : ${instructorList}" th:text="${instructor.getUsername()} + ' (' + ${instructor.getFirstName()} + ' ' + ${instructor.getLastName()} + ')'" th:value="${instructor.getUsername()}"></option>
                 </select>
             </div>
             <div class="form-row">
@@ -90,7 +90,7 @@
             </div>
         </form>
         <br><hr>
-        <h4>Lessons: <span th:text="${salaryLessonTotal}"></span> | Unique Course IDs: <span th:text="${uniqueCourseIdTotal}"></span><br>
+        <h4>Total lessons: <span th:text="${salaryLessonTotal}"></span><br>
             Type B: <span th:text="${courseTypeBLessonTotal}"></span> | Type BE: <span th:text="${courseTypeBELessonTotal}"></span> | Type A: <span th:text="${courseTypeALessonTotal}"></span></h4>
         <div class="centerpane">
             <table id="salaryLessonTable" class="table table-hover table-sm bordered">

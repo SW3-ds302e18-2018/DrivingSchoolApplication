@@ -1,13 +1,8 @@
 package dk.aau.cs.ds302e18.app.controllers;
 
-import dk.aau.cs.ds302e18.app.SortLessonsByCourseId;
-import dk.aau.cs.ds302e18.app.domain.Account;
 import dk.aau.cs.ds302e18.app.auth.AuthGroup;
 import dk.aau.cs.ds302e18.app.auth.AuthGroupRepository;
-import dk.aau.cs.ds302e18.app.domain.Course;
-import dk.aau.cs.ds302e18.app.domain.CourseType;
-import dk.aau.cs.ds302e18.app.domain.Lesson;
-import dk.aau.cs.ds302e18.app.domain.LessonState;
+import dk.aau.cs.ds302e18.app.domain.*;
 import dk.aau.cs.ds302e18.app.service.AccountService;
 import dk.aau.cs.ds302e18.app.service.CourseService;
 import dk.aau.cs.ds302e18.app.service.LessonService;
@@ -76,11 +71,7 @@ public class SalaryController {
         courseTypeBELessonTotal = courseTypeTotal.get(1);
         courseTypeALessonTotal = courseTypeTotal.get(2);
 
-        //Finds unique course ids from the salary lesson list
-        uniqueCourseIdTotal = findUniqueCourseIds(salaryLessonList);
-
         //Models variables from java for usage in html
-        model.addAttribute("uniqueCourseIdTotal", uniqueCourseIdTotal);
         model.addAttribute("courseTypeBLessonTotal", courseTypeBLessonTotal);
         model.addAttribute("courseTypeBELessonTotal", courseTypeBELessonTotal);
         model.addAttribute("courseTypeALessonTotal", courseTypeALessonTotal);
@@ -124,11 +115,7 @@ public class SalaryController {
         courseTypeBELessonTotal = courseTypeTotal.get(1);
         courseTypeALessonTotal = courseTypeTotal.get(2);
 
-        //Finds unique course ids from the salary lesson list
-        uniqueCourseIdTotal = findUniqueCourseIds(salaryLessonList);
-
         //Models variables from java for usage in html
-        model.addAttribute("uniqueCourseIdTotal", uniqueCourseIdTotal);
         model.addAttribute("courseTypeBLessonTotal", courseTypeBLessonTotal);
         model.addAttribute("courseTypeBELessonTotal", courseTypeBELessonTotal);
         model.addAttribute("courseTypeALessonTotal", courseTypeALessonTotal);
@@ -176,12 +163,8 @@ public class SalaryController {
         courseTypeBELessonTotal = courseTypeTotal.get(1);
         courseTypeALessonTotal = courseTypeTotal.get(2);
 
-        //Finds unique course ids from the salary lesson list
-        uniqueCourseIdTotal = findUniqueCourseIds(salaryLessonList);
-
         //Models variables from java for usage in html
         model.addAttribute("instructorList", instructorList);
-        model.addAttribute("uniqueCourseIdTotal", uniqueCourseIdTotal);
         model.addAttribute("courseTypeBLessonTotal", courseTypeBLessonTotal);
         model.addAttribute("courseTypeBELessonTotal", courseTypeBELessonTotal);
         model.addAttribute("courseTypeALessonTotal", courseTypeALessonTotal);
@@ -226,12 +209,8 @@ public class SalaryController {
         courseTypeBELessonTotal = courseTypeTotal.get(1);
         courseTypeALessonTotal = courseTypeTotal.get(2);
 
-        //Finds unique course ids from the salary lesson list
-        uniqueCourseIdTotal = findUniqueCourseIds(salaryLessonList);
-
         //Models variables from java for usage in html
         model.addAttribute("instructorList", instructorList);
-        model.addAttribute("uniqueCourseIdTotal", uniqueCourseIdTotal);
         model.addAttribute("courseTypeBLessonTotal", courseTypeBLessonTotal);
         model.addAttribute("courseTypeBELessonTotal", courseTypeBELessonTotal);
         model.addAttribute("courseTypeALessonTotal", courseTypeALessonTotal);
@@ -262,6 +241,7 @@ public class SalaryController {
         List<Integer> courseTypeTotalList = new ArrayList<>();
         int courseTypeBLessonTotal = 0, courseTypeBELessonTotal = 0, courseTypeALessonTotal = 0;
         for (Lesson lesson : lessonList) {
+            System.out.println(lesson.getCourseId());
             //Checks which type of course the lesson is in and counts up the total of that type
             Course course = courseService.getCourse(lesson.getCourseId());
             if (course.getCourseType().equals(CourseType.TYPE_B_CAR)) {
@@ -280,27 +260,6 @@ public class SalaryController {
         return courseTypeTotalList;
     }
 
-    private int findUniqueCourseIds(List<Lesson> lessonList) {
-        //Sorts the founds lessons by id and iterates through them to find unique course ids
-        int uniqueCourseIdTotal = 0;
-        long currCourseId;
-        Long nextCourseId = null;
-
-        lessonList.sort(new SortLessonsByCourseId());
-        for (Lesson lesson : lessonList) {
-            currCourseId = lesson.getCourseId();
-            if (nextCourseId == null) {
-                uniqueCourseIdTotal++;
-                nextCourseId = currCourseId;
-            }
-            if (nextCourseId != currCourseId) {
-                uniqueCourseIdTotal++;
-                nextCourseId = currCourseId;
-            }
-        }
-        return uniqueCourseIdTotal;
-    }
-
     private List<Account> findAllInstructors() {
         //Finds all accounts and compares their auth group to find the ones who are instructors
         List<AuthGroup> authGroups = this.authGroupRepository.findAll();
@@ -308,6 +267,9 @@ public class SalaryController {
         List<Account> instructorList = new ArrayList<>();
         for (int i = 0; i < accountList.size(); i++) {
             if (authGroups.get(i).getAuthGroup().equals("INSTRUCTOR")) {
+                instructorList.add(accountList.get(i));
+            }
+            if (authGroups.get(i).getAuthGroup().equals("ADMIN")) {
                 instructorList.add(accountList.get(i));
             }
         }
