@@ -99,6 +99,9 @@
                     <div class="container">
                         <select class="selectpicker" data-style="btn-info" data-live-search="true"
                                 th:name="instructorUsername">
+                            <option th:each="adminAccount : ${adminAccounts}"
+                                    th:text="${adminAccount.firstName + ' ' + adminAccount.lastName}"
+                                    th:value="${adminAccount.username}"></option>
                             <option th:each="instructorAccount : ${instructorAccounts}"
                                     th:text="${instructorAccount.firstName + ' ' + instructorAccount.lastName}"
                                     th:value="${instructorAccount.username}"></option>

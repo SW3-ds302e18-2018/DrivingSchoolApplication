@@ -47,6 +47,7 @@ public class CourseController {
         setInstructorFullName(courses);
         courses.sort(new SortCoursesByCourseID());
 
+        model.addAttribute("adminAccounts", findAccountsOfType("ADMIN"));
         model.addAttribute("instructorAccounts", findAccountsOfType("INSTRUCTOR"));
         model.addAttribute("studentAccounts", findAccountsOfType("STUDENT"));
         model.addAttribute("courses", courses);
