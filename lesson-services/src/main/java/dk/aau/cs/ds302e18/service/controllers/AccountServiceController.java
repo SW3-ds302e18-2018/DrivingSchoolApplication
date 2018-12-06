@@ -75,10 +75,11 @@ public class AccountServiceController
     @DeleteMapping("/{username}")
     @ResponseStatus(HttpStatus.RESET_CONTENT)
     public void deleteAccount(@PathVariable String username){
+        Account temp = this.accountRespository.findByUsername(username);
         Optional<Account> existing = Optional.ofNullable(this.accountRespository.findByUsername(username));
         if(!existing.isPresent()){
             throw new AccountNotFoundException("Account not found with username: " + username);
         }
-        this.accountRespository.deleteByUsername(username);
+        this.accountRespository.deleteById(temp.getId());
     }
 }
