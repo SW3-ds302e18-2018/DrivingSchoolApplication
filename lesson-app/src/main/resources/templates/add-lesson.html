@@ -90,17 +90,6 @@
 
                 <div class="form-row">
                     <div class="col">
-                        <h3>Lesson State</h3>
-                        <p th:text="${lessonState}"></p>
-                        <select class="selectpicker" data-style="btn-info" id="lessonState" name="lessonState">
-                            <option value="PENDING">Pending</option>
-                            <option value="COMPLETED_UNSIGNED">Completed (Unsigned)</option>
-                            <option value="COMPLETED_SIGNED">Completed (Signed)</option>
-                            <option value="STUDENT_ABSENT">Student Absent</option>
-                        </select>
-                    </div>
-
-                    <div class="col">
                         <h3>Course ID</h3>
                         <select class="selectpicker" data-style="btn-info" data-live-search="true"
                                 th:name="courseList">

@@ -95,11 +95,12 @@ public class LessonController {
         return "add-lesson";
     }
 
-    /* Posts a newly added lesson in the lessons list on the website */
+
     @PostMapping(value = "/lessons")
     @PreAuthorize("hasAnyRole('ROLE_INSTRUCTOR', 'ROLE_ADMIN')")
     public ModelAndView addLesson(HttpServletRequest request, Model model, @ModelAttribute LessonModel lessonModel) {
-        /* The newly added lesson object is retrieved from the 8200 server.  */
+        /* A new lesson is default set as PENDING.  */
+        lessonModel.setLessonState(LessonState.PENDING);
         Lesson lesson = this.lessonService.addLesson(lessonModel);
 
         if (lesson.getStudentList().isEmpty() | lesson.getLessonInstructor().isEmpty() | lesson.getLessonLocation().isEmpty()) {
@@ -110,7 +111,7 @@ public class LessonController {
 
             request.setAttribute(View.RESPONSE_STATUS_ATTRIBUTE, HttpStatus.TEMPORARY_REDIRECT);
         }
-        return new ModelAndView("redirect:/lessons/" + lesson.getId());
+        return new ModelAndView("redirect:/lessons/");
     }
 
     @GetMapping(value = "/lessons/{id}")
@@ -149,7 +150,7 @@ public class LessonController {
 
     @PostMapping(value = "/lessons/{id}")
     @PreAuthorize("hasAnyRole('ROLE_INSTRUCTOR', 'ROLE_ADMIN')")
-    public String updateLesson(Model model, @PathVariable long id, @ModelAttribute LessonModel lessonModel) {
+    public ModelAndView updateLesson(Model model, @PathVariable long id, @ModelAttribute LessonModel lessonModel) {
         /* Returns an lesson that is read from the 8200 server through updateCourse. */
         Lesson tempLesson = this.lessonService.getLesson(id);
         String tempStudent = lessonModel.getStudentList();
@@ -167,7 +168,7 @@ public class LessonController {
         model.addAttribute("lesson", lesson);
         model.addAttribute("lessonModel", new LessonModel());
 
-        return "add-lesson";
+        return new ModelAndView("redirect:/lessons/");
     }
 
     @GetMapping(value = "/gdpr")

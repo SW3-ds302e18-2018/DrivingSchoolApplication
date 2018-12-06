@@ -2,13 +2,15 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" layout:decorate="~{layout}"lang="en">
 <head>
     <title>Admin</title>
+
+    <script src="https://cdn.datatables.net/1.10.16/js/jquery.dataTables.min.js"></script>
+    <script th:src="@{/js/table.js}"></script>
 </head>
 <body>
 
 <div layout:fragment="content">
-    <div class="container">
-        <h1>Admin</h1>
-
+    <div class="container main-content">
+        <h1>Manage Accounts</h1>
         <div>
             <table id="tableAdmin" class="table table-striped table-sm">
                 <thead>
@@ -27,8 +29,6 @@
                 </tbody>
             </table>
             </div>
-    
-            
     </div>
 </div>
 

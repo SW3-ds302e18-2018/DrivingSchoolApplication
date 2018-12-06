@@ -226,7 +226,7 @@ public class StoreController {
                 "Kind regards .\n" +
                 "Driving School A/S "
                 , "ds302e18@gmail.com", studentEmail);
-        
+
       
         /*
         Creates a logbook for the student
