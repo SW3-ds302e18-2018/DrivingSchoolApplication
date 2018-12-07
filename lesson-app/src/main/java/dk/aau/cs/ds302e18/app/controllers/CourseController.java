@@ -54,6 +54,11 @@ public class CourseController {
         return "courses-view";
     }
 
+    @RequestMapping("/hellodude")
+    public @ResponseBody String greeting() {
+        return "Hello World";
+    }
+
 
     @PostMapping(value = "/course/addCourse")
     @PreAuthorize("hasRole('ROLE_ADMIN')")

@@ -1,3 +1,4 @@
+/*
 package dk.aau.cs.ds302e18.app;
 
 import org.junit.Test;
@@ -15,3 +16,4 @@ public class LessonAppApplicationTests
 	}
 
 }
+*/
