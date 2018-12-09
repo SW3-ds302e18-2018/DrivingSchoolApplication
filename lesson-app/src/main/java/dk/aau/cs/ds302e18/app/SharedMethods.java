@@ -41,6 +41,7 @@ public class SharedMethods {
          *  do not attempt to fetch their full name. */
         for(Lesson lesson: lessonList){
             ArrayList<String> fullNames = new ArrayList<>();
+
             if(lesson.getStudentList() != null && !lesson.getStudentList().equals("")) {
                 ArrayList<String> listOfUsernames = saveStringsSeparatedByCommaAsArray(lesson.getStudentList());
                 for (String username : listOfUsernames) {

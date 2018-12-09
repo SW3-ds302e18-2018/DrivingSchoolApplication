@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -97,7 +98,7 @@ public class CourseController {
                                          @RequestParam("startingPoint") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Date startingPoint,
                                          @RequestParam("weekdaysIntArray") ArrayList<Integer> weekdaysIntArray,
                                          @RequestParam("numberLessonsADay") int numberLessonsADay) {
-        ArrayList<Date> lessonDates = createLessonDates(startingPoint, weekdaysIntArray, numberLessons, numberLessonsADay);
+        ArrayList<Calendar> lessonDates = createLessonDates(startingPoint, weekdaysIntArray, numberLessons, numberLessonsADay);
         /* Converts the weekdaysIntArray into an string */
         String weekdays = "";
         for (int weekday : weekdaysIntArray) {
@@ -109,10 +110,10 @@ public class CourseController {
 
         /* For every lesson date, a lesson will be created */
         for (int j = 0; j < lessonDates.size(); j++) {
-            Date lessonDate = lessonDates.get(j);
+            Calendar lessonDate = lessonDates.get(j);
             LessonModel lesson = new LessonModel();
             lesson.setLessonState(LessonState.PENDING);
-            lesson.setLessonDate(lessonDate);
+            lesson.setLessonDate(lessonDate.getTime());           //quickfix instead of changing the property in Lesson to an Calendar
             lesson.setLessonLocation(course.getCourseLocation());
             lesson.setLessonInstructor(course.getInstructorUsername());
             lesson.setStudentList(course.getStudentUsernames());
@@ -123,7 +124,7 @@ public class CourseController {
 
             /* Notes the date of the first created lesson */
             if (j == 0) {
-                firstCreatedLessonDate = new Date(lessonDate.getTime());
+                firstCreatedLessonDate = lessonDate.getTime();
             }
         }
 
@@ -318,35 +319,35 @@ public class CourseController {
         }
     }
 
-    private ArrayList<Date> createLessonDates(Date startDate, ArrayList<Integer> weekdaysArrays, int numberLessonsToDistribute,
+    private ArrayList<Calendar> createLessonDates(Date startingPoint, ArrayList<Integer> weekdaysArrays, int numberLessonsToDistribute,
                                               int numberLessonsADay) {
-        ArrayList<Date> lessonDates = new ArrayList<>();
-        Date currentDayDate;
-        int dayCount = 0;
+        Calendar currentDayDate = Calendar.getInstance();
+        currentDayDate.setTime(startingPoint);
+        ArrayList<Calendar> lessonDates = new ArrayList<>();
+
+
         /* A lesson should minimum be 45 minutes according to law, and the two interviewed driving schools had a 45
            minute lesson duration. */
         int lessonDurationMinutes = 45;
 
-        int oneMinuteInMilliseconds = 60000;
-        int lessonDurationMilliseconds = oneMinuteInMilliseconds * lessonDurationMinutes;
-
         /* While all lessons has not yet been distributed */
         while (numberLessonsToDistribute > 0) {
-            /* 86400000 * dayCount is not contained in a variable due to the possible of reaching an overflow of most
-               data-types. Date is by default suitable to handle very large numbers. */
-            currentDayDate = new Date(startDate.getTime() + 86400000 * dayCount);
-            if (weekdaysArrays.contains(currentDayDate.getDay())) {
+            currentDayDate.add(Calendar.DATE, 1);   // number of days to add
+            if (weekdaysArrays.contains(currentDayDate.get(Calendar.DAY_OF_WEEK))) {
                 /* If it is one of the weekdays specified in the weekdays array, add an number of lessons equal to
                  * number lessons a day. Also since it adds a several lessons in a loop it needs to check before each lesson
                  * is added if the necessary lessons have been distributed. */
                 for (int g = 0; g < numberLessonsADay; g++) {
                     if (numberLessonsToDistribute > 0) {
-                        lessonDates.add(new Date(currentDayDate.getTime() + lessonDurationMilliseconds * g));
+                        Calendar lessonDate = Calendar.getInstance();
+                        lessonDate.setTime(currentDayDate.getTime());
+                        /* Adds lesson duration in minutes to the date. */
+                        lessonDate.add(Calendar.MINUTE, lessonDurationMinutes * g);
+                        lessonDates.add(lessonDate);
                         numberLessonsToDistribute--;
                     }
                 }
             }
-            dayCount += 1;
         }
         return lessonDates;
     }
