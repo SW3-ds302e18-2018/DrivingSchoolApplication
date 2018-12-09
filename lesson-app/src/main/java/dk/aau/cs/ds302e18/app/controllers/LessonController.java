@@ -1,5 +1,6 @@
 package dk.aau.cs.ds302e18.app.controllers;
 
+import dk.aau.cs.ds302e18.app.SharedMethods;
 import dk.aau.cs.ds302e18.app.SortCoursesByCourseID;
 import dk.aau.cs.ds302e18.app.auth.AuthGroup;
 import dk.aau.cs.ds302e18.app.auth.AuthGroupRepository;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
+import static org.apache.commons.codec.digest.DigestUtils.sha1;
 
 @Controller
 @RequestMapping("/")
@@ -36,6 +38,7 @@ public class LessonController {
     private final AccountService accountService;
     private final AuthGroupRepository authGroupRepository;
     private final CourseService courseService;
+    private SharedMethods sharedMethods;
 
 
     public LessonController(LessonService lessonService, AccountService accountService,
@@ -45,6 +48,7 @@ public class LessonController {
         this.accountService = accountService;
         this.authGroupRepository = authGroupRepository;
         this.courseService = courseService;
+        this.sharedMethods = new SharedMethods(accountService, authGroupRepository);
     }
 
     @GetMapping(value = "/lessons")
@@ -53,6 +57,7 @@ public class LessonController {
         /* Creates an list of lessons from the return value of getAllLessons in LessonService(which is an function that gets lessons
         from the 8200 server and makes them into lesson objects and returns them as an list) */
         List<Lesson> lessons = this.lessonService.getAllLessons();
+        sharedMethods.setInstructorFullName(lessons);
 
         List<Lesson> studentLessons = new ArrayList<>();
         // Iterates through all requests, adding the ones with state (0) into the filtered request list.
@@ -70,6 +75,8 @@ public class LessonController {
             }
         }
 
+        sharedMethods.setStudentFullNamesFromUsernamesString(lessons);
+
         model.addAttribute("lessons", lessons);
         model.addAttribute("specificLesson", studentLessons);
         return "lessons-view";
@@ -78,11 +85,11 @@ public class LessonController {
     @GetMapping(value = "/lessons/add")
     @PreAuthorize("hasAnyRole('ROLE_INSTRUCTOR', 'ROLE_ADMIN')")
     public String getAddLessonForm(Model model) {
-        List<Account> studentAccounts = findAccountsOfType("STUDENT");
+        List<Account> studentAccounts = sharedMethods.findAccountsOfType("STUDENT");
         model.addAttribute("studentAccountlist", studentAccounts);
 
-        List<Account> instructors = findAccountsOfType("INSTRUCTOR");
-        List<Account> admins = findAccountsOfType("ADMIN");
+        List<Account> instructors = sharedMethods.findAccountsOfType("INSTRUCTOR");
+        List<Account> admins = sharedMethods.findAccountsOfType("ADMIN");
         ArrayList<Account> instructorList = new ArrayList<>();
 
         instructorList.addAll(instructors);
@@ -118,12 +125,13 @@ public class LessonController {
     @PreAuthorize("hasAnyRole('ROLE_INSTRUCTOR', 'ROLE_ADMIN')")
     public String getLesson(Model model, @PathVariable long id) {
         Lesson lesson = this.lessonService.getLesson(id);
+        sharedMethods.setInstructorFullName(lesson);
 
-        List<Account> studentAccounts = findAccountsOfType("STUDENT");
+        List<Account> studentAccounts = sharedMethods.findAccountsOfType("STUDENT");
         model.addAttribute("studentAccountlist", studentAccounts);
 
-        List<Account> instructors = findAccountsOfType("INSTRUCTOR");
-        List<Account> admins = findAccountsOfType("ADMIN");
+        List<Account> instructors = sharedMethods.findAccountsOfType("INSTRUCTOR");
+        List<Account> admins = sharedMethods.findAccountsOfType("ADMIN");
         ArrayList<Account> instructorList = new ArrayList<>();
 
         instructorList.addAll(instructors);
@@ -186,25 +194,11 @@ public class LessonController {
     }
 
 
-    private List<Account> findAccountsOfType(String accountType) {
-        List<AuthGroup> authGroups = this.authGroupRepository.findAll();
-        List<Account> accountList = this.accountService.getAllAccounts();
-        List<Account> accountsOfSelectedType = new ArrayList<>();
 
-        /* When an account is created it is at the same time added to authGroup. Elements in a result-set are per default
-           fetched with the order they were entered in the database, so account[0] will be the same as the
-           authGroup[0]. This means that we do not have to manually check which authGroups matches which accounts. */
-        for (int i = 0; i < accountList.size(); i++) {
-            if (authGroups.get(i).getAuthGroup().equals(accountType)) {
-                accountsOfSelectedType.add(accountList.get(i));
-            }
-        }
-        return accountsOfSelectedType;
-    }
 
     private List<Account> findStudentsBelongingToLesson(Lesson lesson) {
-        List<Account> studentAccounts = findAccountsOfType("STUDENT");
-        List<String> studentUsernamesInCourseAsStringArray = saveStringsSeparatedByCommaAsArray(lesson.getStudentList());
+        List<Account> studentAccounts =  sharedMethods.findAccountsOfType("STUDENT");
+        List<String> studentUsernamesInCourseAsStringArray = sharedMethods.saveStringsSeparatedByCommaAsArray(lesson.getStudentList());
         List<Account> studentAccountsBelongingToLesson = new ArrayList<>();
         for (Account studentAccount : studentAccounts) {
             for (String studentUsernameInLesson : studentUsernamesInCourseAsStringArray) {
@@ -217,14 +211,7 @@ public class LessonController {
         return studentAccountsBelongingToLesson;
     }
 
-    private ArrayList<String> saveStringsSeparatedByCommaAsArray(String string) {
-        ArrayList<String> studentList = new ArrayList<>();
-        String[] parts = string.split(",");
-        for (String part : parts) {
-            studentList.add(part);
-        }
-        return studentList;
-    }
+
 
     @ModelAttribute("gravatar")
     public String gravatar() {

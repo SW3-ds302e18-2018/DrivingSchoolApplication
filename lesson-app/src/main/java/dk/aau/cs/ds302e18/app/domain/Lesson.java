@@ -12,6 +12,9 @@ public class Lesson {
     private LessonState lessonState;
     private long courseId;
 
+    private String studentFullNames;
+    private String instructorFullName;
+
     public long getId() {
         return id;
     }
@@ -74,6 +77,22 @@ public class Lesson {
 
     public void setCourseId(long courseId) {
         this.courseId = courseId;
+    }
+
+    public String getStudentFullNames() {
+        return studentFullNames;
+    }
+
+    public void setStudentFullNames(String studentFullNames) {
+        this.studentFullNames = studentFullNames;
+    }
+
+    public String getInstructorFullName() {
+        return instructorFullName;
+    }
+
+    public void setInstructorFullName(String instructorFullName) {
+        this.instructorFullName = instructorFullName;
     }
 
     public LessonModel translateLessonToModel() {

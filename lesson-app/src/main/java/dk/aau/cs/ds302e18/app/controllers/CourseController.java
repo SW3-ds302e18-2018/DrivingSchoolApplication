@@ -1,9 +1,9 @@
 package dk.aau.cs.ds302e18.app.controllers;
 
 
+import dk.aau.cs.ds302e18.app.SharedMethods;
 import dk.aau.cs.ds302e18.app.domain.Account;
 import dk.aau.cs.ds302e18.app.SortCoursesByCourseID;
-import dk.aau.cs.ds302e18.app.auth.AuthGroup;
 import dk.aau.cs.ds302e18.app.auth.AuthGroupRepository;
 import dk.aau.cs.ds302e18.app.domain.*;
 import dk.aau.cs.ds302e18.app.service.AccountService;
@@ -32,24 +32,28 @@ public class CourseController {
     private final LessonService lessonService;
     private final AccountService accountService;
     private final AuthGroupRepository authGroupRepository;
+    private SharedMethods sharedMethods;
 
     public CourseController(CourseService courseService, LessonService lessonService, AccountService accountService, AuthGroupRepository authGroupRepository) {
         this.courseService = courseService;
         this.lessonService = lessonService;
         this.accountService = accountService;
         this.authGroupRepository = authGroupRepository;
+        this.sharedMethods = new SharedMethods(accountService, authGroupRepository);
     }
 
     @GetMapping(value = "/course")
     @PreAuthorize("hasAnyRole('ROLE_INSTRUCTOR', 'ROLE_ADMIN')")
     public String getCourses(Model model) {
         List<Course> courses = this.courseService.getAllCourseRequests();
-        setInstructorFullName(courses);
+        sharedMethods.setInstructorFullName(courses, true);
         courses.sort(new SortCoursesByCourseID());
 
-        model.addAttribute("adminAccounts", findAccountsOfType("ADMIN"));
-        model.addAttribute("instructorAccounts", findAccountsOfType("INSTRUCTOR"));
-        model.addAttribute("studentAccounts", findAccountsOfType("STUDENT"));
+
+
+        model.addAttribute("adminAccounts", sharedMethods.findAccountsOfType("ADMIN"));
+        model.addAttribute("instructorAccounts", sharedMethods.findAccountsOfType("INSTRUCTOR"));
+        model.addAttribute("studentAccounts", sharedMethods.findAccountsOfType("STUDENT"));
         model.addAttribute("courses", courses);
         return "courses-view";
     }
@@ -124,7 +128,7 @@ public class CourseController {
         }
 
         CourseModel updatedCourse = course.translateCourseToModel();
-        /* Updates the created latest created course start_date with the date of the first lesson created and weekdays with the string converted from the weekdaysArray. */
+        /* Updates the course with the start date of the first lesson created and weekdays with the string converted from the weekdaysArray. */
         updatedCourse.setWeekdays(convertWeekdaysIntStringToWeekdaysInWords(weekdays));
         updatedCourse.setCourseStartDate(firstCreatedLessonDate);
         courseService.updateCourse(course.getCourseTableID(), updatedCourse);
@@ -157,23 +161,48 @@ public class CourseController {
     @PreAuthorize("hasAnyRole('ROLE_INSTRUCTOR', 'ROLE_ADMIN')")
     public String getCourse(Model model, @PathVariable long id) {
         Course course = this.courseService.getCourse(id);
+        sharedMethods.setInstructorFullName(course);
         List<Lesson> lessons = lessonService.getAllLessons();
 
         ArrayList<Lesson> lessonsMatchingCourse = new ArrayList<>();
+
         for (Lesson lesson : lessons) {
             if (lesson.getCourseId() == id) {
                 lessonsMatchingCourse.add(lesson);
             }
         }
+        sharedMethods.setStudentFullNamesFromUsernamesString(lessons);
+        sharedMethods.setInstructorFullName(lessons);
 
-        /* Finds all user accounts and adds those that belongs to the course in a separate arrayList */
-        List<Account> studentAccounts = findAccountsOfType("STUDENT");
+        /* Finds all student accounts and adds those that belongs to the course in a separate arrayList */
+        List<Account> studentAccounts = sharedMethods.findAccountsOfType("STUDENT");
         List<Account> studentsBelongingToCourse = findStudentsBelongingToCourse(course);
+
+        /* Depending on course type a number of theory lessons to create is recommended. An more readable
+         * string of course type is also saved. */
+        String readableCourseType = "";
+        int suggestedNumberOfLessons = 0;
+
+        if(course.getCourseType() == CourseType.TYPE_B_CAR){
+            suggestedNumberOfLessons = 29;
+            readableCourseType = "Car (B)";
+        }
+        if(course.getCourseType() == CourseType.TYPE_BE_CAR_TRAILER){
+            suggestedNumberOfLessons = 4;
+            readableCourseType = "Car with trailer (BE)";
+        }
+        if(course.getCourseType() == CourseType.TYPE_A_BIKE){
+            suggestedNumberOfLessons = 26;
+            readableCourseType = "Motorbike (A)";
+        }
+
 
         model.addAttribute("course", course);
         model.addAttribute("studentAccounts", studentAccounts);
         model.addAttribute("lessonsMatchingCourse", lessonsMatchingCourse);
         model.addAttribute("studentAccountsBelongingToCourse", studentsBelongingToCourse);
+        model.addAttribute("suggestNumberOfLessons", suggestedNumberOfLessons);
+        model.addAttribute("readableCourseType", readableCourseType);
 
         return "course-view";
     }
@@ -224,7 +253,7 @@ public class CourseController {
     /* Function that converts an string of ints from 0-6 to weekdays in words with regards to the Date java class.
     Also adds a space and "," between each word. */
     private String convertWeekdaysIntStringToWeekdaysInWords(String weekdaysAsIntegers) {
-        ArrayList<String> weekdaysAsIntegersArray = saveStringsSeparatedByCommaAsArray(weekdaysAsIntegers);
+        ArrayList<String> weekdaysAsIntegersArray = sharedMethods.saveStringsSeparatedByCommaAsArray(weekdaysAsIntegers);
         String weekDaysInWords = "";
         for (int i = 0; i < weekdaysAsIntegersArray.size(); i++) {
             switch (weekdaysAsIntegersArray.get(i)) {
@@ -261,8 +290,8 @@ public class CourseController {
     /* Finds student accounts. Saves the student usernames in the course as an string array. Checks if any of the
        student usernames equals any of the student accounts, and adds them to an the array studentsAccountsBelongToCourse. */
     private List<Account> findStudentsBelongingToCourse(Course course) {
-        List<Account> studentAccounts = findAccountsOfType("STUDENT");
-        List<String> studentUsernamesInCourseAsStringArray = saveStringsSeparatedByCommaAsArray(course.getStudentUsernames());
+        List<Account> studentAccounts = sharedMethods.findAccountsOfType("STUDENT");
+        List<String> studentUsernamesInCourseAsStringArray = sharedMethods.saveStringsSeparatedByCommaAsArray(course.getStudentUsernames());
         List<Account> studentAccountsBelongingToCourse = new ArrayList<>();
         for (Account studentAccount : studentAccounts) {
             for (String studentUsernameInCourse : studentUsernamesInCourseAsStringArray) {
@@ -322,41 +351,6 @@ public class CourseController {
         return lessonDates;
     }
 
-    private ArrayList<String> saveStringsSeparatedByCommaAsArray(String string) {
-        ArrayList<String> studentList = new ArrayList<>();
-        String[] parts = string.split(",");
-        for (String part : parts) {
-            studentList.add(part);
-        }
-        return studentList;
-    }
-
-
-    private void setInstructorFullName(List<Course> courseList) {
-        /*  Finds and sets the full name for every instructor in a courseList */
-        for (Course course : courseList) {
-            String firstName = accountService.getAccount(course.getInstructorUsername()).getFirstName();
-            String lastName = accountService.getAccount(course.getInstructorUsername()).getLastName();
-            String fullName = firstName + " " + lastName;
-            course.setInstructorFullName(fullName);
-        }
-    }
-
-    private List<Account> findAccountsOfType(String accountType) {
-        List<AuthGroup> authGroups = this.authGroupRepository.findAll();
-        List<Account> accountList = this.accountService.getAllAccounts();
-        List<Account> accountsOfSelectedType = new ArrayList<>();
-
-        /* When an account is created it is at the same time added to authGroup. Elements in a result-set are per default
-           fetched with the order they were entered in the database, so account[0] will be the same as the
-           authGroup[0]. This means that we do not have to manually check which authGroups matches which accounts. */
-        for (int i = 0; i < accountList.size(); i++) {
-            if (authGroups.get(i).getAuthGroup().equals(accountType)) {
-                accountsOfSelectedType.add(accountList.get(i));
-            }
-        }
-        return accountsOfSelectedType;
-    }
 
     @ModelAttribute("gravatar")
     public String gravatar() {

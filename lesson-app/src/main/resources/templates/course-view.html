@@ -75,8 +75,10 @@
             <div class="left">
                 <h2 th:text="${'Course: #'+course.courseTableID}" style="padding-bottom: 1%"></h2>
                 <h3>Course Details</h3>
+                <h4>Instructor:</h4>
+                <h5 th:text="${course.instructorFullName}"></h5>
                 <h4>Course Type:</h4>
-                <h5 th:text="${course.courseType}"></h5>
+                <h5 th:text="${readableCourseType}"></h5>
                 <h4>Start Date:</h4>
                 <h5 th:text="${course.courseStartDate}"></h5>
                 <h4>Location:</h4>
@@ -144,7 +146,7 @@
         <div class="split right">
             <h3>Manage Lessons</h3>
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal1">
-                Add Initial Theory Lessons
+                Add Several Theory Lessons
             </button>
             <div class="right">
                 <form method="get" th:action="@{'/course/delete/' + ${course.courseTableID}}"
@@ -179,7 +181,7 @@
                                            th:text="${lesson.Id}"></a></th>
                         <td th:text="${lesson.lessonType}"></td>
                         <td th:text="${lesson.lessonDate}"></td>
-                        <td th:text="${lesson.studentList}"></td>
+                        <td th:text="${lesson.studentFullNames}"></td>
                         <td th:text="${lesson.lessonInstructor}"></td>
                         <td th:text="${lesson.lessonLocation}"></td>
                         <td th:text="${lesson.lessonState}"></td>
@@ -195,9 +197,9 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3>Add Initial Theory Lessons <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip"
+                    <h3>Add Several Theory Lessons <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip"
                                                          data-placement="top"
-                                                         title="Option to add theory lessons at certain times of the week."></span>
+                                                         title="Option to add theory lessons at certain times of the week. Can be used to add several theory lessons. Typically used at the start of a course."></span>
                     </h3>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
@@ -256,7 +258,7 @@
 
                         <div class="form-row">
                             <div class="col">
-                                <h4> Number of Lessons </h4>
+                                <h4 th:text="${'Number of Lessons (Suggested for ' + readableCourseType + ' = '+ suggestNumberOfLessons +')'}">  </h4>
                                 <input th:id="numberLessons" th:name="numberLessons" type="text" class="form-control"
                                        placeholder="Number lessons"/>
                             </div>
@@ -267,7 +269,7 @@
                                                                 data-placement="top"
                                                                 title="Number of lessons in a day. A second lesson will be placed right afterwards the first and a third lesson right after the second and so on."></span>
                                 </h4>
-                                <input thid="numberLessonsADay" th:name="numberLessonsADay" type="text" class="form-control"
+                                <input th:id="numberLessonsADay" th:name="numberLessonsADay" type="text" class="form-control"
                                        placeholder="Number Lessons a day"/>
                             </div>
                         </div>

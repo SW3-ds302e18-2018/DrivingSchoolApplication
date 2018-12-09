@@ -41,8 +41,8 @@
                 <th scope="row"><a th:href="@{'/lessons/' + ${lesson.id}}" th:text="${lesson.id}"></a></th>
                 <td th:text="${lesson.lessonType}"></td>
 				<td th:text="${lesson.lessonDate}"></td>
-                <td th:text="${lesson.studentList}"></td>
-                <td th:text="${lesson.lessonInstructor}"></td>
+                <td th:text="${lesson.studentFullNames}"></td>
+                <td th:text="${lesson.instructorFullName}"></td>
                 <td th:text="${lesson.lessonLocation}"></td>
                 <td th:text="${lesson.lessonState}"></td>
                 <td>
