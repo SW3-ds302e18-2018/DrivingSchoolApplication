@@ -1,6 +1,7 @@
 package dk.aau.cs.ds302e18.app.controllers;
 
 import dk.aau.cs.ds302e18.app.Notification;
+import dk.aau.cs.ds302e18.app.SharedMethods;
 import dk.aau.cs.ds302e18.app.domain.Account;
 import dk.aau.cs.ds302e18.app.domain.*;
 import dk.aau.cs.ds302e18.app.service.AccountService;
@@ -33,7 +34,7 @@ public class StoreController {
     private final LogbookService logbookService;
 
     public StoreController(StoreService storeService, AccountService accountService,
-                           CourseService courseService, LogbookService logbookService){
+                           CourseService courseService, LogbookService logbookService) {
         super();
         this.storeService = storeService;
         this.accountService = accountService;
@@ -71,11 +72,14 @@ public class StoreController {
         // Iterates through all requests, adding the ones with state (0) into the filtered request list.
         for (Store store : storeadmin) if (store.getState() == 0) list.add(store);
 
-        List<Course> courses = this.courseService.getAllCourseRequests();
+        List<Course> courses = this.courseService.getAllCourses();
+        SharedMethods sharedMethods = new SharedMethods();
+        sharedMethods.setInstructorFullName(courses, accountService, true);
 
         List<Course> BType = new ArrayList<>();
         List<Course> BEType = new ArrayList<>();
         List<Course> AType = new ArrayList<>();
+
 
         for (Course course : courses) {
             if ((course.getCourseType() == CourseType.TYPE_B_CAR)) {
@@ -169,14 +173,14 @@ public class StoreController {
      *
      * @param appId
      * @param courseId
-     * @param studentUsername
+     * @param acceptedStudentUsername
      * @param model
      * @param storeModel
      * @return RedirectView (storeadmin)
      */
     @RequestMapping(value = "/accept", method = RequestMethod.POST)
     public RedirectView acceptAppState(@RequestParam("appId") long appId, @RequestParam("courseIdAccept") long courseId,
-                                       @RequestParam("studentUsernameAccept") String studentUsername, Model model,
+                                       @RequestParam("studentUsernameAccept") String acceptedStudentUsername, Model model,
                                        @ModelAttribute StoreModel storeModel,
                                        @ModelAttribute CourseModel courseModel,
                                        @ModelAttribute LogbookModel logbookModel) {
@@ -186,7 +190,7 @@ public class StoreController {
         // Setting the application state, course id and studentname from the request into the update model.
         storeModel.setState(b);
         storeModel.setCourseId(courseId);
-        storeModel.setStudentUsername(studentUsername);
+        storeModel.setStudentUsername(acceptedStudentUsername);
 
         // Creating the storemodel with the set values above, and updaing it.
         Store store = this.storeService.acceptStoreRequest(appId, storeModel);
@@ -199,19 +203,26 @@ public class StoreController {
         /* Creates an courseObject with that course´s values. */
         CourseModel updatedCourse = course.translateCourseToModel();
 
-        /* Adds the student. */
+        /* Checks if the student already is in the course, and adds the student if that is not the case. */
+        boolean studentAlreadyExistsInCourse = false;
         String prevStudents = updatedCourse.getStudentUsernames();
-        prevStudents += studentUsername + ",";
-        updatedCourse.setStudentUsernames(prevStudents);
 
-        /* Increments the number of students by one. */
-        updatedCourse.setNumberStudents(course.getNumberStudents()+1);
+        SharedMethods sharedMethods = new SharedMethods();
+        studentAlreadyExistsInCourse = sharedMethods.isUsernameInString(acceptedStudentUsername, course.getStudentUsernames());
+
+        if(!studentAlreadyExistsInCourse){
+            prevStudents += acceptedStudentUsername + ",";
+            /* Increments the number of students by one. */
+            updatedCourse.setNumberStudents(updatedCourse.getNumberStudents() + 1);
+        }
+
+        updatedCourse.setStudentUsernames(prevStudents);
 
         /* Updates the course. */
         courseService.updateCourse(courseId, updatedCourse);
-      
+
         /* Send an notification to the student */
-        Account acceptedStudent = accountService.getAccount(studentUsername);
+        Account acceptedStudent = accountService.getAccount(acceptedStudentUsername);
         String studentEmail = acceptedStudent.getEmail();
         String studentFirstname = acceptedStudent.getFirstName();
 
@@ -219,9 +230,9 @@ public class StoreController {
         String instructorFullName = instructor.getFirstName() + " " + instructor.getLastName();
 
 
-        new Notification("Hello "+studentFirstname+ ".\n" +
-                "The course will start the "+course.getCourseStartDate()+" at "+course.getCourseLocation()+".\n Your instructor" +
-                "will be "+instructorFullName+". If you are unable to attend this course, " +
+        new Notification("Hello " + studentFirstname + ".\n" +
+                "The course will start the " + course.getCourseStartDate() + " at " + course.getCourseLocation() + ".\n Your instructor" +
+                "will be " + instructorFullName + ". If you are unable to attend this course, " +
                 "please contact us as soon as possible, and at least 24 hours before the first lesson..\n" +
                 "Kind regards .\n" +
                 "Driving School A/S "
@@ -234,7 +245,7 @@ public class StoreController {
 
         logbookModel.setActive(true);
         logbookModel.setCourseID(courseId);
-        logbookModel.setStudent(studentUsername);
+        logbookModel.setStudent(acceptedStudentUsername);
         logbookModel.setLogbookType(course.getCourseType().toString());
 
         logbookService.addLogbook(logbookModel);
@@ -275,15 +286,24 @@ public class StoreController {
         String studentEmail = acceptedStudent.getEmail();
         String studentFirstname = acceptedStudent.getFirstName();
 
-        new Notification("Hello "+studentFirstname+ ".\n" +
-               "You have been sadly declined of your request because you have not met the requirements.\n" +
+        new Notification("Hello " + studentFirstname + ".\n" +
+                "You have been sadly declined of your request because you have not met the requirements.\n" +
                 "Kind regards .\n" +
-                        "Driving School A/S "
+                "Driving School A/S "
                 , "ds302e18@gmail.com", studentEmail);
 
         model.addAttribute("store", store);
         model.addAttribute("storeModel", new StoreModel());
         return new RedirectView("storeadmin");
+    }
+
+    public ArrayList<String> saveStringsSeparatedByCommaAsArray(String string) {
+        ArrayList<String> studentList = new ArrayList<>();
+        String[] parts = string.split(",");
+        for (String part : parts) {
+            studentList.add(part);
+        }
+        return studentList;
     }
 
     /**
@@ -318,12 +338,12 @@ public class StoreController {
 
     @RequestMapping(value = "/applyExtraLesson", method = RequestMethod.POST)
     public RedirectView requestExtraLesson(@RequestParam("day") String date,
-                                     @RequestParam("month") String month,
-                                     @RequestParam("year") String year,
-                                     @RequestParam("customRange2") String lessons,
-                                     @ModelAttribute StoreModel storeModel) {
+                                           @RequestParam("month") String month,
+                                           @RequestParam("year") String year,
+                                           @RequestParam("customRange2") String lessons,
+                                           @ModelAttribute StoreModel storeModel) {
         String message = ("User : " + getAccountUsername() + " would like to request " + lessons + " lessons on the following date : "
-        + date + " / " + month + " - " + year + ".");
+                + date + " / " + month + " - " + year + ".");
         new Notification(message, "ds302e18@cs.aau.dk", "ds302e18@cs.aau.dk");
         return new RedirectView("index");
     }

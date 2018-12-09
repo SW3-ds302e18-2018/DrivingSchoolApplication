@@ -24,7 +24,7 @@ public class CourseService {
 
     /* Retrieves an list of store from the 8200 server and returns it as list of lessons in the format specified in
        the Lesson class. */
-    public List<Course> getAllCourseRequests() {
+    public List<Course> getAllCourses() {
         String url = courseServiceUrl + REQUESTS;
         HttpEntity<String> request = new HttpEntity<>(null, null);
         return this.restTemplate.exchange(url, HttpMethod.GET, request, new ParameterizedTypeReference<List<Course>>() {

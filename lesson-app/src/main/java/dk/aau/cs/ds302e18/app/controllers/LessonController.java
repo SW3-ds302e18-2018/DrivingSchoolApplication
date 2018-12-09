@@ -2,7 +2,6 @@ package dk.aau.cs.ds302e18.app.controllers;
 
 import dk.aau.cs.ds302e18.app.SharedMethods;
 import dk.aau.cs.ds302e18.app.SortCoursesByCourseID;
-import dk.aau.cs.ds302e18.app.auth.AuthGroup;
 import dk.aau.cs.ds302e18.app.auth.AuthGroupRepository;
 import dk.aau.cs.ds302e18.app.domain.*;
 import dk.aau.cs.ds302e18.app.service.AccountService;
@@ -48,7 +47,7 @@ public class LessonController {
         this.accountService = accountService;
         this.authGroupRepository = authGroupRepository;
         this.courseService = courseService;
-        this.sharedMethods = new SharedMethods(accountService, authGroupRepository);
+        this.sharedMethods = new SharedMethods();
     }
 
     @GetMapping(value = "/lessons")
@@ -57,7 +56,7 @@ public class LessonController {
         /* Creates an list of lessons from the return value of getAllLessons in LessonService(which is an function that gets lessons
         from the 8200 server and makes them into lesson objects and returns them as an list) */
         List<Lesson> lessons = this.lessonService.getAllLessons();
-        sharedMethods.setInstructorFullName(lessons);
+        sharedMethods.setInstructorFullName(lessons, accountService);
 
         List<Lesson> studentLessons = new ArrayList<>();
         // Iterates through all requests, adding the ones with state (0) into the filtered request list.
@@ -83,18 +82,18 @@ public class LessonController {
     @GetMapping(value = "/lessons/add")
     @PreAuthorize("hasAnyRole('ROLE_INSTRUCTOR', 'ROLE_ADMIN')")
     public String getAddLessonForm(Model model) {
-        List<Account> studentAccounts = sharedMethods.findAccountsOfType("STUDENT");
+        List<Account> studentAccounts = sharedMethods.findAccountsOfType("STUDENT", accountService, authGroupRepository);
         model.addAttribute("studentAccountlist", studentAccounts);
 
-        List<Account> instructors = sharedMethods.findAccountsOfType("INSTRUCTOR");
-        List<Account> admins = sharedMethods.findAccountsOfType("ADMIN");
+        List<Account> instructors = sharedMethods.findAccountsOfType("INSTRUCTOR", accountService, authGroupRepository);
+        List<Account> admins = sharedMethods.findAccountsOfType("ADMIN", accountService, authGroupRepository);
         ArrayList<Account> instructorList = new ArrayList<>();
 
         instructorList.addAll(instructors);
         instructorList.addAll(admins);
         model.addAttribute("instructorAccountList", instructorList);
 
-        List<Course> courses = this.courseService.getAllCourseRequests();
+        List<Course> courses = this.courseService.getAllCourses();
         model.addAttribute("courseList", courses);
 
         return "add-lesson";
@@ -123,13 +122,13 @@ public class LessonController {
     @PreAuthorize("hasAnyRole('ROLE_INSTRUCTOR', 'ROLE_ADMIN')")
     public String getLesson(Model model, @PathVariable long id) {
         Lesson lesson = this.lessonService.getLesson(id);
-        sharedMethods.setInstructorFullName(lesson);
+        sharedMethods.setInstructorFullName(lesson, accountService);
 
-        List<Account> studentAccounts = sharedMethods.findAccountsOfType("STUDENT");
+        List<Account> studentAccounts = sharedMethods.findAccountsOfType("STUDENT", accountService, authGroupRepository);
         model.addAttribute("studentAccountlist", studentAccounts);
 
-        List<Account> instructors = sharedMethods.findAccountsOfType("INSTRUCTOR");
-        List<Account> admins = sharedMethods.findAccountsOfType("ADMIN");
+        List<Account> instructors = sharedMethods.findAccountsOfType("INSTRUCTOR", accountService, authGroupRepository);
+        List<Account> admins = sharedMethods.findAccountsOfType("ADMIN", accountService, authGroupRepository);
         ArrayList<Account> instructorList = new ArrayList<>();
 
         instructorList.addAll(instructors);
@@ -141,7 +140,7 @@ public class LessonController {
         List<Account> studentsBelongingToLesson = findStudentsBelongingToLesson(lesson);
         model.addAttribute("studentsBelongingToLesson", studentsBelongingToLesson);
 
-        List<Course> courses = this.courseService.getAllCourseRequests();
+        List<Course> courses = this.courseService.getAllCourses();
         courses.sort(new SortCoursesByCourseID());
         model.addAttribute("courseList", courses);
 
@@ -195,7 +194,7 @@ public class LessonController {
 
 
     private List<Account> findStudentsBelongingToLesson(Lesson lesson) {
-        List<Account> studentAccounts =  sharedMethods.findAccountsOfType("STUDENT");
+        List<Account> studentAccounts =  sharedMethods.findAccountsOfType("STUDENT", accountService, authGroupRepository);
         List<String> studentUsernamesInCourseAsStringArray = sharedMethods.saveStringsSeparatedByCommaAsArray(lesson.getStudentList());
         List<Account> studentAccountsBelongingToLesson = new ArrayList<>();
         for (Account studentAccount : studentAccounts) {

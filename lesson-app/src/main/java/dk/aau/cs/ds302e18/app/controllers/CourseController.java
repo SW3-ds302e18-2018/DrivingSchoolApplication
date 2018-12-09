@@ -40,21 +40,21 @@ public class CourseController {
         this.lessonService = lessonService;
         this.accountService = accountService;
         this.authGroupRepository = authGroupRepository;
-        this.sharedMethods = new SharedMethods(accountService, authGroupRepository);
+        this.sharedMethods = new SharedMethods();
     }
 
     @GetMapping(value = "/course")
     @PreAuthorize("hasAnyRole('ROLE_INSTRUCTOR', 'ROLE_ADMIN')")
     public String getCourses(Model model) {
-        List<Course> courses = this.courseService.getAllCourseRequests();
-        sharedMethods.setInstructorFullName(courses, true);
+        List<Course> courses = this.courseService.getAllCourses();
+        sharedMethods.setInstructorFullName(courses, accountService,  true);
         courses.sort(new SortCoursesByCourseID());
 
 
 
-        model.addAttribute("adminAccounts", sharedMethods.findAccountsOfType("ADMIN"));
-        model.addAttribute("instructorAccounts", sharedMethods.findAccountsOfType("INSTRUCTOR"));
-        model.addAttribute("studentAccounts", sharedMethods.findAccountsOfType("STUDENT"));
+        model.addAttribute("adminAccounts", sharedMethods.findAccountsOfType("ADMIN", accountService, authGroupRepository));
+        model.addAttribute("instructorAccounts", sharedMethods.findAccountsOfType("INSTRUCTOR", accountService, authGroupRepository));
+        model.addAttribute("studentAccounts", sharedMethods.findAccountsOfType("STUDENT", accountService, authGroupRepository));
         model.addAttribute("courses", courses);
         return "courses-view";
     }
@@ -162,7 +162,7 @@ public class CourseController {
     @PreAuthorize("hasAnyRole('ROLE_INSTRUCTOR', 'ROLE_ADMIN')")
     public String getCourse(Model model, @PathVariable long id) {
         Course course = this.courseService.getCourse(id);
-        sharedMethods.setInstructorFullName(course);
+        sharedMethods.setInstructorFullName(course, accountService);
         List<Lesson> lessons = lessonService.getAllLessons();
 
         ArrayList<Lesson> lessonsMatchingCourse = new ArrayList<>();
@@ -172,10 +172,10 @@ public class CourseController {
                 lessonsMatchingCourse.add(lesson);
             }
         }
-        sharedMethods.setInstructorFullName(lessons);
+        sharedMethods.setInstructorFullName(lessons, accountService);
 
         /* Finds all student accounts and adds those that belongs to the course in a separate arrayList */
-        List<Account> studentAccounts = sharedMethods.findAccountsOfType("STUDENT");
+        List<Account> studentAccounts = sharedMethods.findAccountsOfType("STUDENT", accountService, authGroupRepository);
         List<Account> studentsBelongingToCourse = findStudentsBelongingToCourse(course);
 
         /* Depending on course type a number of theory lessons to create is recommended. An more readable
@@ -214,18 +214,27 @@ public class CourseController {
         Course courseBeforeUpdate = courseService.getCourse(id);
         /* Sets the courseModel with the values of the current course before it has been changed. */
         CourseModel updatedCourse = courseBeforeUpdate.translateCourseToModel();
-        /* Adds the new student. */
-        String studentUsernames = updatedCourse.getStudentUsernames();
-        studentUsernames += studentToAdd + ",";
 
-        updatedCourse.setStudentUsernames(studentUsernames);
+        /* Checks if the student already is in the course, and adds the student if that is not the case. */
+        boolean studentAlreadyExistsInCourse = false;
+        String prevStudents = updatedCourse.getStudentUsernames();
+
+        SharedMethods sharedMethods = new SharedMethods();
+        studentAlreadyExistsInCourse = sharedMethods.isUsernameInString(studentToAdd, updatedCourse.getStudentUsernames());
+
+        if(!studentAlreadyExistsInCourse){
+            prevStudents += studentToAdd + ",";
+            /* Increments the number of students by one. */
+            updatedCourse.setNumberStudents(updatedCourse.getNumberStudents() + 1);
+        }
+
+        updatedCourse.setStudentUsernames(prevStudents);
         /* Increments studentNumber by one */
-        updatedCourse.setNumberStudents(updatedCourse.getNumberStudents() + 1);
 
         courseService.updateCourse(id, updatedCourse);
 
         /* Updates every lesson with the student in it. */
-        updateUsernamesAssociatedWithCourse(id, studentUsernames);
+        updateUsernamesAssociatedWithCourse(id, prevStudents);
 
         return new ModelAndView("redirect:/course/" + id);
     }
@@ -290,7 +299,7 @@ public class CourseController {
     /* Finds student accounts. Saves the student usernames in the course as an string array. Checks if any of the
        student usernames equals any of the student accounts, and adds them to an the array studentsAccountsBelongToCourse. */
     private List<Account> findStudentsBelongingToCourse(Course course) {
-        List<Account> studentAccounts = sharedMethods.findAccountsOfType("STUDENT");
+        List<Account> studentAccounts = sharedMethods.findAccountsOfType("STUDENT", accountService, authGroupRepository);
         List<String> studentUsernamesInCourseAsStringArray = sharedMethods.saveStringsSeparatedByCommaAsArray(course.getStudentUsernames());
         List<Account> studentAccountsBelongingToCourse = new ArrayList<>();
         for (Account studentAccount : studentAccounts) {

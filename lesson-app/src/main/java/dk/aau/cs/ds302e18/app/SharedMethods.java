@@ -11,17 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SharedMethods {
-    private AccountService accountService;
-    private AuthGroupRepository authGroupRepository;
 
-    public SharedMethods(AccountService accountService, AuthGroupRepository authGroupRepository) {
-        this.accountService = accountService;
-        this.authGroupRepository = authGroupRepository;
-    }
-
-    public List<Account> findAccountsOfType(String accountType) {
-        List<AuthGroup> authGroups = this.authGroupRepository.findAll();
-        List<Account> accountList = this.accountService.getAllAccounts();
+    public List<Account> findAccountsOfType(String accountType, AccountService accountService , AuthGroupRepository authGroupRepository) {
+        List<AuthGroup> authGroups = authGroupRepository.findAll();
+        List<Account> accountList = accountService.getAllAccounts();
         List<Account> accountsOfSelectedType = new ArrayList<>();
 
         /* When an account is created it is at the same time added to authGroup. Elements in a result-set are per default
@@ -36,7 +29,7 @@ public class SharedMethods {
     }
 
 
-    public void setInstructorFullName(List<Course> courseList, boolean takesCourseList) {
+    public void setInstructorFullName(List<Course> courseList, AccountService accountService, boolean takesCourseList) {
         /*  Finds and sets the full name for every instructor in a courseList */
         List<Account> accounts = accountService.getAllAccounts();
         String firstName = "";
@@ -53,7 +46,7 @@ public class SharedMethods {
         }
     }
 
-    public void setInstructorFullName(List<Lesson> lessonList) {
+    public void setInstructorFullName(List<Lesson> lessonList, AccountService accountService) {
         /*  Finds and sets the full name for every instructor in a courseList */
         List<Account> accounts = accountService.getAllAccounts();
         String firstName = "";
@@ -70,7 +63,7 @@ public class SharedMethods {
         }
     }
 
-    public void setInstructorFullName(Lesson lesson) {
+    public void setInstructorFullName(Lesson lesson, AccountService accountService) {
         /*  Finds and sets the full name for every instructor in a courseList */
         String firstName = accountService.getAccount(lesson.getLessonInstructor()).getFirstName();
         String lastName = accountService.getAccount(lesson.getLessonInstructor()).getLastName();
@@ -78,7 +71,7 @@ public class SharedMethods {
         lesson.setInstructorFullName(fullName);
     }
 
-    public void setInstructorFullName(Course course) {
+    public void setInstructorFullName(Course course, AccountService accountService) {
         /*  Finds and sets the full name for every instructor in a courseList */
             String firstName = accountService.getAccount(course.getInstructorUsername()).getFirstName();
             String lastName = accountService.getAccount(course.getInstructorUsername()).getLastName();
@@ -101,6 +94,20 @@ public class SharedMethods {
             studentList.add(part);
         }
         return studentList;
+    }
+
+    /* Checks if username is in String. Not the same as contains, as they need to be equal to the username, not
+     * a substring of it.  */
+    public boolean isUsernameInString(String username, String string) {
+        boolean usernameExistsInString = false;
+        SharedMethods sharedMethods = new SharedMethods();
+        ArrayList<String> studentUsernames = sharedMethods.saveStringsSeparatedByCommaAsArray(string);
+        for (String student : studentUsernames) {
+            if(student.equals(username)){
+                usernameExistsInString = true;
+            }
+        }
+        return usernameExistsInString;
     }
 
 }

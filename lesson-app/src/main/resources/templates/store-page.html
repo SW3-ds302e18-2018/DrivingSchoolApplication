@@ -157,7 +157,7 @@
                             <tr th:each="course : ${b_car_list}">
                                 <td th:text="${course.getCourseTableID()}"></td>
                                 <td th:text="${course.getCourseType()}"></td>
-                                <td th:text="${course.getInstructorUsername()}"></td>
+                                <td th:text="${course.instructorFullName}"></td>
                                 <td th:text="${course.courseStartDate}"></td>
                                 <td th:text="${course.courseLocation}"></td>
                                 <td th:text="${course.weekdays}"></td>

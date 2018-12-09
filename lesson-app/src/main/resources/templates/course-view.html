@@ -78,7 +78,7 @@
                 <h4>Instructor:</h4>
                 <h5 th:text="${course.instructorFullName}"></h5>
                 <h4>Course Type:</h4>
-                <h5 th:text="${readableCourseType}"></h5>
+                <h5 th:text="${course.courseType}"></h5>
                 <h4>Start Date:</h4>
                 <h5 th:text="${course.courseStartDate}"></h5>
                 <h4>Location:</h4>
@@ -182,7 +182,7 @@
                                            th:text="${lesson.Id}"></a></th>
                         <td th:text="${lesson.lessonType}"></td>
                         <td th:text="${lesson.lessonDate}"></td>
-                        <td th:text="${lesson.lessonInstructor}"></td>
+                        <td th:text="${lesson.instructorFullName}"></td>
                         <td th:text="${lesson.lessonLocation}"></td>
                         <td th:text="${lesson.lessonState}"></td>
                     </tr>
