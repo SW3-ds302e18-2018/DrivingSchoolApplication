@@ -113,7 +113,7 @@ public class CourseController {
             Calendar lessonDate = lessonDates.get(j);
             LessonModel lesson = new LessonModel();
             lesson.setLessonState(LessonState.PENDING);
-            lesson.setLessonDate(lessonDate.getTime());           //quickfix instead of changing the property in Lesson to an Calendar
+            lesson.setLessonDate(lessonDate.getTime());          
             lesson.setLessonLocation(course.getCourseLocation());
             lesson.setLessonInstructor(course.getInstructorUsername());
             lesson.setStudentList(course.getStudentUsernames());
