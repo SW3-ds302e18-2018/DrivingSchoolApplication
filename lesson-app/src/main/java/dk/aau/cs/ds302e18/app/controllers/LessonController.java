@@ -75,8 +75,6 @@ public class LessonController {
             }
         }
 
-        sharedMethods.setStudentFullNamesFromUsernamesString(lessons);
-
         model.addAttribute("lessons", lessons);
         model.addAttribute("specificLesson", studentLessons);
         return "lessons-view";

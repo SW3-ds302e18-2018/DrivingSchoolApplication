@@ -172,7 +172,6 @@ public class CourseController {
                 lessonsMatchingCourse.add(lesson);
             }
         }
-        sharedMethods.setStudentFullNamesFromUsernamesString(lessons);
         sharedMethods.setInstructorFullName(lessons);
 
         /* Finds all student accounts and adds those that belongs to the course in a separate arrayList */

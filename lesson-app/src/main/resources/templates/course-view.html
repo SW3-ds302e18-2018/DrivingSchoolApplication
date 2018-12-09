@@ -144,7 +144,9 @@
             </div>
         </div>
         <div class="split right">
-            <h3>Manage Lessons</h3>
+            <h3>Manage Lessons <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip"
+                                     data-placement="top"
+                                     title="Option to add theory lessons at certain times of the week. Can be used to add several theory lessons. Typically used at the start of a course."></span></h3>
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modal1">
                 Add Several Theory Lessons
             </button>
@@ -170,7 +172,6 @@
                     <th scope="col">#</th>
                     <th scope="col">Type</th>
                     <th scope="col">Date</th>
-                    <th scope="col">Student List</th>
                     <th scope="col">Instructor</th>
                     <th scope="col">Location</th>
                     <th scope="col">Lesson State</th>
@@ -181,7 +182,6 @@
                                            th:text="${lesson.Id}"></a></th>
                         <td th:text="${lesson.lessonType}"></td>
                         <td th:text="${lesson.lessonDate}"></td>
-                        <td th:text="${lesson.studentFullNames}"></td>
                         <td th:text="${lesson.lessonInstructor}"></td>
                         <td th:text="${lesson.lessonLocation}"></td>
                         <td th:text="${lesson.lessonState}"></td>
@@ -197,19 +197,16 @@
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h3>Add Several Theory Lessons <span class="glyphicon glyphicon-question-sign" data-toggle="tooltip"
-                                                         data-placement="top"
-                                                         title="Option to add theory lessons at certain times of the week. Can be used to add several theory lessons. Typically used at the start of a course."></span>
-                    </h3>
+                    <h3>Add Several Theory Lessons</h3>
                     <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
                 <div class="modal-body">
                     <form method="post" action="#" th:action="@{'/course/courseAddLessons/' + ${course.courseTableID}}">
-                        <h4> Lessons Will Be Distributed After Date <span class="glyphicon glyphicon-question-sign"
+                        <h4> Lessons Will Be Distributed After Date At Specified Time<span class="glyphicon glyphicon-question-sign"
                                                                           data-toggle="tooltip" data-placement="top"
-                                                                          title="From what date the lessons will be distributed. So if startdate is an monday and Tuesday is chosen in weekdays, every tuesday from the startdate will be distributed lessons."></span>
+                                                                          title="From what date the lessons will be distributed at what time. So if startdate is an monday 15:00 and Tuesday is chosen in weekdays, every tuesday from the startdate at 15:00 will be distributed lessons."></span>
                         </h4>
                         <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
                             <input th:id="startingPoint" th:name="startingPoint" type="text"

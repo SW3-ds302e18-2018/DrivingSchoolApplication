@@ -35,36 +35,19 @@ public class SharedMethods {
         return accountsOfSelectedType;
     }
 
-    public void setStudentFullNamesFromUsernamesString(List<Lesson> lessonList){
-        /*  Every student username list in account is separated and added to an String array. Then the
-         *  username is used to fetch the full name of the student belonging to the username. If there are no students
-         *  do not attempt to fetch their full name. */
-        for(Lesson lesson: lessonList){
-            ArrayList<String> fullNames = new ArrayList<>();
-
-            if(lesson.getStudentList() != null && !lesson.getStudentList().equals("")) {
-                ArrayList<String> listOfUsernames = saveStringsSeparatedByCommaAsArray(lesson.getStudentList());
-                for (String username : listOfUsernames) {
-                    String firstName = accountService.getAccount(username).getFirstName();
-                    String lastName = accountService.getAccount(username).getLastName();
-                    String fullName = firstName + " " + lastName;
-                    fullNames.add(" " + fullName);
-                }
-                String studentFullNames = saveStringListAsSingleString(fullNames);
-            /* The way saveStringListAsSingleString formats the list to an string is with an comma at the end of each
-               object. The last of the commas is removed for appearance sake. */
-                String studentFullNamesWithoutEndingComma = studentFullNames.substring(0, studentFullNames.length() - 1);
-
-                lesson.setStudentFullNames(studentFullNamesWithoutEndingComma);
-            }
-        }
-    }
 
     public void setInstructorFullName(List<Course> courseList, boolean takesCourseList) {
         /*  Finds and sets the full name for every instructor in a courseList */
+        List<Account> accounts = accountService.getAllAccounts();
+        String firstName = "";
+        String lastName = "";
         for (Course course : courseList) {
-            String firstName = accountService.getAccount(course.getInstructorUsername()).getFirstName();
-            String lastName = accountService.getAccount(course.getInstructorUsername()).getLastName();
+            for(Account account : accounts){
+                if(course.getInstructorUsername().equals(account.getUsername())){
+                    firstName = account.getFirstName();
+                    lastName = account.getLastName();
+                }
+            }
             String fullName = firstName + " " + lastName;
             course.setInstructorFullName(fullName);
         }
@@ -72,9 +55,16 @@ public class SharedMethods {
 
     public void setInstructorFullName(List<Lesson> lessonList) {
         /*  Finds and sets the full name for every instructor in a courseList */
+        List<Account> accounts = accountService.getAllAccounts();
+        String firstName = "";
+        String lastName = "";
         for (Lesson lesson : lessonList) {
-            String firstName = accountService.getAccount(lesson.getLessonInstructor()).getFirstName();
-            String lastName = accountService.getAccount(lesson.getLessonInstructor()).getLastName();
+            for(Account account : accounts){
+                if(lesson.getLessonInstructor().equals(account.getUsername())){
+                    firstName = account.getFirstName();
+                    lastName = account.getLastName();
+                }
+            }
             String fullName = firstName + " " + lastName;
             lesson.setInstructorFullName(fullName);
         }

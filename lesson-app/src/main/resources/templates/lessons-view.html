@@ -28,7 +28,6 @@
             <th scope="col">#</th>
             <th scope="col">Type</th>
 			<th scope="col">Date</th>
-            <th scope="col">Student List</th>
             <th scope="col">Instructor</th>
             <th scope="col">Location</th>
             <th scope="col">Lesson Type</th>
@@ -41,7 +40,6 @@
                 <th scope="row"><a th:href="@{'/lessons/' + ${lesson.id}}" th:text="${lesson.id}"></a></th>
                 <td th:text="${lesson.lessonType}"></td>
 				<td th:text="${lesson.lessonDate}"></td>
-                <td th:text="${lesson.studentFullNames}"></td>
                 <td th:text="${lesson.instructorFullName}"></td>
                 <td th:text="${lesson.lessonLocation}"></td>
                 <td th:text="${lesson.lessonState}"></td>
