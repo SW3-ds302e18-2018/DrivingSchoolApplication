@@ -5,7 +5,9 @@ import dk.aau.cs.ds302e18.app.auth.AuthGroupRepository;
 import dk.aau.cs.ds302e18.app.domain.Account;
 import dk.aau.cs.ds302e18.app.domain.Course;
 import dk.aau.cs.ds302e18.app.domain.Lesson;
+import dk.aau.cs.ds302e18.app.domain.LessonModel;
 import dk.aau.cs.ds302e18.app.service.AccountService;
+import dk.aau.cs.ds302e18.app.service.LessonService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -110,4 +112,18 @@ public class SharedMethods {
         return usernameExistsInString;
     }
 
+    /* Replaces studentUsernames in every lesson with the studentToUpdate username in it and the courseID specified, with the updatedUsernamesString */
+    public void updateUsernamesAssociatedWithCourse(long courseID, String updatedUsernamesString, LessonService lessonService) {
+        List<Lesson> lessons = lessonService.getAllLessons();
+        for (Lesson lesson : lessons) {
+            /* If the student that is being added to the course is in a lesson associated with that courseID, update it. */
+            if (lesson.getCourseId() == courseID) {
+                /* Sets the LessonModel with the values of the current lesson before it has been changed. */
+                LessonModel updatedLesson = lesson.translateLessonToModel();
+                /* Updates the student list */
+                updatedLesson.setStudentList(updatedUsernamesString);
+                lessonService.updateLesson(lesson.getId(), updatedLesson);
+            }
+        }
+    }
 }

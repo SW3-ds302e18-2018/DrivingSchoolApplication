@@ -51,7 +51,7 @@ public class AdminController {
         }
 
         model.addAttribute("GetAllAccounts", accountViewModelList);
-        return "admin";
+        return "user-manager";
     }
 
     @GetMapping(value = "/admin/{username}")

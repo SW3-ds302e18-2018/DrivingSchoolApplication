@@ -4,10 +4,7 @@ import dk.aau.cs.ds302e18.app.Notification;
 import dk.aau.cs.ds302e18.app.SharedMethods;
 import dk.aau.cs.ds302e18.app.domain.Account;
 import dk.aau.cs.ds302e18.app.domain.*;
-import dk.aau.cs.ds302e18.app.service.AccountService;
-import dk.aau.cs.ds302e18.app.service.CourseService;
-import dk.aau.cs.ds302e18.app.service.LogbookService;
-import dk.aau.cs.ds302e18.app.service.StoreService;
+import dk.aau.cs.ds302e18.app.service.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -30,14 +27,14 @@ import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
 public class StoreController {
     private final StoreService storeService;
     private final AccountService accountService;
+    private final LessonService lessonService;
     private final CourseService courseService;
     private final LogbookService logbookService;
 
-    public StoreController(StoreService storeService, AccountService accountService,
-                           CourseService courseService, LogbookService logbookService) {
-        super();
+    public StoreController(StoreService storeService, AccountService accountService, LessonService lessonService, CourseService courseService, LogbookService logbookService) {
         this.storeService = storeService;
         this.accountService = accountService;
+        this.lessonService = lessonService;
         this.courseService = courseService;
         this.logbookService = logbookService;
     }
@@ -102,17 +99,6 @@ public class StoreController {
         return "store-page";
     }
 
-    /**
-     * Get for the page.
-     *
-     * @return
-     */
-    @GetMapping(value = "/storeadmin/add")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String getAddStoreForm() {
-        return "store-view";
-    }
-
 
     /**
      * Posts a newly added store in the requests list on the website
@@ -130,39 +116,6 @@ public class StoreController {
         model.addAttribute("store", store);
         request.setAttribute(View.RESPONSE_STATUS_ATTRIBUTE, HttpStatus.TEMPORARY_REDIRECT);
         return new ModelAndView("redirect:/storeadmin/" + store.getId());
-    }
-
-    /**
-     * Used for admins to hard change values in each request - view the information in each request
-     *
-     * @param model
-     * @param id
-     * @return
-     */
-    @GetMapping(value = "/storeadmin/{id}")
-    @PreAuthorize("hasRole('ROLE_STUDENT')")
-    public String getStore(Model model, @PathVariable long id) {
-        Store store = this.storeService.getStoreRequest(id);
-        model.addAttribute("store", store);
-        return "store-view";
-    }
-
-    /**
-     * Used for admins to hard change values in each request - updates the request in the databasse with the id.
-     *
-     * @param model
-     * @param id
-     * @param storeModel
-     * @return
-     */
-    @PostMapping(value = "/storeadmin/{id}")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public String updateRequest(Model model, @PathVariable long id, @ModelAttribute StoreModel storeModel) {
-        /* Returns an lesson that is read from the 8200 server through updateLesson. */
-        Store store = this.storeService.acceptStoreRequest(id, storeModel);
-        model.addAttribute("store", store);
-        model.addAttribute("storeModel", new StoreModel());
-        return "store-view";
     }
 
     /**
@@ -214,6 +167,8 @@ public class StoreController {
             prevStudents += acceptedStudentUsername + ",";
             /* Increments the number of students by one. */
             updatedCourse.setNumberStudents(updatedCourse.getNumberStudents() + 1);
+            /* Updates the lessons in the course */
+            sharedMethods.updateUsernamesAssociatedWithCourse(courseId, prevStudents, lessonService);
         }
 
         updatedCourse.setStudentUsernames(prevStudents);

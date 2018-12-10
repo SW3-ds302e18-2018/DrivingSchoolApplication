@@ -226,15 +226,15 @@ public class CourseController {
             prevStudents += studentToAdd + ",";
             /* Increments the number of students by one. */
             updatedCourse.setNumberStudents(updatedCourse.getNumberStudents() + 1);
+            /* Updates every lesson with the student in it. */
+            sharedMethods.updateUsernamesAssociatedWithCourse(id, prevStudents, lessonService);
         }
 
         updatedCourse.setStudentUsernames(prevStudents);
-        /* Increments studentNumber by one */
 
         courseService.updateCourse(id, updatedCourse);
 
-        /* Updates every lesson with the student in it. */
-        updateUsernamesAssociatedWithCourse(id, prevStudents);
+
 
         return new ModelAndView("redirect:/course/" + id);
     }
@@ -255,7 +255,7 @@ public class CourseController {
 
         courseService.updateCourse(id, updatedCourse);
 
-        updateUsernamesAssociatedWithCourse(id, studentUsernamesWithoutRemovedStudent);
+        sharedMethods.updateUsernamesAssociatedWithCourse(id, studentUsernamesWithoutRemovedStudent, lessonService);
         return new ModelAndView("redirect:/course/" + id);
     }
 
@@ -310,21 +310,6 @@ public class CourseController {
             }
         }
         return studentAccountsBelongingToCourse;
-    }
-
-    /* Replaces studentUsernames in every lesson with the studentToUpdate username in it and the courseID specified, with the updatedUsernamesString */
-    private void updateUsernamesAssociatedWithCourse(long courseID, String updatedUsernamesString) {
-        List<Lesson> lessons = lessonService.getAllLessons();
-        for (Lesson lesson : lessons) {
-            /* If the student that is being added to the course is in a lesson associated with that courseID, update it. */
-            if (lesson.getCourseId() == courseID) {
-                /* Sets the LessonModel with the values of the current lesson before it has been changed. */
-                LessonModel updatedLesson = lesson.translateLessonToModel();
-                /* Updates the student list */
-                updatedLesson.setStudentList(updatedUsernamesString);
-                lessonService.updateLesson(lesson.getId(), updatedLesson);
-            }
-        }
     }
 
     private ArrayList<Calendar> createLessonDates(Date startingPoint, ArrayList<Integer> weekdaysArrays, int numberLessonsToDistribute,

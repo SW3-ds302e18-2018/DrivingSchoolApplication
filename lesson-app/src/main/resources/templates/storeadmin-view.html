@@ -18,14 +18,15 @@
             <th scope="col">Course ID</th>
             <th scope="col">Student Username</th>
             <th scope="col">State</th>
-            <th scope="col">Enrollment</th>
-            <th scope="col">Options</th>
+            <th scope="col">Approve</th>
+            <th scope="col">Deny</th>
             </thead>
             <tbody>
             <tr th:each="store : ${storeadmin}">
-                <th scope="row"><a th:href="@{'/storeadmin/' + ${store.id}}" th:text="${store.id}"></a></th>
-                <td th:text="${store.courseId}"></td>
-                <td th:text="${store.studentUsername}"></td>
+                <td th:text="${store.id}"></td>
+                <th scope="row"><a th:href="@{'/course/' + ${store.courseId}}"
+                                   th:text="${store.courseId}"></a></th>
+                <th scope="row"><a th:href="@{'/admin/' + ${store.studentUsername}}" th:text="${store.studentUsername}"></a></th>
                 <td>Pending</td>
                 <td>
                     <form method="POST" th:action="@{/accept}">
