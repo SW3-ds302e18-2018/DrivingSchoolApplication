@@ -9,6 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
 import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
@@ -94,12 +95,12 @@ public class AccountController {
     }
 
     @RequestMapping(value = "/account/edit/delete", method = RequestMethod.POST)
-    public RedirectView deleteAccount() {
+    public ModelAndView deleteAccount() {
         User user = this.userRepository.findByUsername(getAccountUsername());
         this.userRepository.deleteById(user.getId());
         this.accountService.deleteAccount(user.getUsername());
         this.authGroupRepository.deleteById(user.getId());
-        return new RedirectView("redirect:/logout");
+        return new ModelAndView("redirect:/logout");
     }
 
 
