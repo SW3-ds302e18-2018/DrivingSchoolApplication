@@ -90,7 +90,6 @@
                 <th scope="col">Lesson Date</th>
                 <th scope="col">Lesson State</th>
                 <th scope="col">Lesson Instructor</th>
-                <th scope="col">Lesson Student List</th>
                 </thead>
                 <tbody>
                 <tr th:each="lesson : ${salaryLessonList}">
@@ -99,7 +98,6 @@
                     <td th:text="${lesson.getLessonDate()}"></td>
                     <td th:text="${lesson.getLessonState()}"></td>
                     <td th:text="${lesson.getLessonInstructor()}"></td>
-                    <td th:text="${lesson.getStudentList()}"></td>
                 </tr>
                 </tbody>
             </table>
