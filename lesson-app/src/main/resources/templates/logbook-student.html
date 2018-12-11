@@ -28,6 +28,7 @@
             <th scope="col">Logbook Type</th>
             <th scope="col">Logbook Owner</th>
             <th scope="col">Logbook Active?</th>
+            <th scope="col">Export Logbook</th>
             </thead>
             <tbody>
             <tr th:each="logbook : ${studentLogbookList}">
@@ -36,6 +37,13 @@
                 <td th:text="${logbook.getLogbookType()}"></td>
                 <td th:text="${logbook.getStudent()}"></td>
                 <td th:text="${logbook.isActive()}"></td>
+                <th scope="row">
+                        <form action="#" th:action="@{'/logbook/export/' + ${logbook.getId()}}" method="get">
+                            <button class="btn btn-primary" type="submit">
+                                <i>Export Logbook</i>
+                            </button>
+                        </form>
+                    </th>
             </tr>
             </tbody>
         </table>
