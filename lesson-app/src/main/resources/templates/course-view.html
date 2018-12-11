@@ -89,7 +89,29 @@
                 <h5 th:text="${course.weekdays}"></h5>
 
 
-                <h3 style="padding-bottom: 1%">Manage Students</h3>
+
+                <h3 style="padding-bottom: 1%">Manage Instructor or Students</h3>
+                <form method="post" th:action="@{'/course/changeInstructor/' + ${course.courseTableID}}"
+                      style="padding-bottom: 0.8%">
+                    <div class="form-group mb-4 row">
+                        <div class="col-4">
+                            <div class="container" style="padding-left: 1.5%">
+                                <select class="selectpicker" data-style="btn-info" data-live-search="true"
+                                        th:name="instructorToChangeTo">
+                                    <option th:each="adminAccount : ${adminAccounts}"
+                                            th:text="${adminAccount.firstName + ' ' + adminAccount.lastName}"
+                                            th:value="${adminAccount.username}"></option>
+                                    <option th:each="instructorAccount : ${instructorAccounts}"
+                                            th:text="${instructorAccount.firstName + ' ' + instructorAccount.lastName}"
+                                            th:value="${instructorAccount.username}"></option>
+                                </select>
+
+                                <button type="submit" name="submit" value="value" class="btn btn-primary">Change instructor
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
                 <form method="post" th:action="@{'/course/addStudent/' + ${course.courseTableID}}"
                       style="padding-bottom: 0.8%">
                     <div class="form-group mb-4 row">

@@ -178,6 +178,10 @@ public class CourseController {
         List<Account> studentAccounts = sharedMethods.findAccountsOfType("STUDENT", accountService, authGroupRepository);
         List<Account> studentsBelongingToCourse = findStudentsBelongingToCourse(course);
 
+        /* Adds instructor and admins for drop down list to change instructor. */
+        List<Account> adminAccounts = sharedMethods.findAccountsOfType("ADMIN", accountService, authGroupRepository);
+        List<Account> instructorAccounts = sharedMethods.findAccountsOfType("INSTRUCTOR", accountService, authGroupRepository);
+
         /* Depending on course type a number of theory lessons to create is recommended. An more readable
          * string of course type is also saved. */
         String readableCourseType = "";
@@ -198,6 +202,8 @@ public class CourseController {
 
 
         model.addAttribute("course", course);
+        model.addAttribute("adminAccounts", adminAccounts);
+        model.addAttribute("instructorAccounts", instructorAccounts);
         model.addAttribute("studentAccounts", studentAccounts);
         model.addAttribute("lessonsMatchingCourse", lessonsMatchingCourse);
         model.addAttribute("studentAccountsBelongingToCourse", studentsBelongingToCourse);
@@ -227,7 +233,7 @@ public class CourseController {
             /* Increments the number of students by one. */
             updatedCourse.setNumberStudents(updatedCourse.getNumberStudents() + 1);
             /* Updates every lesson with the student in it. */
-            sharedMethods.updateUsernamesAssociatedWithCourse(id, prevStudents, lessonService);
+            sharedMethods.updateUsernamesAssociatedWithCourse(id, prevStudents, lessonService, false);
         }
 
         updatedCourse.setStudentUsernames(prevStudents);
@@ -255,7 +261,22 @@ public class CourseController {
 
         courseService.updateCourse(id, updatedCourse);
 
-        sharedMethods.updateUsernamesAssociatedWithCourse(id, studentUsernamesWithoutRemovedStudent, lessonService);
+        sharedMethods.updateUsernamesAssociatedWithCourse(id, studentUsernamesWithoutRemovedStudent, lessonService, false);
+        return new ModelAndView("redirect:/course/" + id);
+    }
+
+    @RequestMapping(value = "/course/changeInstructor/{id}", method = RequestMethod.POST)
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ModelAndView changeInstructor(@PathVariable long id, @ModelAttribute CourseModel courseModel,
+                                      @RequestParam("instructorToChangeTo") String instructorToChangeTo) {
+        Course courseBeforeUpdate = courseService.getCourse(id);
+        /* Sets the courseModel with the values of the current course before it has been changed. */
+        CourseModel updatedCourse = courseBeforeUpdate.translateCourseToModel();
+        /* Changes the instructor in the course */
+        updatedCourse.setInstructorUsername(instructorToChangeTo);
+        courseService.updateCourse(id, updatedCourse);
+
+        sharedMethods.updateUsernamesAssociatedWithCourse(id, instructorToChangeTo, lessonService, true);
         return new ModelAndView("redirect:/course/" + id);
     }
 

@@ -168,7 +168,7 @@ public class StoreController {
             /* Increments the number of students by one. */
             updatedCourse.setNumberStudents(updatedCourse.getNumberStudents() + 1);
             /* Updates the lessons in the course */
-            sharedMethods.updateUsernamesAssociatedWithCourse(courseId, prevStudents, lessonService);
+            sharedMethods.updateUsernamesAssociatedWithCourse(courseId, prevStudents, lessonService, false);
         }
 
         updatedCourse.setStudentUsernames(prevStudents);

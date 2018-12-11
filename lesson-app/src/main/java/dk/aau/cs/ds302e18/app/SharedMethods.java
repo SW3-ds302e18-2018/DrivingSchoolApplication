@@ -2,10 +2,7 @@ package dk.aau.cs.ds302e18.app;
 
 import dk.aau.cs.ds302e18.app.auth.AuthGroup;
 import dk.aau.cs.ds302e18.app.auth.AuthGroupRepository;
-import dk.aau.cs.ds302e18.app.domain.Account;
-import dk.aau.cs.ds302e18.app.domain.Course;
-import dk.aau.cs.ds302e18.app.domain.Lesson;
-import dk.aau.cs.ds302e18.app.domain.LessonModel;
+import dk.aau.cs.ds302e18.app.domain.*;
 import dk.aau.cs.ds302e18.app.service.AccountService;
 import dk.aau.cs.ds302e18.app.service.LessonService;
 
@@ -14,7 +11,7 @@ import java.util.List;
 
 public class SharedMethods {
 
-    public List<Account> findAccountsOfType(String accountType, AccountService accountService , AuthGroupRepository authGroupRepository) {
+    public List<Account> findAccountsOfType(String accountType, AccountService accountService, AuthGroupRepository authGroupRepository) {
         List<AuthGroup> authGroups = authGroupRepository.findAll();
         List<Account> accountList = accountService.getAllAccounts();
         List<Account> accountsOfSelectedType = new ArrayList<>();
@@ -37,8 +34,8 @@ public class SharedMethods {
         String firstName = "";
         String lastName = "";
         for (Course course : courseList) {
-            for(Account account : accounts){
-                if(course.getInstructorUsername().equals(account.getUsername())){
+            for (Account account : accounts) {
+                if (course.getInstructorUsername().equals(account.getUsername())) {
                     firstName = account.getFirstName();
                     lastName = account.getLastName();
                 }
@@ -54,8 +51,8 @@ public class SharedMethods {
         String firstName = "";
         String lastName = "";
         for (Lesson lesson : lessonList) {
-            for(Account account : accounts){
-                if(lesson.getLessonInstructor().equals(account.getUsername())){
+            for (Account account : accounts) {
+                if (lesson.getLessonInstructor().equals(account.getUsername())) {
                     firstName = account.getFirstName();
                     lastName = account.getLastName();
                 }
@@ -75,10 +72,10 @@ public class SharedMethods {
 
     public void setInstructorFullName(Course course, AccountService accountService) {
         /*  Finds and sets the full name for every instructor in a courseList */
-            String firstName = accountService.getAccount(course.getInstructorUsername()).getFirstName();
-            String lastName = accountService.getAccount(course.getInstructorUsername()).getLastName();
-            String fullName = firstName + " " + lastName;
-            course.setInstructorFullName(fullName);
+        String firstName = accountService.getAccount(course.getInstructorUsername()).getFirstName();
+        String lastName = accountService.getAccount(course.getInstructorUsername()).getLastName();
+        String fullName = firstName + " " + lastName;
+        course.setInstructorFullName(fullName);
     }
 
     public String saveStringListAsSingleString(ArrayList<String> studentNameList) {
@@ -105,25 +102,42 @@ public class SharedMethods {
         SharedMethods sharedMethods = new SharedMethods();
         ArrayList<String> studentUsernames = sharedMethods.saveStringsSeparatedByCommaAsArray(string);
         for (String student : studentUsernames) {
-            if(student.equals(username)){
+            if (student.equals(username)) {
                 usernameExistsInString = true;
             }
         }
         return usernameExistsInString;
     }
 
-    /* Replaces studentUsernames in every lesson with the studentToUpdate username in it and the courseID specified, with the updatedUsernamesString */
-    public void updateUsernamesAssociatedWithCourse(long courseID, String updatedUsernamesString, LessonService lessonService) {
+
+    public void updateUsernamesAssociatedWithCourse(long courseID, String updatedString, LessonService lessonService, boolean isInstructor) {
         List<Lesson> lessons = lessonService.getAllLessons();
-        for (Lesson lesson : lessons) {
-            /* If the student that is being added to the course is in a lesson associated with that courseID, update it. */
-            if (lesson.getCourseId() == courseID) {
-                /* Sets the LessonModel with the values of the current lesson before it has been changed. */
-                LessonModel updatedLesson = lesson.translateLessonToModel();
-                /* Updates the student list */
-                updatedLesson.setStudentList(updatedUsernamesString);
-                lessonService.updateLesson(lesson.getId(), updatedLesson);
+        /* Replaces studentUsernames in every lesson with the courseID specified, with the updatedString */
+        if(!isInstructor) {
+            for (Lesson lesson : lessons) {
+                /* If the student that is being added to the course is in a lesson associated with that courseID, update it. */
+                if (lesson.getCourseId() == courseID) {
+                    /* Sets the LessonModel with the values of the current lesson before it has been changed. */
+                    LessonModel updatedLesson = lesson.translateLessonToModel();
+                    /* Updates the student list */
+                    updatedLesson.setStudentList(updatedString);
+                    lessonService.updateLesson(lesson.getId(), updatedLesson);
+                }
+            }
+        }
+        /* If the instructor is in the lesson and the lesson has not been completed, update it. If it has been
+         * completed the original instructor should still be registered with the lesson so he gets his salary. */
+        if (isInstructor) {
+            for (Lesson lesson : lessons) {
+                if ((lesson.getCourseId() == courseID) && (lesson.getLessonState() == LessonState.PENDING)) {
+                    /* Sets the LessonModel with the values of the current lesson before it has been changed. */
+                    LessonModel updatedLesson = lesson.translateLessonToModel();
+                    /* Updates the student list */
+                    updatedLesson.setLessonInstructor(updatedString);
+                    lessonService.updateLesson(lesson.getId(), updatedLesson);
+                }
             }
         }
     }
 }
+
