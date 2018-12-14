@@ -91,13 +91,13 @@ public class CourseController {
     }
 
 
-    @PostMapping(value = "/course/courseAddLessons/{id}")
+    @PostMapping(value = "/course/addSeveralTheoryLessons/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
-    public ModelAndView courseAddLessons(@ModelAttribute CourseModel courseModel, @PathVariable long id,
-                                         @RequestParam("numberLessons") int numberLessons,
-                                         @RequestParam("startingPoint") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Date startingPoint,
-                                         @RequestParam("weekdaysIntArray") ArrayList<Integer> weekdaysIntArray,
-                                         @RequestParam("numberLessonsADay") int numberLessonsADay) {
+    public ModelAndView addSeveralTheoryLessons(@ModelAttribute CourseModel courseModel, @PathVariable long id,
+                                                @RequestParam("numberLessons") int numberLessons,
+                                                @RequestParam("startingPoint") @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm") Date startingPoint,
+                                                @RequestParam("weekdaysIntArray") ArrayList<Integer> weekdaysIntArray,
+                                                @RequestParam("numberLessonsADay") int numberLessonsADay) {
         ArrayList<Calendar> lessonDates = createLessonDates(startingPoint, weekdaysIntArray, numberLessons, numberLessonsADay);
         /* Converts the weekdaysIntArray into an string */
         String weekdays = "";
@@ -252,9 +252,12 @@ public class CourseController {
         Course courseBeforeUpdate = courseService.getCourse(id);
         /* Sets the courseModel with the values of the current course before it has been changed. */
         CourseModel updatedCourse = courseBeforeUpdate.translateCourseToModel();
-        /* Removes the targeted student */
+        /* Removes the targeted student. */
         String studentUsernames = courseBeforeUpdate.getStudentUsernames();
-        String studentUsernamesWithoutRemovedStudent = studentUsernames.replace(studentToRemove + ",", "");
+        ArrayList<String> studentUsernamesArray = sharedMethods.saveStringsSeparatedByCommaAsArray(studentUsernames);
+        studentUsernamesArray.remove(studentToRemove);
+
+        String studentUsernamesWithoutRemovedStudent = sharedMethods.saveStringListAsSingleString(studentUsernamesArray);
         updatedCourse.setStudentUsernames(studentUsernamesWithoutRemovedStudent);
         /* Decrements studentNumber by one */
         updatedCourse.setNumberStudents(updatedCourse.getNumberStudents() - 1);

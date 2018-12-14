@@ -252,15 +252,6 @@ public class StoreController {
         return new RedirectView("storeadmin");
     }
 
-    public ArrayList<String> saveStringsSeparatedByCommaAsArray(String string) {
-        ArrayList<String> studentList = new ArrayList<>();
-        String[] parts = string.split(",");
-        for (String part : parts) {
-            studentList.add(part);
-        }
-        return studentList;
-    }
-
     /**
      * Apply Post Mapping, for every time a student want to apply for a course, they post a request, where it checks
      * the id of the course, and post the request for the instructor.

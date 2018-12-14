@@ -1,5 +1,8 @@
 package dk.aau.cs.ds302e18.app.controllers;
 
+import dk.aau.cs.ds302e18.app.auth.AuthGroup;
+import dk.aau.cs.ds302e18.app.auth.AuthGroupRepository;
+import dk.aau.cs.ds302e18.app.domain.Account;
 import dk.aau.cs.ds302e18.app.domain.CalendarViewModel;
 import dk.aau.cs.ds302e18.app.domain.Lesson;
 import dk.aau.cs.ds302e18.app.domain.LessonType;
@@ -23,11 +26,12 @@ import static org.apache.commons.codec.digest.DigestUtils.md5Hex;
 public class CalendarController {
     private final LessonService lessonService;
     private final AccountService accountService;
+    private final AuthGroupRepository authGroupRepository;
 
-    public CalendarController(LessonService lessonService, AccountService accountService) {
-        super();
+    public CalendarController(LessonService lessonService, AccountService accountService, AuthGroupRepository authGroupRepository) {
         this.lessonService = lessonService;
         this.accountService = accountService;
+        this.authGroupRepository = authGroupRepository;
     }
 
     @GetMapping(value = "/calendar")
@@ -44,11 +48,39 @@ public class CalendarController {
 
         List<Lesson> lessons = this.lessonService.getAllLessons();
         ArrayList<CalendarViewModel> lessonArrayModels = new ArrayList<>();
-        for (Lesson lesson : lessons) {
 
+        List<AuthGroup> loggedInAccount = authGroupRepository.findByUsername(userDetails.getUsername());
+
+
+        for (Lesson lesson : lessons) {
             String[] studentListArray = lesson.getStudentList().split(",");
-            for (String studentUsername : studentListArray) {
-                if (studentUsername.equals(userDetails.getUsername())) {
+            String instructorUsername = lesson.getLessonInstructor();
+            if (loggedInAccount.get(0).getAuthGroup().equals("STUDENT")) {
+                for (String studentUsername : studentListArray) {
+                    if (studentUsername.equals(userDetails.getUsername())) {
+                        String lessonType = "";
+                        String lessonColor = "";
+
+                        if (lesson.getLessonType() == LessonType.THEORY_LESSON) {
+                            lessonType = "Theory lesson";
+                            lessonColor = "CYAN";
+                        }
+                        if (lesson.getLessonType() == LessonType.PRACTICAL_LESSON) {
+                            lessonType = "Practical lesson";
+                            lessonColor = "GREEN";
+                        }
+                        CalendarViewModel calendarViewModel = new CalendarViewModel();
+                        calendarViewModel.setId(lesson.getCourseId());
+                        calendarViewModel.setColor(lessonColor);
+                        calendarViewModel.setTitle(lessonType);
+                        calendarViewModel.setStart(lesson.getLessonDate());
+                        calendarViewModel.setDescription("Location : " + lesson.getLessonLocation());
+
+                        lessonArrayModels.add(calendarViewModel);
+                    }
+                }
+            } else {
+                if (instructorUsername.equals(userDetails.getUsername())) {
                     String lessonType = "";
                     String lessonColor = "";
 
