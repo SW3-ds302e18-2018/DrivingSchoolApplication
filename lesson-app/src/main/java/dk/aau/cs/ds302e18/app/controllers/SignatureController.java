@@ -49,12 +49,11 @@ public class SignatureController {
 
         String username = logbook.getStudent();
 
+        /*
+         * Prepares student signatures object for the html page.
+         */
         for (Lesson lesson : lessons) {
             if (lesson.getCourseId() == logbook.getCourseID() && lesson.getStudentList().contains(username)) {
-                /*
-                 * Student Signatures
-                 */
-
                 Account tempAccount = accountService.getAccount(logbook.getStudent());
                 List<AuthGroup> tempAuthGroup = authGroupRepository.findByUsername(logbook.getStudent());
                 LogbookExportModel logbookExportModel = new LogbookExportModel();
@@ -64,6 +63,8 @@ public class SignatureController {
                 logbookExportModel.setPosition(tempAuthGroup.get(0).getAuthGroup());
                 logbookExportModel.setLessonType(String.valueOf(lesson.getLessonType()));
                 logbookExportModel.setLessonId(String.valueOf(lesson.getId()));
+                /* All lessons are default set to an image that was uploaded Sun Dec 02 23:30:02 CET 2018 when not yet signed. If that is the image for the
+                 * lesson show that image. Else show the image belonging to the lesson. */
                 if (signatureCanvas.getSignatureDate("p3-project", username + lesson.getId()).equals("Sun Dec 02 23:30:02 CET 2018")) {
                     logbookExportModel.setSignatureUrl("https://s3.eu-west-2.amazonaws.com/p3-project/notsigned.png");
                     logbookExportModel.setSignatureDate("Not signed");
@@ -74,7 +75,7 @@ public class SignatureController {
                 studentList.add(logbookExportModel);
 
                 /*
-                 * Instructor Signatures
+                 * Prepares instructor signatures object for the html page.
                  */
                 Account tempIns = accountService.getAccount(lesson.getLessonInstructor());
                 List<AuthGroup> tempInsAuth = authGroupRepository.findByUsername(lesson.getLessonInstructor());
@@ -114,7 +115,7 @@ public class SignatureController {
         for (Lesson lesson : lessons) {
             if (lesson.getId() == id) {
                 /*
-                 * Student Signatures
+                 * Prepares student signatures object for the html page.
                  */
                 String[] studentListArray = lesson.getStudentList().split(",");
                 for (String username: studentListArray)
@@ -126,7 +127,8 @@ public class SignatureController {
                     signatureModel.setFirstName(tempAccount.getFirstName());
                     signatureModel.setLastName(tempAccount.getLastName());
                     signatureModel.setPosition(tempAuthGroup.get(0).getAuthGroup());
-
+                    /* All lessons are default set to an image that was uploaded Sun Dec 02 23:30:02 CET 2018 when not yet signed. If that is the image for the
+                     * lesson show that image. Else show the image belonging to the lesson. */
                     if (signatureCanvas.getSignatureDate("p3-project", username + id).equals("Sun Dec 02 23:30:02 CET 2018")) {
                         signatureModel.setSignatureUrl("https://s3.eu-west-2.amazonaws.com/p3-project/notsigned.png");
                         signatureModel.setSignatureDate("Not signed");
@@ -140,7 +142,7 @@ public class SignatureController {
                 }
 
                 /*
-                 * Instructor Signature
+                 * Prepares instructor signatures object for the html page.
                  */
                 Account tempAccount = accountService.getAccount(lesson.getLessonInstructor());
                 SignatureModel signatureModel = new SignatureModel();
@@ -148,7 +150,8 @@ public class SignatureController {
                 signatureModel.setFirstName(tempAccount.getFirstName());
                 signatureModel.setLastName(tempAccount.getLastName());
                 signatureModel.setPosition("Instructor");
-
+                /* All lessons are default set to an image that was uploaded Sun Dec 02 23:30:02 CET 2018 when not yet signed. If that is the image for the
+                 * lesson show that image. Else show the image belonging to the lesson. */
                 if (signatureCanvas.getSignatureDate("p3-project", lesson.getLessonInstructor() + id).equals("Sun Dec 02 23:30:02 CET 2018")) {
                     signatureModel.setSignatureUrl("https://s3.eu-west-2.amazonaws.com/p3-project/notsigned.png");
                     signatureModel.setSignatureDate("Not signed");
@@ -166,6 +169,7 @@ public class SignatureController {
         model.addAttribute("pathid", id);
         model.addAttribute("SignatureList", signatureList);
         model.addAttribute("SNS", signedNotSigned);
+
 
         if (unsigned == 0) {
             Lesson lesson = this.lessonService.getLesson(id);
