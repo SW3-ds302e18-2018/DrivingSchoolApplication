@@ -51,18 +51,19 @@ public class NotificationScheduler
     }
 
     private boolean isApartofLesson(Lesson lesson, Account account)
-        {
-            return lesson.getLessonInstructor().equals(account.getUsername()) ||
-                    lesson.getStudentList().contains(account.getUsername());
-        }
+    {
+        return lesson.getLessonInstructor().equals(account.getUsername()) ||
+                lesson.getStudentList().contains(account.getUsername());
+    }
 
-        private boolean withinNotificationTimer(Lesson lesson, Account account)
-        {
-            Calendar today = Calendar.getInstance();
-            return TimeUnit.MILLISECONDS.toMinutes(lesson.getLessonDate().getTime()) - account.getNotificationInMinutes() ==
-                    TimeUnit.MILLISECONDS.toMinutes(today.getTime().getTime());
-
-        }
+    private boolean withinNotificationTimer(Lesson lesson, Account account)
+    {
+        // Converts all times to minutes, and takes the (Lesson Date Minus (-) Time the user want to receive the notification)
+        // and matches it with current time in minutes.
+        Calendar today = Calendar.getInstance();
+        return TimeUnit.MILLISECONDS.toMinutes(lesson.getLessonDate().getTime()) - account.getNotificationInMinutes() ==
+                TimeUnit.MILLISECONDS.toMinutes(today.getTime().getTime());
+    }
 
 }
 
