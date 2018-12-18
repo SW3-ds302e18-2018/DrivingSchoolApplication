@@ -13,12 +13,12 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 @Component
-public class ScheduledTasks
+public class NotificationScheduler
 {
     private AccountRespository accountRespository;
     private LessonRepository lessonRepository;
 
-    public ScheduledTasks(AccountRespository accountRespository, LessonRepository lessonRepository)
+    public NotificationScheduler(AccountRespository accountRespository, LessonRepository lessonRepository)
     {
         this.accountRespository = accountRespository;
         this.lessonRepository = lessonRepository;
