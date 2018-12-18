@@ -38,7 +38,6 @@ public class NotificationScheduler
             {
                 if (isApartofLesson(lesson, account) && withinNotificationTimer(lesson, account))
                 {
-                    System.out.println("TRIGGERED");
                     String message = "Hello " + account.getUsername() + ",\n You have a lesson at " +
                             lesson.getLessonLocation() + " on the\n" + lesson.getLessonDate();
                     new Notification(message, "ds302e18@gmail.com", account.getEmail(),
@@ -60,11 +59,6 @@ public class NotificationScheduler
         private boolean withinNotificationTimer(Lesson lesson, Account account)
         {
             Calendar today = Calendar.getInstance();
-
-            System.out.println("Current Time" + TimeUnit.MILLISECONDS.toMinutes(today.getTime().getTime()));
-            System.out.println("Lesson Time" + TimeUnit.MILLISECONDS.toMinutes(lesson.getLessonDate().getTime())+ "For Lesson " + lesson.getId());
-            System.out.println("Account Notification Minutes" + account.getNotificationInMinutes() + " For Account " + account.getUsername());
-
             return TimeUnit.MILLISECONDS.toMinutes(lesson.getLessonDate().getTime()) - account.getNotificationInMinutes() ==
                     TimeUnit.MILLISECONDS.toMinutes(today.getTime().getTime());
 
